@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulos — Valle de Lili</title>
+    <link rel="stylesheet" href="/Estudiante/modulos.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ===== FILA 1: TABS DE MÓDULOS =====
+         Inicio | Nihon Koden | Eval NK 🔒 | Beneheart D6 | Eval BD 🔒
+         Se genera dinámicamente según los módulos asignados -->
+    <nav class="fila-modulos" id="filaModulos">
+        <div class="avatar" id="avatarLetra">E</div>
+        <span id="nombreEstudiante" style="color: white;">Estudiante</span>
+        <div class="tabs-centrados" id="tabsCentrados">
+            <!-- Se llena con JS -->
+            <div class="tab-cargando">Cargando...</div>
+        </div>
+        <!-- Nombre del estudiante y cerrar sesión -->
+        <div class="nav-usuario">
+
+            <button class="btn-logout" onclick="cerrarSesion()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Salir
+            </button>
+        </div>
+    </nav>
+
+    <!-- ===== FILA 2: SECCIONES DEL MÓDULO ACTIVO =====
+         Muestra las secciones con check, número o candado -->
+    <div class="fila-secciones" id="filaSecciones">
+        <!-- Se llena con JS cuando se selecciona un módulo -->
+    </div>
+
+    <!-- ===== CONTENIDO PRINCIPAL ===== -->
+    <main class="contenido" id="contenido">
+
+        <!-- Estado inicial -->
+        <div class="estado-inicial" id="estadoInicial">
+            <div class="estado-icono">
+               
+            </div>
+            <img src="/Estudiante/threejs/img/retroalimentacion/Inicio.png" alt="" style="max-width: 800px;">
+         
+        </div>
+
+        <!-- Sección activa -->
+        <div class="seccion-activa" id="seccionActiva" style="display:none;">
+            <div class="seccion-info-bar">
+                <span class="seccion-badge" id="seccionBadge">Sección 1</span>
+                <span class="seccion-modulo-txt" id="seccionModuloTxt"></span>
+                <div class="progreso-wrap">
+                    <div class="progreso-barra">
+                        <div class="progreso-fill" id="progresoFill"></div>
+                    </div>
+                    <span class="progreso-pct" id="progresoTexto">0%</span>
+                </div>
+            </div>
+            <!-- Área vacía para Three.js -->
+            <div class="area-threejs" id="areaThreeJs"></div>
+            <div class="seccion-footer">
+                <button class="btn-completar" id="btnCompletar" onclick="completarSeccion()">
+                    Completar sección
+                </button>
+            </div>
+        </div>
+
+        <!-- Sección bloqueada -->
+        <div class="seccion-bloqueada" id="seccionBloqueada" style="display:none;">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="11" width="18" height="11" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            <h3>Sección bloqueada</h3>
+            <p>Completa la sección anterior para continuar</p>
+        </div>
+
+        <!-- Evaluación -->
+        <div class="seccion-evaluacion" id="seccionEvaluacion" style="display:none;">
+            <div class="eval-icono-grande" id="evalIconoGrande">
+               <img src="/Estudiante/threejs/img/retroalimentacion/Recomendaciones.png" alt="" style="max-width: 600px;">
+            </div>
+            <h2 id="evalTitulo">Evaluación</h2>
+            
+            <button class="btn-evaluacion" id="btnEvaluacion" onclick="irEvaluacion()" style="display:none;">
+                Iniciar evaluación 
+            </button>
+        </div>
+
+    </main>
+
+    <div class="toast" id="toast"></div>
+    <script type="module" src="modulos.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="login.js">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Contenedor principal: divide la pantalla en dos paneles lado a lado -->
+    <div class="contenedor">
+
+        <!-- ===== PANEL IZQUIERDO ===== -->
+        <!-- Muestra el logo, imagen decorativa y texto de bienvenida -->
+        <div class="panel-izq">
+
+            <!-- Línea decorativa vertical en el borde derecho del panel -->
+            <div class="linea-deco"></div>
+
+            <!-- Logo: ícono de corazón con efecto de pulso + nombre de la fundación -->
+            <div class="logo-area">
+                <div class="icono-corazon">
+                    <!-- Círculos que se expanden hacia afuera simulando un pulso cardíaco -->
+                    <div class="pulso"></div>
+                    <div class="pulso"></div>
+                    <!-- SVG del corazón con señal vital integrada -->
+                    <svg viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 35s-14-9.5-14-19a8 8 0 0 1 14-5.3A8 8 0 0 1 35 16c0 9.5-14 19-14 19z"
+                            fill="#1e5c3a" opacity="0.15" />
+                        <path d="M21 35s-14-9.5-14-19a8 8 0 0 1 14-5.3A8 8 0 0 1 35 16c0 9.5-14 19-14 19z"
+                            stroke="#1e5c3a" stroke-width="2" stroke-linejoin="round" />
+                        <path d="M8 22h5l3-6 4 10 3-7 2 3h7" stroke="#1e5c3a" stroke-width="1.8" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <h2>Fundación <span>Valle de Lili</span></h2>
+            </div>
+
+            <!-- Imagen decorativa de médicos — se contiene dentro del div con object-fit en CSS -->
+            <div class="ilustracion">
+                <img src="/img/doctor.png" alt="Médicos Fundación Valle de Lili">
+            </div>
+
+            <!-- Descripción corta debajo de la imagen -->
+            <p class="tagline">Accede a tu capacitación en desfibriladores cardíacos</p>
+        </div>
+
+        <!-- ===== PANEL DERECHO ===== -->
+        <!-- Formulario de inicio de sesión sobre fondo verde -->
+        <div class="panel-der">
+
+            <div class="form-area">
+
+                <!-- Título y subtítulo -->
+                <h1 class="bienvenida">Bienvenido</h1>
+                <p class="subtitulo">Ingresa tus credenciales para continuar</p>
+
+                <!-- Alerta de error — oculta por defecto, JS la muestra cuando hay error -->
+                <div class="mensaje-error" id="mensajeError">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path
+                            d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 3a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+                    </svg>
+                    <span id="textoError">Usuario o contraseña incorrectos</span>
+                </div>
+
+                <!-- Campo usuario -->
+                <div class="campo">
+                    <label for="usuario">Usuario</label>
+                    <div class="campo-input">
+                        <input type="text" id="usuario" placeholder="Tu nombre de usuario" autocomplete="username" />
+                        <!-- Ícono de persona posicionado dentro del input con CSS -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Campo contraseña -->
+                <div class="campo">
+                    <label for="contrasena">Contraseña</label>
+                    <div class="campo-input">
+                        <input type="password" id="contrasena" placeholder="Tu contraseña"
+                            autocomplete="current-password" />
+                        <!-- Ícono de candado posicionado dentro del input con CSS -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                        <!-- Botón ojo: alterna entre mostrar y ocultar la contraseña -->
+                        <button class="ojo" id="btnOjo" type="button" onclick="toggleContrasena()">
+                            
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Botón de ingreso — muestra spinner mientras procesa -->
+                <button class="btn-login" id="btnLogin" onclick="iniciarSesion()">
+                    <div class="spinner" id="spinner"></div>
+                    <span class="btn-texto">Iniciar sesión</span>
+                </button>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JS al final del body para que el DOM esté completamente cargado -->
+    <script src="login.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,202 @@
+/* ===== RESET Y VARIABLES ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+:root {
+    --verde: #1e5c3a;
+    --verde-oscuro: #163d27;
+    --verde-claro: #2d7a50;
+    --verde-suave: #e8f5ee;
+    --blanco: #ffffff;
+    --gris-fondo: #f4f6f4;
+    --gris-borde: #e0e6e0;
+    --texto: #1a2e1f;
+    --texto-suave: #5a7a62;
+}
+ 
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gris-fondo);
+    color: var(--texto);
+    min-height: 100vh;
+}
+ 
+/* ===== NAVBAR ===== */
+.navbar {
+    background: var(--verde-oscuro);
+    padding: 0 2rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+ 
+.navbar-izq {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+ 
+/* Círculo con inicial del estudiante */
+.avatar {
+    width: 32px; height: 32px;
+    background: var(--verde-claro);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 500; color: white;
+}
+ 
+.navbar-izq span {
+    color: rgba(255,255,255,0.9);
+    font-size: 0.9rem; font-weight: 500;
+}
+ 
+.navbar-titulo {
+    font-family: 'Playfair Display', serif;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.95rem;
+}
+ 
+.btn-logout {
+    display: flex; align-items: center; gap: 6px;
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.8);
+    padding: 6px 14px; border-radius: 8px;
+    cursor: pointer; font-size: 0.85rem;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+}
+ 
+.btn-logout:hover { background: rgba(255,255,255,0.1); color: white; }
+ 
+/* ===== CONTENIDO PRINCIPAL =====
+   Centrado vertical y horizontal en la pantalla */
+.contenido {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+}
+ 
+/* ===== BIENVENIDA ===== */
+.bienvenida {
+    text-align: center;
+    animation: subir 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+ 
+.bienvenida h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--texto);
+    margin-bottom: 0.5rem;
+}
+ 
+.bienvenida p {
+    font-size: 0.95rem;
+    color: var(--texto-suave);
+}
+ 
+/* ===== OPCIONES =====
+   Dos tarjetas lado a lado */
+.opciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    width: 100%;
+    animation: subir 0.7s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+ 
+/* ===== TARJETA DE OPCIÓN =====
+   Cada opción es un enlace (<a>) con estilo de card */
+.opcion-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 2.5rem 2rem;
+    background: var(--blanco);
+    border: 1.5px solid var(--gris-borde);
+    border-radius: 20px;
+    text-decoration: none; /* Quita el subrayado del enlace */
+    color: var(--texto);
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+}
+ 
+.opcion-card:hover {
+    border-color: var(--verde);
+    box-shadow: 0 8px 32px rgba(30,92,58,0.12);
+    transform: translateY(-3px);
+}
+ 
+/* Flecha que aparece más visible al hacer hover */
+.opcion-card:hover .opcion-flecha {
+    color: var(--verde);
+    transform: translateX(4px);
+}
+ 
+/* ===== OPCIÓN PRINCIPAL =====
+   La segunda opción (módulos) tiene fondo verde */
+.opcion-principal {
+    background: var(--verde);
+    border-color: var(--verde);
+    color: var(--blanco);
+}
+ 
+.opcion-principal:hover {
+    background: var(--verde-claro);
+    border-color: var(--verde-claro);
+    box-shadow: 0 8px 32px rgba(30,92,58,0.3);
+}
+ 
+.opcion-principal .opcion-texto h2 { color: var(--blanco); }
+.opcion-principal .opcion-texto p  { color: rgba(255,255,255,0.75); }
+.opcion-principal .opcion-flecha   { color: rgba(255,255,255,0.7); }
+ 
+.opcion-principal:hover .opcion-flecha { color: white; }
+ 
+/* Ícono de la opción */
+.opcion-icono img {
+    width: 230px; height: 210px;
+}
+ 
+/* Texto de la opción */
+.opcion-texto {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+ 
+.opcion-texto h2 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--texto);
+}
+ 
+.opcion-texto p {
+    font-size: 0.85rem;
+    color: var(--texto-suave);
+    line-height: 1.6;
+}
+ 
+/* Flecha indicadora al final de la card */
+.opcion-flecha {
+    color: var(--texto-suave);
+    transition: all 0.25s;
+}
+ 
+/* ===== ANIMACIÓN DE ENTRADA ===== */
+@keyframes subir {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

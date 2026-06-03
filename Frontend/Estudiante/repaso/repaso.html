@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblioteca Multimedia · Equipos Biomédicos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/Estudiante/repaso/repaso.css" />
+</head>
+<body>
+
+  <!-- BACKGROUND DECORATION -->
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-circle bg-circle--1"></div>
+    <div class="bg-circle bg-circle--2"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="10" fill="var(--primary)"/>
+            <path d="M12 20h4l3-7 4 14 3-7h4" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">Biblioteca Multimedia</h1>
+          <span class="brand-subtitle">Equipos Biomédicos · Fundación Valle del Lili</span>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="header-badge">Modo Visualización</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO STRIP -->
+  <section class="hero-strip">
+    <div class="hero-inner">
+      <p class="hero-label">Recursos educativos</p>
+      <h2 class="hero-heading">Biblioteca Multimedia de<br/><em>Equipos Biomédicos</em></h2>
+      <p class="hero-description">Explora los tutoriales y guías de uso de equipos biomédicos especializados, organizados por fabricante para un aprendizaje estructurado.</p>
+    </div>
+    <div class="hero-stats" id="heroStats">
+      <!-- Populated by JS -->
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- CATEGORY NAVIGATION -->
+    <nav class="category-nav" role="tablist" aria-label="Categorías de equipos">
+      <div class="nav-track">
+        <button class="cat-tab active" role="tab" data-category="all" aria-selected="true">
+          <span class="cat-tab__icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" fill="currentColor" opacity=".7"/><rect x="11" y="2" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="2" y="11" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="11" y="11" width="7" height="7" rx="1.5" fill="currentColor" opacity=".7"/></svg>
+          </span>
+          <span>Todos</span>
+          <span class="cat-tab__count" id="count-all"></span>
+        </button>
+        <button class="cat-tab" role="tab" data-category="nihon-kohden" aria-selected="false">
+          <span class="cat-tab__icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="2"/><path d="M7 10h2l1.5-3.5L12 14l1.5-3.5H15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span>Nihon Kohden</span>
+          <span class="cat-tab__count" id="count-nihon-kohden"></span>
+        </button>
+        <button class="cat-tab" role="tab" data-category="mindray" aria-selected="false">
+          <span class="cat-tab__icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M4 16L8 8l4 6 2-3 2 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="2" width="16" height="16" rx="3" stroke="currentColor" stroke-width="2"/></svg>
+          </span>
+          <span>Mindray Beneheart D6</span>
+          <span class="cat-tab__count" id="count-mindray"></span>
+        </button>
+      </div>
+      <div class="nav-divider"></div>
+    </nav>
+
+    <!-- VIDEO GRID -->
+    <section class="video-section" aria-live="polite">
+      <div class="section-header" id="sectionHeader">
+        <!-- Populated by JS -->
+      </div>
+      <div class="video-grid" id="videoGrid" role="list">
+        <!-- Populated by JS -->
+      </div>
+      <div class="empty-state hidden" id="emptyState" aria-hidden="true">
+        <div class="empty-state__icon">📹</div>
+        <p>No se encontraron videos en esta categoría.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-copy">© 2025 · Biblioteca Multimedia de Equipos Biomédicos · Uso académico exclusivo</p>
+      <p class="footer-note">Los videos son propiedad de sus respectivos fabricantes y se visualizan vía YouTube.</p>
+    </div>
+  </footer>
+
+  <script src="/Estudiante/repaso/repaso.js"></script>
+</body>
+</html>

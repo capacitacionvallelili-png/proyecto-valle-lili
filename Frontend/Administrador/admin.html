@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>administrador</title>
+    <link rel="stylesheet" href="/Administrador/admin.css">
+</head>
+
+<body>
+
+    <!-- ===== NAVBAR =====
+         Barra superior fija con nombre del admin y botón cerrar sesión -->
+    <nav class="navbar">
+        <div class="navbar-izq">
+            <div class="avatar" id="avatarLetra">A</div>
+            <span id="nombreAdmin">Administrador</span>
+        </div>
+        <span class="navbar-titulo">Fundación Valle de Lili</span>
+        <button class="btn-logout" onclick="cerrarSesion()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Cerrar sesión
+        </button>
+    </nav>
+
+    <!-- ===== CONTENIDO PRINCIPAL ===== -->
+    <main class="contenido">
+
+        <!-- Título del panel -->
+        <div class="panel-titulo">
+            <h1>Panel de administración</h1>
+            <p>Gestiona estudiantes, administradores y resultados</p>
+        </div>
+
+        <!-- ===== TABS =====
+             Tres pestañas: Estudiantes, Administradores, Resultados -->
+        <div class="tabs-contenedor">
+            <div class="tabs">
+                <!-- Tab activo por defecto: Estudiantes -->
+                <button class="tab activo" onclick="cambiarTab('estudiantes')" id="tab-estudiantes">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    Estudiantes
+                </button>
+                <button class="tab" onclick="cambiarTab('administradores')" id="tab-administradores">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    Administradores
+                </button>
+                <button class="tab" onclick="cambiarTab('resultados')" id="tab-resultados">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                    </svg>
+                    Resultados Evaluaciones
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TAB: ESTUDIANTES ===== -->
+        <div class="tab-panel activo" id="panel-estudiantes">
+
+            <!-- Barra de acciones: buscador + botón añadir -->
+            <div class="barra-acciones">
+                <div class="buscador">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" id="inputBuscarEstudiante" placeholder="Buscar por usuario o nombre..."
+                        oninput="filtrarTabla('tablaEstudiantes')" />
+                </div>
+                <button class="btn-secundario" onclick="abrirModalAsignarModulo()">
+                    + Asignar módulo
+                </button>
+                <button class="btn-principal" onclick="abrirModal('modalCrearEstudiante'); cargarModulos()">
+                    + Añadir estudiante
+                </button>
+            </div>
+
+            <!-- Tabla de estudiantes -->
+            <div class="tabla-contenedor">
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Nombre</th>
+                            <th>Módulo</th>
+                            <th>Progreso</th>
+                            <th>Estado</th>
+                            <th>Intento 1</th>
+                            <th>Intento 2</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaEstudiantes">
+                        <tr>
+                            <td colspan="8" class="cargando-texto">Cargando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación de estudiantes -->
+            <div class="paginacion" id="paginacionEstudiantes"></div>
+
+        </div>
+
+        <!-- ===== TAB: ADMINISTRADORES ===== -->
+        <div class="tab-panel" id="panel-administradores">
+
+            <div class="barra-acciones">
+                <div class="buscador">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" id="inputBuscarAdmin" placeholder="Buscar administrador..."
+                        oninput="filtrarTabla('tablaAdmins')" />
+                </div>
+                <button class="btn-principal" onclick="abrirModal('modalCrearAdmin')">
+                    + Añadir administrador
+                </button>
+            </div>
+
+            <!-- Tabla de administradores -->
+            <div class="tabla-contenedor">
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Nombre</th>
+                            <th>Fecha creación</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaAdmins">
+                        <tr>
+                            <td colspan="5" class="cargando-texto">Cargando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación de administradores -->
+            <div class="paginacion" id="paginacionAdmins"></div>
+
+        </div>
+
+        <!-- ===== TAB: RESULTADOS ===== -->
+        <div class="tab-panel" id="panel-resultados">
+
+            <!-- Filtros de resultados -->
+            <div class="barra-acciones">
+                <div class="buscador">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" id="inputBuscarResultado" placeholder="Buscar por estudiante..."
+                        oninput="filtrarResultados()" />
+                </div>
+                <!-- Filtro por módulo -->
+                <select id="filtroModulo" onchange="filtrarResultados()" class="select-filtro">
+                    <option value="">Todos los módulos</option>
+                    <option value="Nihon Koden">Nihon Koden</option>
+                    <option value="Beneheart D6">Beneheart D6</option>
+                </select>
+            </div>
+
+            <!-- Tabla de resultados -->
+            <div class="tabla-contenedor">
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Módulo</th>
+                            <th>Intento</th>
+                            <th>Puntaje</th>
+                            <th>Fecha</th>
+                            <th>Resultado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaResultados">
+                        <tr>
+                            <td colspan="6" class="cargando-texto">Cargando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación de resultados -->
+            <div class="paginacion" id="paginacionResultados"></div>
+
+        </div>
+
+    </main>
+
+    <!-- ===== MODAL CREAR ESTUDIANTE ===== -->
+    <div class="modal-overlay" id="modalCrearEstudiante">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Añadir estudiante</h3>
+                <button class="btn-cerrar-modal" onclick="cerrarModal('modalCrearEstudiante')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="campo-form">
+                    <label>Usuario</label>
+                    <input type="text" id="nuevoUsuario" placeholder="Nombre de usuario" />
+                </div>
+                <div class="campo-form">
+                    <label>Contraseña</label>
+                    <input type="password" id="nuevaContrasena" placeholder="Contraseña" />
+                </div>
+                <div class="campo-form">
+                    <label>Nombre completo</label>
+                    <input type="text" id="nuevoNombre" placeholder="Nombre y apellidos" />
+                </div>
+                <div class="campo-form">
+                    <label>Módulos a asignar <span class="requerido">*</span></label>
+                    <div class="checkboxes" id="listaModulos">
+                        <p class="cargando-texto">Cargando módulos...</p>
+                    </div>
+                </div>
+                <p class="modal-error" id="errorCrearEstudiante"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancelar" onclick="cerrarModal('modalCrearEstudiante')">Cancelar</button>
+                <button class="btn-confirmar" onclick="crearEstudiante()">Crear estudiante</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ===== MODAL ASIGNAR MÓDULO ===== -->
+    <div class="modal-overlay" id="modalAsignarModulo">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Asignar módulo a estudiante</h3>
+                <button class="btn-cerrar-modal" onclick="cerrarModal('modalAsignarModulo')">✕</button>
+            </div>
+            <div class="modal-body">
+                <!-- Buscador de estudiante -->
+                <div class="campo-form">
+                    <label>Buscar estudiante</label>
+                    <input type="text" id="inputBuscarEstudianteAsignar" placeholder="Escribe el nombre o usuario..."
+                        oninput="filtrarEstudiantesAsignar()" autocomplete="off" />
+                    <div class="lista-busqueda" id="listaEstudiantesAsignar"></div>
+                    <!-- Guarda el id seleccionado — oculto -->
+                    <input type="hidden" id="estudianteSeleccionadoId" />
+                </div>
+                <!-- Select de módulo -->
+                <div class="campo-form">
+                    <label>Módulo a asignar</label>
+                    <select id="selectModuloAsignar" class="campo-select"></select>
+                </div>
+                <p class="modal-error" id="errorAsignarModulo"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancelar" onclick="cerrarModal('modalAsignarModulo')">Cancelar</button>
+                <button class="btn-confirmar" onclick="confirmarAsignarModulo()">Asignar</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <!-- ===== MODAL CREAR ADMINISTRADOR ===== -->
+    <div class="modal-overlay" id="modalCrearAdmin">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Añadir administrador</h3>
+                <button class="btn-cerrar-modal" onclick="cerrarModal('modalCrearAdmin')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="campo-form">
+                    <label>Usuario</label>
+                    <input type="text" id="nuevoUsuarioAdmin" placeholder="Nombre de usuario" />
+                </div>
+                <div class="campo-form">
+                    <label>Contraseña</label>
+                    <input type="password" id="nuevaContrasenaAdmin" placeholder="Contraseña" />
+                </div>
+                <div class="campo-form">
+                    <label>Nombre completo</label>
+                    <input type="text" id="nuevoNombreAdmin" placeholder="Nombre y apellidos" />
+                </div>
+                <p class="modal-error" id="errorCrearAdmin"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancelar" onclick="cerrarModal('modalCrearAdmin')">Cancelar</button>
+                <button class="btn-confirmar" onclick="crearAdministrador()">Crear administrador</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL CONFIRMAR ELIMINAR ===== -->
+    <div class="modal-overlay" id="modalEliminar">
+        <div class="modal modal-pequeno">
+            <div class="modal-header">
+                <h3>Confirmar eliminación</h3>
+                <button class="btn-cerrar-modal" onclick="cerrarModal('modalEliminar')">✕</button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás segura que deseas eliminar al usuario <strong id="usuarioAEliminar"></strong>?</p>
+                <p class="advertencia">Esta acción eliminará también todas sus asignaciones y resultados.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancelar" onclick="cerrarModal('modalEliminar')">Cancelar</button>
+                <button class="btn-eliminar" onclick="confirmarEliminar()">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TOAST DE NOTIFICACIÓN ===== -->
+    <div class="toast" id="toast"><span id="toastMensaje"></span></div>
+
+    <script src="admin.js"></script>
+</body>
+
+</html>

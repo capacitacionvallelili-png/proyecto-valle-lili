@@ -1,0 +1,405 @@
+/* Reset básico: elimina márgenes y padding por defecto de todos los elementos */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+ 
+/* ===== VARIABLES DE COLOR =====
+   Se definen aquí para usarlas en todo el archivo
+   Si cambias un color aquí, cambia en todo el CSS automáticamente */
+:root {
+    --verde: #1e5c3a;           /* Verde principal de la marca */
+    --verde-oscuro: #163d27;    /* Verde más oscuro para hover y textos */
+    --verde-claro: #2d7a50;     /* Verde medio para elementos secundarios */
+    --verde-suave: #e8f5ee;     /* Verde muy claro para fondos y hover del botón */
+    --blanco: #ffffff;
+    --gris: #f4f6f4;            /* Fondo general de la página */
+    --texto: #1a2e1f;           /* Color de texto oscuro */
+    --texto-suave: #5a7a62;     /* Color de texto secundario */
+}
+ 
+/* ===== BODY =====
+   Centra el contenedor en la pantalla tanto horizontal como verticalmente */
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gris);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+ 
+/* ===== FONDOS DECORATIVOS =====
+   Círculos de color difuminado en las esquinas para dar profundidad */
+body::before {
+    content: '';
+    position: fixed;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(30,92,58,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none; /* No interfiere con clics */
+}
+ 
+body::after {
+    content: '';
+    position: fixed;
+    bottom: -150px; left: -150px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(30,92,58,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+ 
+/* ===== CONTENEDOR PRINCIPAL =====
+   Grid de dos columnas — panel izquierdo y panel derecho */
+.contenedor {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 900px;
+    min-height: 560px;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(30,92,58,0.18), 0 8px 24px rgba(0,0,0,0.08);
+    /* Animación de entrada: aparece desde abajo al cargar la página */
+    animation: aparecer 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(24px);
+}
+ 
+/* Animación de entrada del contenedor */
+@keyframes aparecer {
+    to { opacity: 1; transform: translateY(0); }
+}
+ 
+/* ===== PANEL IZQUIERDO =====
+   Fondo blanco con logo, imagen y tagline centrados */
+.panel-izq {
+    background: var(--blanco);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    position: relative;
+    gap: 1.5rem;
+}
+ 
+/* ===== ÁREA DEL LOGO =====
+   Ícono + nombre de la fundación apilados verticalmente */
+.logo-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    /* Animación con retraso para que aparezca después del contenedor */
+    animation: subir 0.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+ 
+/* Animación reutilizable: sube desde abajo con fade */
+@keyframes subir {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+ 
+/* Círculo verde suave que contiene el ícono del corazón */
+.icono-corazon {
+    width: 80px; height: 80px;
+    background: var(--verde-suave);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; /* Necesario para posicionar los anillos de pulso */
+}
+ 
+.icono-corazon svg {
+    width: 42px; height: 42px;
+}
+ 
+/* ===== EFECTO PULSO =====
+   Anillos que se expanden desde el ícono simulando un latido */
+.pulso {
+    position: absolute;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    border: 2px solid rgba(30,92,58,0.2);
+    animation: pulso 2.5s ease-out infinite;
+}
+ 
+/* El segundo anillo empieza con retraso para efecto escalonado */
+.pulso:nth-child(2) { animation-delay: 0.8s; }
+ 
+@keyframes pulso {
+    0%   { transform: scale(1);   opacity: 0.6; }
+    100% { transform: scale(1.8); opacity: 0; }
+}
+ 
+/* Título del logo con fuente serif elegante */
+.logo-area h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--texto);
+    text-align: center;
+    line-height: 1.3;
+}
+ 
+/* "Valle de Lili" en verde para resaltar */
+.logo-area h2 span {
+    color: var(--verde);
+}
+ 
+/* ===== IMAGEN DECORATIVA =====
+   Se contiene dentro del div y no se deforma gracias a object-fit */
+.ilustracion {
+    width: 100%;
+    max-width: 240px;       /* Limita el tamaño máximo */
+    max-height: 180px;      /* Limita la altura para que no sea gigante */
+    overflow: hidden;
+    border-radius: 12px;
+    animation: subir 0.8s 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+ 
+/* La imagen se recorta para caber en el contenedor sin deformarse */
+.ilustracion img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;      /* Recorta la imagen para llenar el espacio */
+    object-position: center top; /* Prioriza la parte superior de la imagen */
+    display: block;
+}
+ 
+/* Texto descriptivo debajo de la imagen */
+.tagline {
+    font-size: 0.85rem;
+    color: var(--texto-suave);
+    text-align: center;
+    line-height: 1.6;
+    max-width: 220px;
+    animation: subir 0.8s 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+ 
+/* Línea decorativa vertical en el borde derecho del panel izquierdo */
+.linea-deco {
+    position: absolute;
+    top: 0; right: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--verde-suave), transparent);
+}
+ 
+/* ===== PANEL DERECHO =====
+   Fondo verde con el formulario de login */
+.panel-der {
+    background: var(--verde);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 3.5rem;
+    position: relative;
+    overflow: hidden;
+}
+ 
+/* Círculos decorativos semitransparentes en el fondo del panel verde */
+.panel-der::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    border: 40px solid rgba(255,255,255,0.04);
+    border-radius: 50%;
+}
+ 
+.panel-der::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 200px; height: 200px;
+    border: 30px solid rgba(255,255,255,0.04);
+    border-radius: 50%;
+}
+ 
+/* El formulario va encima de los círculos decorativos */
+.form-area {
+    position: relative;
+    z-index: 1;
+    animation: subir 0.8s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+ 
+/* Título principal del formulario */
+.bienvenida {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    color: var(--blanco);
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
+}
+ 
+/* Subtítulo debajo del título */
+.subtitulo {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+}
+ 
+/* ===== CAMPOS DEL FORMULARIO ===== */
+.campo {
+    margin-bottom: 1.25rem;
+    position: relative;
+}
+ 
+/* Label en mayúsculas pequeñas */
+.campo label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+ 
+/* Contenedor relativo para poder posicionar el ícono dentro del input */
+.campo-input {
+    position: relative;
+}
+ 
+/* Ícono SVG posicionado a la izquierda del input */
+.campo-input svg {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px; height: 18px;
+    color: rgba(255,255,255,0.4);
+    pointer-events: none; /* No bloquea el clic al input */
+    transition: color 0.2s;
+}
+ 
+/* Input con fondo semitransparente sobre el verde */
+.campo input {
+    width: 100%;
+    padding: 14px 16px 14px 46px; /* Padding izquierdo extra para el ícono */
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    color: var(--blanco);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.25s;
+}
+ 
+.campo input::placeholder {
+    color: rgba(255,255,255,0.35);
+}
+ 
+/* Al hacer foco el input se ilumina */
+.campo input:focus {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.5);
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.06);
+}
+ 
+/* El ícono también se ilumina cuando el input está activo */
+.campo-input:focus-within svg {
+    color: rgba(255,255,255,0.8);
+}
+ 
+/* ===== BOTÓN OJO =====
+   Permite mostrar/ocultar la contraseña — posicionado a la derecha del input */
+.ojo {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: rgba(255,255,255,0.4);
+    transition: color 0.2s;
+    display: flex;
+}
+ 
+.ojo:hover { color: rgba(255,255,255,0.8); }
+ 
+/* El input de contraseña tiene padding derecho extra para el botón ojo */
+.campo input[type="password"],
+.campo input[type="text"] {
+    padding-right: 48px;
+}
+ 
+/* ===== MENSAJE DE ERROR =====
+   Aparece con la clase 'visible' que agrega JS cuando hay un error */
+.mensaje-error {
+    display: none;          /* Oculto por defecto */
+    background: rgba(255,100,100,0.15);
+    border: 1px solid rgba(255,100,100,0.3);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: #ffb3b3;
+    margin-bottom: 1rem;
+    align-items: center;
+    gap: 8px;
+}
+ 
+/* JS agrega esta clase para hacer visible el mensaje */
+.mensaje-error.visible { display: flex; }
+ 
+/* ===== BOTÓN DE LOGIN ===== */
+.btn-login {
+    width: 100%;
+    padding: 15px;
+    background: var(--blanco);
+    color: var(--verde-oscuro);
+    border: none;
+    border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 1.75rem;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+ 
+.btn-login:hover {
+    background: var(--verde-suave);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+ 
+.btn-login:active { transform: translateY(0); }
+ 
+/* Mientras carga: no permite más clics y baja la opacidad */
+.btn-login.cargando {
+    pointer-events: none;
+    opacity: 0.8;
+}
+ 
+/* ===== SPINNER DE CARGA =====
+   Círculo que gira mientras se procesa el login — oculto por defecto */
+.spinner {
+    display: none;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(30,92,58,0.3);
+    border-top-color: var(--verde);
+    border-radius: 50%;
+    animation: girar 0.7s linear infinite;
+}
+ 
+@keyframes girar {
+    to { transform: rotate(360deg); }
+}
+ 
+/* Cuando el botón tiene clase 'cargando', muestra el spinner */
+.btn-login.cargando .spinner { display: block; }
+/* Y baja la opacidad del texto */
+.btn-login.cargando .btn-texto { opacity: 0.6; }
