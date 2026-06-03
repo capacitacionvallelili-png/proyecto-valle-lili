@@ -31,7 +31,6 @@ async function iniciarSesion() {
     const contrasena = document.getElementById('contrasena').value.trim();
     const btn = document.getElementById('btnLogin');
 
-    // Validación campos vacíos
     if (!usuario || !contrasena) {
         mostrarError('Por favor completa todos los campos');
         return;
@@ -40,7 +39,6 @@ async function iniciarSesion() {
     btn.classList.add('cargando');
 
     try {
-        // Llama al backend
         const response = await fetch('https://backend-production-2be1d.up.railway.app/Vallelili/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -55,19 +53,17 @@ async function iniciarSesion() {
             return;
         }
 
-        // Guarda el token en localStorage
         localStorage.setItem('token', data);
 
-        // Decodifica el token para leer el rol
         const payload = JSON.parse(atob(data.split('.')[1]));
         localStorage.setItem('rol', payload.rol);
         localStorage.setItem('usuario', payload.sub);
 
-        // Redirige según el rol
+        // ✅ Rutas corregidas para Railway
         if (payload.rol === 'Administrador') {
-            window.location.href = '/Administrador/admin.html';
+            window.location.href = '/admin';
         } else {
-            window.location.href = '/Estudiante/inicio/estudiante.html';
+            window.location.href = '/inicio';
         }
 
     } catch (error) {

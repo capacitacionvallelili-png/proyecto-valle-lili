@@ -5,7 +5,7 @@ function verificarAuth() {
     const rol = localStorage.getItem('rol');
 
     if (!token || rol !== 'Estudiante') {
-        window.location.href = '../login/index.html';
+        window.location.href = '/login';
     }
 
     // Muestra el nombre del estudiante en la navbar

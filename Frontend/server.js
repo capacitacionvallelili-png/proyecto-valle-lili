@@ -12,7 +12,6 @@ const PORT    = process.env.PORT || 3000;
 const ROOT = __dirname; // carpeta Frontend/
 
 // ── Servir TODO el contenido estático de la raíz ────────────────────────────
-// Esto cubre cualquier .js, .css, .png, .svg, etc. de cualquier subcarpeta
 app.use(express.static(ROOT));
 
 // ── Páginas HTML con rutas limpias ───────────────────────────────────────────
@@ -28,17 +27,23 @@ app.get('/estudiante', (req, res) => {
   res.sendFile(path.join(ROOT, 'Estudiante', 'modulos.html'));
 });
 
+app.get('/inicio', (req, res) => {
+  res.sendFile(path.join(ROOT, 'Estudiante', 'inicio', 'estudiante.html'));
+});
+
+app.get('/repaso', (req, res) => {
+  res.sendFile(path.join(ROOT, 'Estudiante', 'repaso', 'repaso.html'));
+});
+
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(ROOT, 'Administrador', 'admin.html'));
 });
 
 // ── Fallback: solo para rutas que NO sean archivos estáticos ─────────────────
 app.use((req, res, next) => {
-  // Si la URL tiene extensión (es un archivo), devuelve 404 real
   if (path.extname(req.path)) {
     return res.status(404).send('Archivo no encontrado: ' + req.path);
   }
-  // Si es una ruta de navegación desconocida, vuelve al login
   res.redirect('/');
 });
 
@@ -47,5 +52,7 @@ app.listen(PORT, () => {
   console.log(`\n Servidor corriendo en http://localhost:${PORT}`);
   console.log(`   Login       → http://localhost:${PORT}/`);
   console.log(`   Estudiante  → http://localhost:${PORT}/estudiante`);
+  console.log(`   Inicio      → http://localhost:${PORT}/inicio`);
+  console.log(`   Repaso      → http://localhost:${PORT}/repaso`);
   console.log(`   Admin       → http://localhost:${PORT}/admin\n`);
 });
