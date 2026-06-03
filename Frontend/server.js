@@ -7,21 +7,15 @@
 const express = require('express');
 const path    = require('path');
 const app     = express();
-const PORT    = 3000;
+const PORT    = process.env.PORT || 3000;
 
 const ROOT = __dirname; // carpeta Frontend/
 
-// ── Rutas estáticas ──────────────────────────────────────────────────────────
-// Cada subcarpeta queda disponible bajo su propio prefijo de URL
-app.use('/Estudiante',    express.static(path.join(ROOT, 'Estudiante')));
-app.use('/Administrador', express.static(path.join(ROOT, 'Administrador')));
-app.use('/img',           express.static(path.join(ROOT, 'img')));
+// ── Servir TODO el contenido estático de la raíz ────────────────────────────
+// Esto cubre cualquier .js, .css, .png, .svg, etc. de cualquier subcarpeta
+app.use(express.static(ROOT));
 
-// ── Páginas HTML ─────────────────────────────────────────────────────────────
-// /            → login/index.html  (entrada principal)
-// /estudiante  → Estudiante/modulos.html
-// /admin       → Administrador/admin.html
-
+// ── Páginas HTML con rutas limpias ───────────────────────────────────────────
 app.get('/', (req, res) => {
   res.sendFile(path.join(ROOT, 'login', 'index.html'));
 });
@@ -29,9 +23,6 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
   res.sendFile(path.join(ROOT, 'login', 'index.html'));
 });
-
-// Archivos estáticos del login (login.css, login.js)
-app.use('/login', express.static(path.join(ROOT, 'login')));
 
 app.get('/estudiante', (req, res) => {
   res.sendFile(path.join(ROOT, 'Estudiante', 'modulos.html'));
@@ -41,8 +32,13 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(ROOT, 'Administrador', 'admin.html'));
 });
 
-// ── Fallback: cualquier ruta no reconocida vuelve al login ───────────────────
-app.use((req, res) => {
+// ── Fallback: solo para rutas que NO sean archivos estáticos ─────────────────
+app.use((req, res, next) => {
+  // Si la URL tiene extensión (es un archivo), devuelve 404 real
+  if (path.extname(req.path)) {
+    return res.status(404).send('Archivo no encontrado: ' + req.path);
+  }
+  // Si es una ruta de navegación desconocida, vuelve al login
   res.redirect('/');
 });
 
