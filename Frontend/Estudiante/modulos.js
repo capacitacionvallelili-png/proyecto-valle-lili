@@ -11,6 +11,7 @@ import { iniciarSeccion5, destruirSeccion5 } from './threejs/benehearth/seccion5
 import { iniciarSeccion6, destruirSeccion6 } from './threejs/benehearth/seccion6.js';
 import { iniciarSeccion7, destruirSeccion7 } from './threejs/benehearth/seccion7.js';
 
+// imports para el nihon
 import { iniciarSeccion1 as nihonS1, destruirSeccion1 as nihonD1 } from './threejs/nihon/seccion1.js';
 import { iniciarSeccion2 as nihonS2, destruirSeccion2 as nihonD2 } from './threejs/nihon/seccion2.js';
 import { iniciarSeccion3 as nihonS3, destruirSeccion3 as nihonD3 } from './threejs/nihon/seccion3.js';
@@ -19,6 +20,8 @@ import { iniciarSeccion5 as nihonS5, destruirSeccion5 as nihonD5 } from './three
 import { iniciarSeccion6 as nihonS6, destruirSeccion6 as nihonD6 } from './threejs/nihon/seccion6.js';
 import { iniciarSeccion7 as nihonS7, destruirSeccion7 as nihonD7 } from './threejs/nihon/seccion7.js';
 
+//evaluacion benehearth 
+//  Import correcto
 import { iniciarEvaluacion, destruirEvaluacion } from './threejs/benehearth/evaluacion.js';
 import { iniciarEvaluacion as nihonEval, destruirEvaluacion as nihonDestrEval } from './threejs/nihon/evaluacion.js';
 
@@ -62,11 +65,11 @@ const estado = {
     asignacionId: null
 };
 
+
 /* ===== AUTENTICACIÓN ===== */
 function verificarAuth() {
-    // ✅ Ruta corregida para Railway
     if (!TOKEN || localStorage.getItem('rol') !== 'Estudiante') {
-        window.location.href = '/login';
+        window.location.href = '../login/index.html';
         return;
     }
     const usuario = USUARIO || 'Estudiante';
@@ -76,9 +79,9 @@ function verificarAuth() {
 
 window.cerrarSesion = function () {
     localStorage.clear();
-    // ✅ Ruta corregida para Railway
-    window.location.href = '/login';
+    window.location.href = '../login/index.html';
 };
+
 
 /* ===== TOAST ===== */
 function mostrarToast(mensaje, tipo = 'exito') {
@@ -88,6 +91,7 @@ function mostrarToast(mensaje, tipo = 'exito') {
     toast.classList.add('visible');
     setTimeout(() => toast.classList.remove('visible'), 3000);
 }
+
 
 /* ===== CARGAR MÓDULOS Y ASIGNACIONES ===== */
 async function cargarModulos() {
@@ -155,13 +159,14 @@ function construirHeader() {
 
     document.getElementById('tabsCentrados').innerHTML = `
         <button class="modulo-tab"
-            onclick="window.location.href='/inicio'">
+            onclick="window.location.href='/Estudiante/inicio/estudiante.html'">
             Inicio
         </button>
         ${tabsHTML}`;
 
     construirFilaSecciones();
 }
+
 
 /* ===== CONSTRUIR FILA DE SECCIONES ===== */
 function construirFilaSecciones() {
@@ -224,20 +229,26 @@ function construirFilaSecciones() {
     filaSecciones.innerHTML = html;
 }
 
+
 /* ===== DESTRUIR SECCIONES ACTIVAS ===== */
 function destruirSecciones(limpiarCache = false) {
     destruirSeccion1(); destruirSeccion2(); destruirSeccion3();
     destruirSeccion4(); destruirSeccion5(); destruirSeccion6();
     destruirSeccion7();
 
+
     nihonD1(); nihonD2(); nihonD3(); nihonD4(); nihonD5(); nihonD6(); nihonD7();
 
     destruirEvaluacion(); nihonDestrEval();
 
+    // Limpiar cache de modelos al cambiar de módulo
+    // Solo limpia el cache cuando cambia de módulo, no entre secciones
     if (limpiarCache && window._cacheModelos) {
         window._cacheModelos = {};
     }
+
 }
+
 
 /* ===== SELECCIONAR MÓDULO ===== */
 window.seleccionarModulo = function (moduloId) {
@@ -247,6 +258,7 @@ window.seleccionarModulo = function (moduloId) {
     construirHeader();
     mostrarVista('estadoInicial');
 };
+
 
 /* ===== SELECCIONAR SECCIÓN ===== */
 window.seleccionarSeccion = function (moduloId, seccionId) {
@@ -271,6 +283,7 @@ window.seleccionarSeccion = function (moduloId, seccionId) {
     mostrarSeccionActiva(moduloId, seccionId, seccion, asignacion);
 };
 
+
 /* ===== SELECCIONAR EVALUACIÓN ===== */
 window.seleccionarEvaluacion = function (moduloId) {
     const asignacion = estado.asignaciones[moduloId];
@@ -281,13 +294,16 @@ window.seleccionarEvaluacion = function (moduloId) {
     mostrarEvaluacion(moduloObj, asignacion.EvaluacionHabilitada);
 };
 
-/* ===== MOSTRAR VISTA ===== */
+
+/* ===== MOSTRAR VISTA =====
+   Muestra una sola vista y oculta las demás */
 function mostrarVista(vistaActiva) {
     const vistas = ['estadoInicial', 'seccionActiva', 'seccionBloqueada', 'seccionEvaluacion'];
     vistas.forEach(v => {
         document.getElementById(v).style.display = v === vistaActiva ? 'flex' : 'none';
     });
 }
+
 
 /* ===== MOSTRAR SECCIÓN ACTIVA ===== */
 function mostrarSeccionActiva(moduloId, seccionId, seccion, asignacion) {
@@ -304,6 +320,7 @@ function mostrarSeccionActiva(moduloId, seccionId, seccion, asignacion) {
     document.getElementById('progresoTexto').textContent = `${pct}%`;
     document.getElementById('progresoFill').style.width = `${pct}%`;
 
+    // Botón completar — bloqueado hasta que la sección lo desbloquee
     const btn = document.getElementById('btnCompletar');
     if (seccion.completada) {
         btn.textContent = 'Sección completada';
@@ -317,8 +334,10 @@ function mostrarSeccionActiva(moduloId, seccionId, seccion, asignacion) {
         btn.style.cursor = 'not-allowed';
     }
 
+    // Inicia la sección Three.js correspondiente
     destruirSecciones();
 
+    // Agrega condiciones aquí cuando implementes más secciones
     if (moduloActual?.Nombre === 'Beneheart D6') {
         if (seccionId === 1) setTimeout(() => iniciarSeccion1('areaThreeJs'), 100);
         if (seccionId === 2) setTimeout(() => iniciarSeccion2('areaThreeJs'), 100);
@@ -337,8 +356,10 @@ function mostrarSeccionActiva(moduloId, seccionId, seccion, asignacion) {
         if (seccionId === 5) setTimeout(() => nihonS5('areaThreeJs'), 100);
         if (seccionId === 6) setTimeout(() => nihonS6('areaThreeJs'), 100);
         if (seccionId === 7) setTimeout(() => nihonS7('areaThreeJs'), 100);
+
     }
 }
+
 
 /* ===== MOSTRAR EVALUACIÓN ===== */
 function mostrarEvaluacion(moduloObj, habilitada) {
@@ -349,6 +370,7 @@ function mostrarEvaluacion(moduloObj, habilitada) {
 
     if (habilitada) {
         evalIcono.classList.add('habilitada');
+        
         document.getElementById('btnEvaluacion').style.display = 'block';
     } else {
         evalIcono.classList.remove('habilitada');
@@ -362,15 +384,23 @@ function mostrarEvaluacion(moduloObj, habilitada) {
 window.irEvaluacion = function () {
     const moduloObj = estado.modulos.find(m => m.id === estado.moduloActivo);
 
+    // Por ahora solo Beneheart D6 tiene evaluación implementada
     if (moduloObj?.Nombre === 'Beneheart D6') {
+        // Oculta el panel de presentación y muestra el área Three.js
         mostrarVista('seccionActiva');
+
+        // Oculta barra de info y botón completar durante la evaluación
         document.getElementById('seccionBadge').textContent = 'Evaluación';
         document.getElementById('seccionModuloTxt').textContent = moduloObj.Nombre;
         document.getElementById('btnCompletar').style.display = 'none';
+
         destruirSecciones();
+
         setTimeout(() => {
             iniciarEvaluacion('areaThreeJs', estado.asignacionId);
         }, 100);
+
+        // Cuando el estudiante termina la evaluación vuelve a la pantalla de módulo
         window.addEventListener('evaluacionTerminada', () => {
             document.getElementById('btnCompletar').style.display = '';
             mostrarVista('estadoInicial');
@@ -392,7 +422,10 @@ window.irEvaluacion = function () {
         }, { once: true });
         return;
     }
+
+    //mostrarToast('Evaluación próximamente disponible');
 };
+
 
 /* ===== COMPLETAR SECCIÓN ===== */
 window.completarSeccion = async function () {
@@ -442,6 +475,9 @@ window.completarSeccion = async function () {
         btn.textContent = 'Completar sección';
     }
 };
+
+
+
 
 /* ===== INICIALIZACIÓN ===== */
 document.addEventListener('DOMContentLoaded', () => {
