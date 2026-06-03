@@ -26,7 +26,7 @@ import { iniciarEvaluacion, destruirEvaluacion } from './threejs/benehearth/eval
 import { iniciarEvaluacion as nihonEval, destruirEvaluacion as nihonDestrEval } from './threejs/nihon/evaluacion.js';
 
 /* ===== CONSTANTES ===== */
-const API = 'http://localhost:8080/Vallelili';
+const API = 'https://backend-production-2be1d.up.railway.app/Vallelili';
 const TOKEN = localStorage.getItem('token');
 const USUARIO = localStorage.getItem('usuario');
 const HEADERS = {

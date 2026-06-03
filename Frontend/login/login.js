@@ -41,7 +41,7 @@ async function iniciarSesion() {
 
     try {
         // Llama al backend
-        const response = await fetch('http://localhost:8080/Vallelili/auth/login', {
+        const response = await fetch('https://backend-production-2be1d.up.railway.app/Vallelili/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ Usuario: usuario, Contrasena: contrasena })

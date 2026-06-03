@@ -48,7 +48,7 @@ app.use((req, res) => {
 
 // ── Arranque ─────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`\n✅  Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`\n Servidor corriendo en http://localhost:${PORT}`);
   console.log(`   Login       → http://localhost:${PORT}/`);
   console.log(`   Estudiante  → http://localhost:${PORT}/estudiante`);
   console.log(`   Admin       → http://localhost:${PORT}/admin\n`);

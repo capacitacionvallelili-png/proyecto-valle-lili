@@ -1,5 +1,5 @@
 // ===== CONFIGURACIÓN =====
-const API = 'http://localhost:8080/Vallelili';
+const API = 'https://backend-production-2be1d.up.railway.app/Vallelili';
 const TOKEN = localStorage.getItem('token');
 const HEADERS = {
     'Content-Type': 'application/json',
