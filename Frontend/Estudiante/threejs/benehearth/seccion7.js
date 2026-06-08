@@ -15,6 +15,10 @@ const TOLERANCIA_ANGULO_PERILLA = 0.45;
 const CAMARA_POSICION = { x: -0.1, y: -0.1, z: 0.5 };
 const CAMARA_TARGET = { x: -0.1, y: -0.1, z: 0 };
 
+// [CAMBIO 1] CONSTANTES DE COLOR DE RESALTADO
+const COLOR_RESALTADO = 0xff6600;  // naranja
+const COLOR_CONFIRMADO = 0x4caf50;  // verde claro
+
 
 const PARTES = [
     {
@@ -25,6 +29,7 @@ const PARTES = [
         anguloObjetivo: 'Marcapasos',
         tipo: 'rotar',
         camaraOffset: { x: 0, y: -0.1, z: 0.8 },
+        imagenesPantalla: ['/Estudiante/threejs/img/negro.jpg'],
         instruccion: "Gira la perilla hasta el modo marcapasos"
 
     },
@@ -44,7 +49,7 @@ const PARTES = [
         nombre: 'Observe la pantalla. Verá el trazado de ECG. Gire la perilla de navegación para seleccionar una derivada donde la onda R se vea claramente.',
         objeto: 'selector',
         tipo: 'click',
-       // camaraOffset: { x: 0, y: 0, z: 0.9 },
+        // camaraOffset: { x: 0, y: 0, z: 0.9 },
         objeto: 'selector', imagen: '/Estudiante/threejs/img/marcapasos.png', instruccion: 'Gire la perilla para seleccionar una derivada donde se vea bien la onda'
 
     },
@@ -78,7 +83,7 @@ const PARTES = [
         nombre: 'Presione el botón de pantalla [Inic estim] para iniciar la estimulación. La pantalla mostrará el mensaje "Estimulac".',
         objeto: 'selector',
         tipo: 'click',
-       // camaraOffset: { x: 0, y: 0, z: 0.9 },
+        // camaraOffset: { x: 0, y: 0, z: 0.9 },
         pasos: [
             { objeto: 'selector', imagen: '/Estudiante/threejs/img/marcapasos.png', instruccion: 'Presione el botón de pantalla' },
 
@@ -151,6 +156,13 @@ const _cachTexturas = {};
 let _modoActual = null;
 let indiceImagenActual = 0;
 
+// ══════════════════════════════════════════════════════════════════
+// [CAMBIO 2] VARIABLES DEL SISTEMA DE RESALTADO
+
+// ══════════════════════════════════════════════════════════════════
+const _snapshot = {};
+let _nombreResaltadoActual = null;
+
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -208,6 +220,9 @@ export function iniciarSeccion7(contenedorId) {
 
             camaraOriginalPos = camara.position.clone();
             camaraOriginalTarget = controls.target.clone();
+
+            // [CAMBIO 3] CAPTURA DE COLORES ORIGINALES
+            capturaMaterialesOriginales();
 
             // ═══════════════════════════════════════════════════════
             // [F] RESET DE ROTACIÓN DE LA PERILLA AL CARGAR
@@ -285,6 +300,12 @@ export function destruirSeccion7() {
 
     //Correcion 6
     document.getElementById('feedbackPerillaS7')?.remove(); // [G] limpiar feedback perilla
+
+
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 5] RESTAURAR COLORES AL DESTRUIR
+    restaurarTodosLosColores();
+
 
     Object.keys(_cachTexturas).forEach(k => delete _cachTexturas[k]);
     _modoActual = null;
@@ -468,6 +489,16 @@ function mostrarUI() {
 
 function activarParte(indice) {
     if (indice >= PARTES.length) return;
+
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 6] QUITAR NARANJA DEL OBJETO ANTERIOR
+    //
+    // Primera línea de activarParte. Siempre quita el resaltado
+    // del objeto del paso anterior antes de activar el nuevo.
+    // ══════════════════════════════════════════════════════════════
+    quitarResaltadoActual();
+
+
     indiceActivo = indice;
     indiceImagenActual = 0;
     const parte = PARTES[indice];
@@ -511,6 +542,23 @@ function activarParte(indice) {
 
     const primerObjeto = parte.pasos?.[0]?.objeto ?? parte.objeto;
 
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 7] FIJAR ÁNGULO DE PERILLA EN PASOS 2 EN ADELA
+    // ══════════════════════════════════════════════════════════════
+    if (indice > 0 && modeloCargado) {
+        const pasoEncendido = PARTES.find(p => p.tipo === 'rotar' && p.anguloObjetivo);
+        if (pasoEncendido) {
+            const modoEncendido = MODOS_PERILLA.find(m => m.nombre === pasoEncendido.anguloObjetivo);
+            if (modoEncendido) {
+                modeloCargado.traverse(obj => {
+                    if (obj.name === 'perilla001') obj.rotation.x = modoEncendido.angulo;
+                });
+                actualizarPantalla(modoEncendido.angulo);
+            }
+        }
+    }
+
+
     // Correcion 7
     if (parte.camaraOffset) {
         enfocarObjeto(primerObjeto);
@@ -526,31 +574,33 @@ function activarParte(indice) {
     crearSenal(primerObjeto);
     actualizarChecklist();
 
-    if (parte.pasos?.[0]?.imagen) {
-        cambiarImagenPantalla(parte.pasos[0].imagen);
-    } else if (parte.imagenesPantalla?.length) {
+    // ── IMAGEN DE PANTALLA AL ACTIVAR EL PASO ────────────────────
+    // Solo se muestra la imagen base definida en imagenesPantalla[0].
+    // Las imágenes dentro de pasos[].imagen son por clic: se aplican
+    // en onClickCanvas al acertar cada sub-paso, nunca aquí.
+    // Si un paso no tiene imagenesPantalla, la pantalla queda como
+    // estaba (o en negro si es el primer paso).
+    if (parte.imagenesPantalla?.length) {
         cambiarImagenPantalla(parte.imagenesPantalla[0]);
     }
 
-    // correcion 8
-    // ═══════════════════════════════════════════════════════════════
-    // [I] BLOQUEO DE ÓRBITA Y FEEDBACK DE PERILLA
-    // Si el paso es tipo 'rotar': bloquea la órbita y muestra el
-    // indicador "modo actual → modo objetivo".
-    // Copia este if/else en cada sección.
-    // ═══════════════════════════════════════════════════════════════
     if (parte.tipo === 'rotar') {
         controls.enableRotate = false;
         controls.enablePan = false;
-        mostrarFeedbackPerilla(parte); // muestra el indicador solo si hay anguloObjetivo
+        mostrarFeedbackPerilla(parte);
+        // ══════════════════════════════════════════════════════
+        // [CAMBIO 8a] RESALTAR EN TIPO ROTAR
+        // Pone en naranja el mesh de la perilla.
+        // ══════════════════════════════════════════════════════
+        resaltarObjetoActivo(parte.objeto);
     } else {
         controls.enableRotate = true;
         controls.enablePan = true;
-    }
-
-    // parte corregida
-    if (parte.imagenesPantalla?.length) {
-        cambiarImagenPantalla(parte.imagenesPantalla[0]);
+        // ══════════════════════════════════════════════════════
+        // [CAMBIO 8b] RESALTAR EN TIPO CLICK
+        // Pone en naranja el primer objeto del paso o sub-paso.
+        // ══════════════════════════════════════════════════════
+        resaltarObjetoActivo(primerObjeto);
     }
 }
 
@@ -589,9 +639,18 @@ function marcarTodoCompletado() {
     PARTES.forEach(p => marcarCompletada(p.id));
     const cs = document.getElementById('contenedorSenales');
     if (cs) cs.innerHTML = '';
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 9] QUITAR NARANJA AL COMPLETAR TODO
+    // Siempre llama quitarResaltadoActual() en marcarTodoCompletado.
+    // ══════════════════════════════════════════════════════════════
+    quitarResaltadoActual();
     if (controls) controls.enableRotate = true;
     const instruccion = document.getElementById('instruccionS7');
+
     if (instruccion) instruccion.textContent = 'Marcapasos completado, selecciona de nuevo un paso de la lista y recuerda';
+    // creo
+    document.getElementById('feedbackPerillaS7')?.remove();
+
 }
 
 function todasCompletadas() {
@@ -626,6 +685,126 @@ window.irAParteS7 = function (indice) {
     if (indice > indiceActivo && icon?.innerHTML !== '✓') return;
     activarParte(indice);
 };
+
+
+/* =====================================================
+   SISTEMA DE RESALTADO — COPIA ÍNTEGRA EN CADA SECCIÓN
+   =====================================================
+ */
+function capturaMaterialesOriginales() {
+    if (!modeloCargado) return;
+    modeloCargado.traverse(obj => {
+        if (!obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (!_snapshot[clave]) {
+                _snapshot[clave] = mat.color.clone();
+            }
+        });
+    });
+}
+
+
+function resaltarObjetoActivo(nombreObjeto) {
+    if (!modeloCargado || !nombreObjeto) return;
+    // Restaurar el anterior si es diferente al nuevo
+    if (_nombreResaltadoActual && _nombreResaltadoActual !== nombreObjeto) {
+        _restaurarMesh(_nombreResaltadoActual);
+    }
+    _nombreResaltadoActual = nombreObjeto;
+    modeloCargado.traverse(obj => {
+        if (obj.name !== nombreObjeto || !obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach(mat => {
+            if (!mat?.color) return;
+            mat.color.setHex(COLOR_RESALTADO);
+            mat.needsUpdate = true;
+        });
+    });
+}
+
+
+function quitarResaltadoActual() {
+    if (!_nombreResaltadoActual) return;
+    _restaurarMesh(_nombreResaltadoActual);
+    _nombreResaltadoActual = null;
+}
+
+
+function restaurarTodosLosColores() {
+    if (!modeloCargado) return;
+    modeloCargado.traverse(obj => {
+        if (!obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (_snapshot[clave]) {
+                mat.color.copy(_snapshot[clave]);
+                mat.needsUpdate = true;
+            }
+        });
+    });
+    _nombreResaltadoActual = null;
+}
+
+
+function _restaurarMesh(nombreObjeto) {
+    if (!modeloCargado || !nombreObjeto) return;
+    modeloCargado.traverse(obj => {
+        if (obj.name !== nombreObjeto || !obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (_snapshot[clave]) {
+                mat.color.copy(_snapshot[clave]);
+                mat.needsUpdate = true;
+            }
+        });
+    });
+}
+
+
+function resaltarConfirmacion(objeto) {
+    if (!objeto?.isMesh) return;
+    const mats = Array.isArray(objeto.material) ? objeto.material : [objeto.material];
+    mats.forEach(mat => {
+        if (!mat?.color) return;
+        mat.color.setHex(COLOR_CONFIRMADO);
+        mat.needsUpdate = true;
+    });
+    setTimeout(() => {
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${objeto.name}_${idx}`;
+            if (_snapshot[clave]) {
+                mat.color.copy(_snapshot[clave]);
+                mat.needsUpdate = true;
+            }
+        });
+    }, 300);
+}
+
+
+/* =====================================================
+   RESTAURAR PERILLA AL RE-INGRESAR CON SECCIÓN COMPLETADA
+   ===================================================== */
+function restaurarEstadoPerilla() {
+    if (!modeloCargado) return;
+    const ultimoRotar = [...PARTES].reverse().find(
+        p => p.tipo === 'rotar' && p.anguloObjetivo
+    );
+    if (!ultimoRotar) return;
+    const modoDestino = MODOS_PERILLA.find(m => m.nombre === ultimoRotar.anguloObjetivo);
+    if (!modoDestino) return;
+    modeloCargado.traverse(obj => {
+        if (obj.name === 'perilla001') obj.rotation.x = modoDestino.angulo;
+    });
+    actualizarPantalla(modoDestino.angulo);
+}
 
 
 /* =====================================================
@@ -1169,33 +1348,31 @@ function onMouseUp() {
     const parte = PARTES[indiceActivo];
     if (parte.tipo !== 'rotar' || panelAbierto) return;
 
-    //correcion 11
+    //correcion 11 CAMBIO 10]
     // ═══════════════════════════════════════════════════════════════
     if (parte.anguloObjetivo && objRotado) {
         const modoObjetivo = MODOS_PERILLA.find(m => m.nombre === parte.anguloObjetivo);
-        if (!modoObjetivo) {
-            console.warn(`[seccion4] anguloObjetivo "${parte.anguloObjetivo}" no existe en MODOS_PERILLA`);
-        } else {
+        if (modoObjetivo) {
             const diferencia = Math.abs(objRotado.rotation.x - modoObjetivo.angulo);
             if (diferencia > TOLERANCIA_ANGULO_PERILLA) {
-                mostrarToastPerilla(`Gira hacia  "${parte.anguloObjetivo}"`, false);
-                controls.enableRotate = false; // sigue bloqueado para reintentar
+                mostrarToastPerilla(`Gira hacia "${parte.anguloObjetivo}"`, false);
+                controls.enableRotate = false;
                 return;
             }
         }
     }
 
-    // Ángulo correcto (o sin restricción) → completar
+    // Ángulo correcto: quitar naranja, feedback y avanzar
+    quitarResaltadoActual();
     mostrarToastPerilla(
-        parte.anguloObjetivo ? `¡Modo  ${parte.anguloObjetivo} alcanzado!` : '¡Listo!',
+        parte.anguloObjetivo ? `¡Modo ${parte.anguloObjetivo} alcanzado!` : '¡Listo!',
         true
     );
-    document.getElementById('feedbackPerillaS7')?.remove();
+    document.getElementById('feedbackPerillaS5')?.remove();
     reproducirSonidoCorrecto();
 
     if (parte.video) { mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte)); }
     else { avanzarDespuesDeVideo(parte); }
-
     // ═══════════════════════════════════════════════════════════════
 }
 
@@ -1244,35 +1421,47 @@ function onClickCanvas(event) {
     // Los pasos tipo minijuego se activan desde el botón, no desde el canvas
     if (parte.tipo === 'minijuego') return;
 
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 11] GUARD: TIPO ROTAR NO AVANZA CON CLIC
+    //
+    // Los pasos tipo 'rotar' NUNCA se validan aquí.
+    // Solo onMouseUp (al soltar el drag) puede avanzarlos.
+    // Agrega esta línea al inicio de onClickCanvas en cada sección.
+    // ══════════════════════════════════════════════════════════════
+    if (parte.tipo === 'rotar') return;
+
     const nombreHit = hits[0].object.name;
 
     if (parte.pasos?.length) {
         const pasoActual = parte.pasos[indiceImagenActual];
         if (nombreHit !== pasoActual.objeto) return;
 
+        // [CAMBIO 12] QUITAR NARANJA Y PONER EN SIGUIENTE
+
+        quitarResaltadoActual();
         reproducirSonidoCorrecto();
         efectoClick(hits[0].object);
+        resaltarConfirmacion(hits[0].object);
+
+        // Aplicar la imagen del sub-paso que acaba de completarse
+        if (pasoActual.imagen) cambiarImagenPantalla(pasoActual.imagen);
+
 
         const siguientePaso = indiceImagenActual + 1;
 
         if (siguientePaso < parte.pasos.length) {
             indiceImagenActual = siguientePaso;
             const proxPaso = parte.pasos[siguientePaso];
-
-            if (proxPaso.imagen) cambiarImagenPantalla(proxPaso.imagen);
-
-            const instruccionEl = document.getElementById('instruccionS7');
+            const instruccionEl = document.getElementById('instruccionS5');
             if (instruccionEl) instruccionEl.textContent = proxPaso.instruccion ?? parte.instruccion;
-
+            resaltarObjetoActivo(proxPaso.objeto);  // naranja en el siguiente
             crearSenal(proxPaso.objeto);
             window._senalObjeto = proxPaso.objeto;
-
         } else {
-            if (parte.video) {
-                mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte));
-            } else {
-                avanzarDespuesDeVideo(parte);
-            }
+            setTimeout(() => {
+                if (parte.video) { mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte)); }
+                else { avanzarDespuesDeVideo(parte); }
+            }, 1000);
         }
         return;
     }

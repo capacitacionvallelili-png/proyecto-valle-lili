@@ -233,6 +233,10 @@ const PARTES = [
         audioInicio: 217,
         audioFin: 243,
         instruccion: 'Haz click sobre los indicadores LED',
+          resaltarTemporal: [
+            { objetos: ['LED3'], color: 0xA6060A, intensidad: 0.6, inicio: 235, fin: 240 },
+
+        ],
     },
 ];
 

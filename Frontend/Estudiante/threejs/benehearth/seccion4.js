@@ -8,19 +8,21 @@ const MODOS_PERILLA = [
     { nombre: 'DEA',        angulo: 2,     imagen: '/Estudiante/threejs/img/DEA.png' },
 ];
 
-// ═══════════════════════════════════════════════════════════════════
-// [A] TOLERANCIA DE ÁNGULO PERILLA
-// Cuántos radianes de margen se acepta para dar el paso por bueno.
-
-// ═══════════════════════════════════════════════════════════════════
 const TOLERANCIA_ANGULO_PERILLA = 0.45;
 
-// ═══════════════════════════════════════════════════════════════════
-// [B] POSICIÓN FIJA DE LA CÁMARA (vista frontal por defecto)
-// 
-// ═══════════════════════════════════════════════════════════════════
 const CAMARA_POSICION = { x: -0.1, y: -0.1, z: 0.5 };
 const CAMARA_TARGET   = { x: -0.1, y: -0.1, z: 0   };
+
+// ══════════════════════════════════════════════════════════════════
+// [CAMBIO 1] CONSTANTES DE COLOR DE RESALTADO
+//
+// Agrega estas dos constantes debajo de CAMARA_TARGET en cualquier
+// sección nueva. Solo cambia los valores hex si quieres otro color.
+//   COLOR_RESALTADO  = naranja mientras espera interacción.
+//   COLOR_CONFIRMADO = verde destello 300 ms al acertar.
+// ══════════════════════════════════════════════════════════════════
+const COLOR_RESALTADO  = 0xff6600;  // naranja
+const COLOR_CONFIRMADO = 0x4caf50;  // verde claro
 
 const PARTES = [
     {
@@ -28,10 +30,6 @@ const PARTES = [
         nombre: 'Encienda el equipo girando la perilla hasta la sección monitor para este modo',
         objeto: 'perilla001',
         tipo: 'rotar',
-        // ═══════════════════════════════════════════════════════════
-        // [C] anguloObjetivo — nombre exacto de un modo en MODOS_PERILLA.
-        
-        // ═══════════════════════════════════════════════════════════
         anguloObjetivo: 'Monitor',
         camaraOffset: { x: 0, y: -0.1, z: 0.8 },
         instruccion: 'Haz click y gira la perilla hasta el modo Monitor para encender el equipo',
@@ -42,11 +40,9 @@ const PARTES = [
     {
         id: 'selector',
         nombre: 'Usa la perilla de navegación para elegir el tipo de paciente: Adulto, pediátrico o Neonatal, para este caso dejalo en adulto',
-       // objeto: 'selector',
         tipo: 'click',
-        //camaraOffset: { x: 0, y: 0.8, z: 0.9 },
+        imagenesPantalla: [ '/Estudiante/threejs/img/monitor/pediatrico.png' ],
         pasos: [
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/monitor/pediatrico.png', instruccion: 'Haz click sobre la perilla de navegación hasta llegar al modo adulto' },
             { objeto: 'selector', imagen: '/Estudiante/threejs/img/monitor/Neonatal.png',   instruccion: 'Haz click sobre la perilla de navegación hasta llegar al modo adulto' },
             { objeto: 'selector', imagen: '/Estudiante/threejs/img/monitor/adulto.png',     instruccion: 'Haz click sobre la perilla de navegación hasta llegar al modo adulto' },
         ],
@@ -57,29 +53,24 @@ const PARTES = [
         nombre: 'Conecte los electrodos al paciente (los parches adhesivos en el pecho) en la posición correcta',
         objeto: 'selector',
         tipo: 'minijuego',
-       // camaraOffset: { x: 0.5, y: -0.1, z: 0.7 },
         instruccion: 'Arrastra cada electrodo a su posición correcta en el paciente',
     },
     {
         id: 'selector2',
         nombre: 'Para cambiar a electrodos: gire la perilla y busque la derivada a visualizar, o use el botón de selección de derivada en el panel frontal inferior.',
-        objeto: 'selector',
+        imagenesPantalla: [ '/Estudiante/threejs/img/MODOMONITOR.png' ],
         tipo: 'click',
-        //camaraOffset: { x: 0, y: 0, z: 1.2 },
         pasos: [
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/MODOMONITOR.png', instruccion: 'Cambia de palas a una opción de derivada' },
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/19.png',          instruccion: 'Con la perilla de navegación puedes cambiar a las opciones de derivada' },
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/20.png',          instruccion: 'Con la perilla de navegación puedes cambiar a las opciones de derivada' },
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/21.png',          instruccion: 'Con la perilla de navegación puedes cambiar a las opciones de derivada' },
+            { objeto: 'B_SelecDerivada', imagen: '/Estudiante/threejs/img/19.png',          instruccion: 'Con la perilla de navegación puedes cambiar a las opciones de derivada' },
+            { objeto: 'B_SelecDerivada', imagen: '/Estudiante/threejs/img/20.png',          instruccion: 'Con la perilla de navegación puedes cambiar a las opciones de derivada' },
+            { objeto: 'B_SelecDerivada', imagen: '/Estudiante/threejs/img/21.png',          instruccion: 'Con la perilla de navegación puedes cambiar a las opciones de derivada' },
         ],
         video: 'https://youtu.be/TW_0ryNz290',
     },
     {
         id: 'ganancia',
         nombre: 'Si la onda del corazón se ve muy pequeña o muy grande, ajuste la ganancia o amplitud del panel para ajustarla hasta que se vea clara usando la perilla de navegación.',
-       // objeto: 'selector',
         tipo: 'click',
-        //camaraOffset: { x: 0, y: 0, z: 1.2 },
         pasos: [
             { objeto: 'selector', imagen: '/Estudiante/threejs/img/monitor/ampliar.png', instruccion: 'Puedes ajustar la ganancia de la onda para verla mejor' },
             { objeto: 'selector', imagen: '/Estudiante/threejs/img/monitor/x4.png',      instruccion: 'Puedes ajustar la ganancia de la onda para verla mejor' },
@@ -125,6 +116,20 @@ const _cachTexturas = {};
 let _modoActual = null;
 let indiceImagenActual = 0;
 
+// ══════════════════════════════════════════════════════════════════
+// [CAMBIO 2] VARIABLES DEL SISTEMA DE RESALTADO
+//
+// Agrega estas dos líneas en el bloque de estado interno de cualquier
+// sección nueva, junto con las otras variables let/const.
+//
+//   _snapshot               : objeto que guarda los colores originales
+//                             del GLB, llenado UNA sola vez al cargar.
+//   _nombreResaltadoActual  : nombre del único mesh en naranja ahora.
+//                             null = ninguno resaltado.
+// ══════════════════════════════════════════════════════════════════
+const _snapshot = {};
+let   _nombreResaltadoActual = null;
+
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -147,11 +152,6 @@ export function iniciarSeccion4(contenedorId) {
     controls  = base.controls;
     reloj     = base.reloj;
 
-    // ═══════════════════════════════════════════════════════════════
-    // [D] CONFIGURACIÓN DE CONTROLES
-    // Pan habilitado, zoom limitado, velocidades reducidas.
-    // Copia este bloque en cada sección tal cual.
-    // ═══════════════════════════════════════════════════════════════
     controls.enablePan   = true;
     controls.minDistance = 0.3;
     controls.maxDistance = 3.5;
@@ -168,10 +168,6 @@ export function iniciarSeccion4(contenedorId) {
             animaciones   = anim;
             mixer         = mix;
 
-            // ═══════════════════════════════════════════════════════
-            // [E] POSICIÓN INICIAL DE LA CÁMARA
-          
-            // ═══════════════════════════════════════════════════════
             camara.position.set(CAMARA_POSICION.x, CAMARA_POSICION.y, CAMARA_POSICION.z);
             controls.target.set(CAMARA_TARGET.x,   CAMARA_TARGET.y,   CAMARA_TARGET.z);
             controls.update();
@@ -179,10 +175,17 @@ export function iniciarSeccion4(contenedorId) {
             camaraOriginalPos    = camara.position.clone();
             camaraOriginalTarget = controls.target.clone();
 
-            // ═══════════════════════════════════════════════════════
-            // [F] RESET DE ROTACIÓN DE LA PERILLA AL CARGAR
-            
-            // ═══════════════════════════════════════════════════════
+            // ══════════════════════════════════════════════════════
+            // [CAMBIO 3] CAPTURA DE COLORES ORIGINALES
+            //
+            // Llama capturaMaterialesOriginales() como PRIMERA operación
+            // después de asignar modeloCargado, antes de modificar
+            // cualquier material (color, textura, etc.).
+            // Si lo haces después de cambiar colores, el snapshot
+            // guardará los colores modificados y la restauración fallará.
+            // ══════════════════════════════════════════════════════
+            capturaMaterialesOriginales();
+
             modeloCargado.traverse(obj => {
                 if (obj.name === 'perilla001') {
                     obj.rotation.x = 0;
@@ -206,7 +209,12 @@ export function iniciarSeccion4(contenedorId) {
 
             ocultarLoader();
             mostrarUI();
-            yaCompletada ? marcarTodoCompletado() : activarParte(0);
+
+            if (yaCompletada) {
+                marcarTodoCompletado();
+            } else {
+                activarParte(0);
+            }
         }
     );
 
@@ -247,9 +255,21 @@ export function destruirSeccion4() {
     document.getElementById('checklistS4')?.remove();
     document.getElementById('videoPopupS4')?.remove();
     document.getElementById('minijuegoElectrodosS4')?.remove();
-    document.getElementById('feedbackPerillaS4')?.remove(); // [G] limpiar feedback perilla
+    document.getElementById('feedbackPerillaS4')?.remove();
+
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 5] RESTAURAR COLORES AL DESTRUIR
+    //
+    // Llama restaurarTodosLosColores() antes de limpiar _snapshot.
+    // Esto garantiza que si el usuario cambia de sección con un botón
+    // aún en naranja, el color vuelve al original antes de destruir.
+    // Luego limpia el snapshot y resetea _nombreResaltadoActual.
+    // ══════════════════════════════════════════════════════════════
+    restaurarTodosLosColores();
 
     Object.keys(_cachTexturas).forEach(k => delete _cachTexturas[k]);
+    Object.keys(_snapshot).forEach(k => delete _snapshot[k]);
+    _nombreResaltadoActual = null;
     _modoActual = null;
 
     if (escena) {
@@ -433,6 +453,15 @@ function mostrarUI() {
 
 function activarParte(indice) {
     if (indice >= PARTES.length) return;
+
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 6] QUITAR NARANJA DEL OBJETO ANTERIOR
+    //
+    // Primera línea de activarParte. Siempre quita el resaltado
+    // del objeto del paso anterior antes de activar el nuevo.
+    // ══════════════════════════════════════════════════════════════
+    quitarResaltadoActual();
+
     indiceActivo       = indice;
     indiceImagenActual = 0;
     const parte = PARTES[indice];
@@ -443,7 +472,7 @@ function activarParte(indice) {
     const instruccionEl = document.getElementById('instruccionS4');
     if (instruccionEl) instruccionEl.textContent = instruccionTexto;
 
-    // Minijuego: flujo especial sin señal ni movimiento de cámara
+    // Minijuego: flujo especial sin señal ni resaltado 3D
     if (parte.tipo === 'minijuego') {
         actualizarChecklist();
         const cs = document.getElementById('contenedorSenales');
@@ -475,12 +504,28 @@ function activarParte(indice) {
 
     const primerObjeto = parte.pasos?.[0]?.objeto ?? parte.objeto;
 
-    // ═══════════════════════════════════════════════════════════════
-    // [H] MOVIMIENTO DE CÁMARA CONDICIONAL
-    // Con camaraOffset → anima hacia el objeto.
-    // Sin camaraOffset → vuelve a la posición frontal fija.
-    // Copia este if/else en cada sección (cambia el ID instruccion si es necesario).
-    // ═══════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 7] FIJAR ÁNGULO DE PERILLA EN PASOS 2 EN ADELANTE
+    //
+    // Solo actúa cuando indice > 0.
+    // El paso 0 usa la rotación que trae el modelo por defecto (0),
+    // establecida en el callback de cargarModelo. Nunca se toca aquí.
+    // A partir del paso 1 el equipo ya está encendido, así que fijamos
+    // la perilla en el ángulo del primer paso tipo 'rotar' completado.
+    // ══════════════════════════════════════════════════════════════
+    if (indice > 0 && modeloCargado) {
+        const pasoEncendido = PARTES.find(p => p.tipo === 'rotar' && p.anguloObjetivo);
+        if (pasoEncendido) {
+            const modoEncendido = MODOS_PERILLA.find(m => m.nombre === pasoEncendido.anguloObjetivo);
+            if (modoEncendido) {
+                modeloCargado.traverse(obj => {
+                    if (obj.name === 'perilla001') obj.rotation.x = modoEncendido.angulo;
+                });
+                actualizarPantalla(modoEncendido.angulo);
+            }
+        }
+    }
+
     if (parte.camaraOffset) {
         enfocarObjeto(primerObjeto);
     } else {
@@ -494,25 +539,33 @@ function activarParte(indice) {
     crearSenal(primerObjeto);
     actualizarChecklist();
 
-    if (parte.pasos?.[0]?.imagen) {
-        cambiarImagenPantalla(parte.pasos[0].imagen);
-    } else if (parte.imagenesPantalla?.length) {
+    // ── IMAGEN DE PANTALLA AL ACTIVAR EL PASO ────────────────────
+    // Solo se muestra la imagen base definida en imagenesPantalla[0].
+    // Las imágenes dentro de pasos[].imagen son por clic: se aplican
+    // en onClickCanvas al acertar cada sub-paso, nunca aquí.
+    // Si un paso no tiene imagenesPantalla, la pantalla queda como
+    // estaba (o en negro si es el primer paso).
+    if (parte.imagenesPantalla?.length) {
         cambiarImagenPantalla(parte.imagenesPantalla[0]);
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // [I] BLOQUEO DE ÓRBITA Y FEEDBACK DE PERILLA
-    // Si el paso es tipo 'rotar': bloquea la órbita y muestra el
-    // indicador "modo actual → modo objetivo".
-    // Copia este if/else en cada sección.
-    // ═══════════════════════════════════════════════════════════════
     if (parte.tipo === 'rotar') {
         controls.enableRotate = false;
         controls.enablePan    = false;
-        mostrarFeedbackPerilla(parte); // muestra el indicador solo si hay anguloObjetivo
+        mostrarFeedbackPerilla(parte);
+        // ══════════════════════════════════════════════════════
+        // [CAMBIO 8a] RESALTAR EN TIPO ROTAR
+        // Pone en naranja el mesh de la perilla.
+        // ══════════════════════════════════════════════════════
+        resaltarObjetoActivo(parte.objeto);
     } else {
         controls.enableRotate = true;
         controls.enablePan    = true;
+        // ══════════════════════════════════════════════════════
+        // [CAMBIO 8b] RESALTAR EN TIPO CLICK
+        // Pone en naranja el primer objeto del paso o sub-paso.
+        // ══════════════════════════════════════════════════════
+        resaltarObjetoActivo(primerObjeto);
     }
 }
 
@@ -550,6 +603,11 @@ function marcarTodoCompletado() {
     PARTES.forEach(p => marcarCompletada(p.id));
     const cs = document.getElementById('contenedorSenales');
     if (cs) cs.innerHTML = '';
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 9] QUITAR NARANJA AL COMPLETAR TODO
+    // Siempre llama quitarResaltadoActual() en marcarTodoCompletado.
+    // ══════════════════════════════════════════════════════════════
+    quitarResaltadoActual();
     controls.enableRotate = true;
     controls.enablePan    = true;
     const instruccion = document.getElementById('instruccionS4');
@@ -562,10 +620,10 @@ function todasCompletadas() {
     if (cs) cs.innerHTML = '';
     window._senalObjeto = null;
     document.getElementById('feedbackPerillaS4')?.remove();
-
+    // Quitar naranja al terminar la secuencia completa
+    quitarResaltadoActual();
     const instruccion = document.getElementById('instruccionS4');
     if (instruccion) instruccion.textContent = '¡Modo monitor completado!';
-
     const btnCompletar = document.getElementById('btnCompletar');
     if (btnCompletar && !btnCompletar.textContent.includes('completada')) {
         btnCompletar.disabled      = false;
@@ -590,6 +648,185 @@ window.irAParteS4 = function (indice) {
     if (indice > indiceActivo && icon?.innerHTML !== '✓') return;
     activarParte(indice);
 };
+
+
+/* =====================================================
+   SISTEMA DE RESALTADO — COPIA ÍNTEGRA EN CADA SECCIÓN
+   =====================================================
+
+   RESUMEN DE LOS 5 PASOS PARA REPLICAR EN SECCION5, 6, etc.:
+
+   PASO 1 → Agrega las constantes COLOR_RESALTADO y COLOR_CONFIRMADO
+            arriba del archivo (después de CAMARA_TARGET).
+
+   PASO 2 → Agrega en el estado interno:
+            const _snapshot = {};
+            let   _nombreResaltadoActual = null;
+
+   PASO 3 → En iniciarSeccionN(), dentro del callback de cargarModelo,
+            llama capturaMaterialesOriginales() como primera operación.
+
+   PASO 4 → En destruirSeccionN(), antes de limpiar _snapshot, llama:
+            restaurarTodosLosColores();
+            Object.keys(_snapshot).forEach(k => delete _snapshot[k]);
+            _nombreResaltadoActual = null;
+
+   PASO 5 → Copia las 5 funciones de abajo sin modificar ninguna lógica.
+            Solo cambia el nombre de función si quieres (no es necesario).
+
+   USO EN activarParte / onClickCanvas / onMouseUp:
+   - Al entrar a un paso: resaltarObjetoActivo(nombreObjeto)
+   - Al salir de un paso o sub-paso: quitarResaltadoActual()
+   - Al acertar un clic: resaltarConfirmacion(hits[0].object)
+   ===================================================== */
+
+/**
+ * capturaMaterialesOriginales
+ * Recorre el modelo y guarda el color de cada material en _snapshot.
+ * Llamar UNA sola vez, antes de cualquier modificación de colores.
+ */
+function capturaMaterialesOriginales() {
+    if (!modeloCargado) return;
+    modeloCargado.traverse(obj => {
+        if (!obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (!_snapshot[clave]) {
+                _snapshot[clave] = mat.color.clone();
+            }
+        });
+    });
+}
+
+/**
+ * resaltarObjetoActivo
+ * Pinta de naranja el mesh llamado nombreObjeto.
+ * Restaura automáticamente el anterior si era distinto.
+ * Solo puede haber UN objeto resaltado a la vez.
+ */
+function resaltarObjetoActivo(nombreObjeto) {
+    if (!modeloCargado || !nombreObjeto) return;
+    // Restaurar el anterior si es diferente al nuevo
+    if (_nombreResaltadoActual && _nombreResaltadoActual !== nombreObjeto) {
+        _restaurarMesh(_nombreResaltadoActual);
+    }
+    _nombreResaltadoActual = nombreObjeto;
+    modeloCargado.traverse(obj => {
+        if (obj.name !== nombreObjeto || !obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach(mat => {
+            if (!mat?.color) return;
+            mat.color.setHex(COLOR_RESALTADO);
+            mat.needsUpdate = true;
+        });
+    });
+}
+
+/**
+ * quitarResaltadoActual
+ * Restaura el color original del mesh actualmente en naranja.
+ * Llama esto al cambiar de paso, sub-paso o al terminar la sección.
+ */
+function quitarResaltadoActual() {
+    if (!_nombreResaltadoActual) return;
+    _restaurarMesh(_nombreResaltadoActual);
+    _nombreResaltadoActual = null;
+}
+
+/**
+ * restaurarTodosLosColores
+ * Restaura el color original de TODOS los meshes usando el snapshot.
+ * Usar en destruirSeccionN() para limpiar al cambiar de sección.
+ */
+function restaurarTodosLosColores() {
+    if (!modeloCargado) return;
+    modeloCargado.traverse(obj => {
+        if (!obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (_snapshot[clave]) {
+                mat.color.copy(_snapshot[clave]);
+                mat.needsUpdate = true;
+            }
+        });
+    });
+    _nombreResaltadoActual = null;
+}
+
+/**
+ * _restaurarMesh (interna)
+ * Restaura el color original de un mesh específico desde el snapshot.
+ */
+function _restaurarMesh(nombreObjeto) {
+    if (!modeloCargado || !nombreObjeto) return;
+    modeloCargado.traverse(obj => {
+        if (obj.name !== nombreObjeto || !obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (_snapshot[clave]) {
+                mat.color.copy(_snapshot[clave]);
+                mat.needsUpdate = true;
+            }
+        });
+    });
+}
+
+/**
+ * resaltarConfirmacion
+ * Destella el mesh en verde 300 ms al acertar, luego vuelve al original.
+ * Llamar con hits[0].object justo después de validar un clic correcto,
+ * pero DESPUÉS de quitarResaltadoActual() para que el verde se vea limpio.
+ */
+function resaltarConfirmacion(objeto) {
+    if (!objeto?.isMesh) return;
+    const mats = Array.isArray(objeto.material) ? objeto.material : [objeto.material];
+    mats.forEach(mat => {
+        if (!mat?.color) return;
+        mat.color.setHex(COLOR_CONFIRMADO);
+        mat.needsUpdate = true;
+    });
+    setTimeout(() => {
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${objeto.name}_${idx}`;
+            if (_snapshot[clave]) {
+                mat.color.copy(_snapshot[clave]);
+                mat.needsUpdate = true;
+            }
+        });
+    }, 300);
+}
+
+
+/* =====================================================
+   RESTAURAR PERILLA AL RE-INGRESAR CON SECCIÓN COMPLETADA
+   ===================================================== */
+
+/**
+ * restaurarEstadoPerilla
+ * Busca el ÚLTIMO paso tipo 'rotar' con anguloObjetivo y aplica
+ * ese ángulo a 'perilla001'. Llama en iniciarSeccionN() cuando
+ * yaCompletada === true, antes de marcarTodoCompletado().
+ */
+function restaurarEstadoPerilla() {
+    if (!modeloCargado) return;
+    const ultimoRotar = [...PARTES].reverse().find(
+        p => p.tipo === 'rotar' && p.anguloObjetivo
+    );
+    if (!ultimoRotar) return;
+    const modoDestino = MODOS_PERILLA.find(m => m.nombre === ultimoRotar.anguloObjetivo);
+    if (!modoDestino) return;
+    modeloCargado.traverse(obj => {
+        if (obj.name === 'perilla001') obj.rotation.x = modoDestino.angulo;
+    });
+    actualizarPantalla(modoDestino.angulo);
+}
 
 
 /* =====================================================
@@ -820,29 +1057,17 @@ function animarCamara(posDestino, targetDestino, duracionMs, onComplete = null) 
 
 /* =====================================================
    FEEDBACK VISUAL DE PERILLA
-   Igual que seccion3. Copia estas dos funciones en cada
-   sección que tenga pasos tipo 'rotar' con anguloObjetivo.
-   Cambia el ID del elemento ('feedbackPerillaS4' → 'feedbackPerillaS5'…)
    ===================================================== */
 
-// ═══════════════════════════════════════════════════════════════════
-// [J] mostrarFeedbackPerilla — muestra un indicador "modo actual → objetivo"
-// Solo aparece si la parte tiene anguloObjetivo definido.
-// ═══════════════════════════════════════════════════════════════════
 function mostrarFeedbackPerilla(parte) {
     document.getElementById('feedbackPerillaS4')?.remove();
     if (!parte.anguloObjetivo) return;
-
     const contenedor = document.getElementById('areaThreeJs');
     const div = document.createElement('div');
     div.id = 'feedbackPerillaS4';
     contenedor.appendChild(div);
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// [K] actualizarFeedbackPerilla — actualiza el modo mostrado mientras se gira.
-// Se llama desde onMouseMove. Cambia el ID del elemento en cada sección.
-// ═══════════════════════════════════════════════════════════════════
 function actualizarFeedbackPerilla(modoActualNombre) {
     const el = document.getElementById('feedbackModoActualS4');
     if (el) el.textContent = modoActualNombre;
@@ -947,13 +1172,6 @@ function onMouseMove(event) {
                 -Math.PI / 2, Math.PI / 2
             );
             actualizarPantalla(objetoRotando.rotation.x);
-
-            // ═══════════════════════════════════════════════════════
-            // [L] Actualizar el indicador de modo mientras se gira.
-            // Copia este bloque dentro del if(rotandoObjeto) de onMouseMove
-            // en cada sección. Solo tiene efecto si mostrarFeedbackPerilla
-            // fue llamado (es decir, si la parte tiene anguloObjetivo).
-            // ═══════════════════════════════════════════════════════
             const modoDetectado = MODOS_PERILLA.reduce((prev, curr) =>
                 Math.abs(curr.angulo - objetoRotando.rotation.x) <
                 Math.abs(prev.angulo - objetoRotando.rotation.x) ? curr : prev
@@ -985,29 +1203,28 @@ function onMouseUp() {
     const parte = PARTES[indiceActivo];
     if (parte.tipo !== 'rotar' || panelAbierto) return;
 
-    // ═══════════════════════════════════════════════════════════════
-    // [M] VALIDACIÓN DE ÁNGULO DE PERILLA
-    // Si la parte tiene anguloObjetivo, comprueba que el ángulo actual
-    // esté dentro de TOLERANCIA_ANGULO_PERILLA.
-    // Si no llega → muestra toast rojo y NO avanza.
-    // Si llega    → muestra toast verde y completa el paso.
-    // Copia todo este bloque en onMouseUp de cada sección.
-    // ═══════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 10] VALIDACIÓN DE ÁNGULO — NO AVANZA CON CLIC SIMPLE
+    //
+    // La perilla solo avanza al SOLTAR el drag (onMouseUp).
+    // Si el ángulo no está dentro de la tolerancia → toast rojo, no avanza.
+    // Si sí está → quita naranja, toast verde, avanza.
+    // onClickCanvas tiene su propio guard (ver CAMBIO 11).
+    // ══════════════════════════════════════════════════════════════
     if (parte.anguloObjetivo && objRotado) {
         const modoObjetivo = MODOS_PERILLA.find(m => m.nombre === parte.anguloObjetivo);
-        if (!modoObjetivo) {
-            console.warn(`[seccion4] anguloObjetivo "${parte.anguloObjetivo}" no existe en MODOS_PERILLA`);
-        } else {
+        if (modoObjetivo) {
             const diferencia = Math.abs(objRotado.rotation.x - modoObjetivo.angulo);
             if (diferencia > TOLERANCIA_ANGULO_PERILLA) {
                 mostrarToastPerilla(`Gira hacia "${parte.anguloObjetivo}"`, false);
-                controls.enableRotate = false; // sigue bloqueado para reintentar
+                controls.enableRotate = false;
                 return;
             }
         }
     }
 
-    // Ángulo correcto (o sin restricción) → completar
+    // Ángulo correcto: quitar naranja, feedback y avanzar
+    quitarResaltadoActual();
     mostrarToastPerilla(
         parte.anguloObjetivo ? `¡Modo ${parte.anguloObjetivo} alcanzado!` : '¡Listo!',
         true
@@ -1019,10 +1236,6 @@ function onMouseUp() {
     else { avanzarDespuesDeVideo(parte); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// [N] mostrarToastPerilla — toast verde (éxito) o rojo (error de ángulo).
-// Copia esta función en cada sección. No necesita cambios.
-// ═══════════════════════════════════════════════════════════════════
 function mostrarToastPerilla(mensaje, exito) {
     document.getElementById('toastPerillaS4')?.remove();
     const contenedor = document.getElementById('areaThreeJs');
@@ -1055,33 +1268,64 @@ function onClickCanvas(event) {
     if (!hits.length) return;
     const parte    = PARTES[indiceActivo];
     if (parte.tipo === 'minijuego') return;
+
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 11] GUARD: TIPO ROTAR NO AVANZA CON CLIC
+    //
+    // Los pasos tipo 'rotar' NUNCA se validan aquí.
+    // Solo onMouseUp (al soltar el drag) puede avanzarlos.
+    // Agrega esta línea al inicio de onClickCanvas en cada sección.
+    // ══════════════════════════════════════════════════════════════
+    if (parte.tipo === 'rotar') return;
+
     const nombreHit = hits[0].object.name;
 
     if (parte.pasos?.length) {
         const pasoActual = parte.pasos[indiceImagenActual];
         if (nombreHit !== pasoActual.objeto) return;
+
+        // ══════════════════════════════════════════════════════
+        // [CAMBIO 12] QUITAR NARANJA Y PONER EN SIGUIENTE
+        //
+        // Al acertar un sub-paso:
+        // 1. quitarResaltadoActual() → quita naranja del actual.
+        // 2. reproducirSonidoCorrecto() + efectoClick + resaltarConfirmacion.
+        // 3. Si hay siguiente sub-paso: resaltarObjetoActivo(proxPaso.objeto).
+        // 4. Si es el último: no resaltar nada, el paso principal avanza.
+        // ══════════════════════════════════════════════════════
+        quitarResaltadoActual();
         reproducirSonidoCorrecto();
         efectoClick(hits[0].object);
+        resaltarConfirmacion(hits[0].object);
+
+        // Aplicar la imagen del sub-paso que acaba de completarse
+        if (pasoActual.imagen) cambiarImagenPantalla(pasoActual.imagen);
+
         const siguientePaso = indiceImagenActual + 1;
         if (siguientePaso < parte.pasos.length) {
             indiceImagenActual = siguientePaso;
             const proxPaso     = parte.pasos[siguientePaso];
-            if (proxPaso.imagen) cambiarImagenPantalla(proxPaso.imagen);
             const instruccionEl = document.getElementById('instruccionS4');
             if (instruccionEl) instruccionEl.textContent = proxPaso.instruccion ?? parte.instruccion;
+            resaltarObjetoActivo(proxPaso.objeto);  // naranja en el siguiente
             crearSenal(proxPaso.objeto);
             window._senalObjeto = proxPaso.objeto;
         } else {
-            if (parte.video) { mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte)); }
-            else { avanzarDespuesDeVideo(parte); }
+            setTimeout(() => {
+                if (parte.video) { mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte)); }
+                else { avanzarDespuesDeVideo(parte); }
+            }, 900);
         }
         return;
     }
 
     const validos = parte.objetosGrupo ?? [parte.objeto];
     if (!validos.includes(nombreHit)) return;
+
+    quitarResaltadoActual();
     reproducirSonidoCorrecto();
     efectoClick(hits[0].object);
+    resaltarConfirmacion(hits[0].object);
 
     if (parte.imagenesPantalla?.length) {
         const siguienteImg = indiceImagenActual + 1;

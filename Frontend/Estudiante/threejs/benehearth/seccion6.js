@@ -13,6 +13,11 @@ const TOLERANCIA_ANGULO_PERILLA = 0.45;
 const CAMARA_POSICION = { x: -0.1, y: -0.1, z: 0.5 };
 const CAMARA_TARGET = { x: -0.1, y: -0.1, z: 0 };
 
+
+// [CAMBIO 1] CONSTANTES DE COLOR DE RESALTADO
+const COLOR_RESALTADO = 0xff6600;  // naranja
+const COLOR_CONFIRMADO = 0x4caf50;  // verde claro
+
 // ═══════════════════════════════════════════════════════════════════
 // MECÁNICA DE BOTÓN SOSTENIDO
 // Cuántos milisegundos debe mantener presionado el botón.
@@ -38,6 +43,7 @@ const PARTES = [
         objeto: 'ECG',
         tipo: 'minijuego',
         instruccion: 'Arrastra cada electrodo a su posición correcta en el paciente',
+         
         video: 'https://youtu.be/BREWn8OSgGQ',
     },
     {
@@ -45,10 +51,11 @@ const PARTES = [
         nombre: 'Presione el botón de la flecha para Activar sincrónico en el panel. La pantalla muestra que el modo sincrónico está activo.',
         objeto: 'Flecha2',
         tipo: 'click',
+        imagenesPantalla: [ '/Estudiante/threejs/img/cardioversion/sincronico.png' ],
         pasos: [
-            { objeto: 'Flecha2', imagen: '/Estudiante/threejs/img/cardioversion/sincronico.png', instruccion: 'Haz click sobre el botón para acceder al modo sincrónico' },
-            { objeto: 'Flecha1', imagen: '/Estudiante/threejs/img/cardioversion/acceder.png', instruccion: 'Haz click sobre el botón para confirmar el modo' },
-            { objeto: 'Flecha1', imagen: '/Estudiante/threejs/img/cardioversion/cardioversion.png', instruccion: 'Al ingresar al modo sincrónico se observará en la pantalla el modo SINCR' },
+            { objeto: 'Flecha2', imagen: '/Estudiante/threejs/img/cardioversion/acceder.png', instruccion: 'Haz click sobre el botón para acceder al modo sincrónico' },
+            { objeto: 'Flecha1', imagen: '/Estudiante/threejs/img/cardioversion/cardioversion.png', instruccion: 'Haz click sobre el botón para confirmar el modo sincrónico' },
+            
         ],
         video: 'https://youtu.be/QIhrk0FPM_w',
     },
@@ -56,20 +63,21 @@ const PARTES = [
         id: 'Carga',
         nombre: 'Posiciona las palas sobre el paciente y Presione el botón de CARGA ya sea en las palas o en el panel frontal y espere a que cargue.',
         tipo: 'click',
+        imagenesPantalla: [ '/Estudiante/threejs/img/cardioversion/cardioversion.png' ],
         pasos: [
-            { objeto: 'Carga', imagen: '/Estudiante/threejs/img/cardioversion/cardioversion.png', instruccion: 'Puedes hacer la carga desde las palas o el panel frontal' },
             { objeto: 'Carga', imagen: '/Estudiante/threejs/img/cardioversion/cargaSincronizada.png', instruccion: 'Realiza la carga y observarás en la pantalla el proceso de carga' },
         ],
     },
     {
         id: 'Boton3D',
-        nombre: 'Realiza la descarga: a diferencia de desfibrilación manual, debes dejar sostenido el botón de descarga por unos segundos',
+        nombre: 'Realiza la descarga: a diferencia de desfibrilación manual, debes dejar sostenido los botones de descarga por unos segundos',
         tipo: 'hold',   // ← tipo especial: botón que debe mantenerse presionado
         objeto: 'Boton3D',
         camaraOffset: { x: -0.1, y: 0.1, z: 0.1 },
+         imagenesPantalla: [ '/Estudiante/threejs/img/cardioversion/descargaSincronizada.png' ],
         pasos: [
-            { objeto: 'Boton3D', imagen: '/Estudiante/threejs/img/cardioversion/descargaSincronizada.png', instruccion: 'Mantén presionado el botón de descarga durante 3 segundos' },
-            { objeto: 'Boton3D', imagen: '/Estudiante/threejs/img/cardioversion/descargaadminSincroni.png', instruccion: 'Mantén presionado el botón de descarga durante 3 segundos' },
+            { objeto: 'Boton3D', imagen: '/Estudiante/threejs/img/cardioversion/descargaadminSincroni.png', instruccion: 'Mantén presionado el botón de descarga durante 3 segundos, en este caso solo oprimes uno pero en un contexto real deben ser los dos' },
+          //  { objeto: 'Boton3D', imagen: '/Estudiante/threejs/img/cardioversion/descargaadminSincroni.png', instruccion: 'Mantén presionado el botón de descarga durante 3 segundos' },
         ],
         video: 'https://youtu.be/ZjbFj_OBWIM',
     },
@@ -77,9 +85,10 @@ const PARTES = [
         id: 'felcha3',
         nombre: 'Si al usar el desfibrilador la energía quedó cargada, el equipo tiene 2 modos seguros para salir. 1) Esperar un minuto  2) Oprimir el botón desactivar',
         tipo: 'click',
+        imagenesPantalla: [ '/Estudiante/threejs/img/cardioversion/descargaSincronizada.png' ],
         pasos: [
-            { objeto: 'Flecha1', imagen: '/Estudiante/threejs/img/cardioversion/descargaSincronizada.png', instruccion: 'Para descargar de forma segura oprime el botón desactivar' },
-            { objeto: 'Flecha1', imagen: '/Estudiante/threejs/img/cardioversion/CargaDesconectada.png', instruccion: 'Al desactivar se observará en la pantalla el mensaje de Carga Desconectada' },
+            { objeto: 'Flecha1', imagen: '/Estudiante/threejs/img/cardioversion/CargaDesconectada.png', instruccion: 'Para descargar de forma segura oprime el botón desactivar' },
+           // { objeto: 'Flecha1', imagen: '/Estudiante/threejs/img/cardioversion/CargaDesconectada.png', instruccion: 'Al desactivar se observará en la pantalla el mensaje de Carga Desconectada' },
         ],
         video: 'https://youtu.be/bk2AAcc0GKg',
     },
@@ -133,6 +142,14 @@ const _cachTexturas = {};
 let _modoActual = null;
 let indiceImagenActual = 0;
 
+// ══════════════════════════════════════════════════════════════════
+// [CAMBIO 2] VARIABLES DEL SISTEMA DE RESALTADO
+
+// ══════════════════════════════════════════════════════════════════
+const _snapshot = {};
+let _nombreResaltadoActual = null;
+
+
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -177,6 +194,9 @@ export function iniciarSeccion6(contenedorId) {
 
             camaraOriginalPos = camara.position.clone();
             camaraOriginalTarget = controls.target.clone();
+
+            // [CAMBIO 3] CAPTURA DE COLORES ORIGINALES
+            capturaMaterialesOriginales();
 
             // Reset rotación de perilla al cargar
             modeloCargado.traverse(obj => {
@@ -243,6 +263,12 @@ export function destruirSeccion6() {
     document.getElementById('minijuegoElectrodosS6')?.remove();
     document.getElementById('feedbackPerillaS6')?.remove();   // ID correcto S6
     document.getElementById('holdBarS6')?.remove();
+
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 5] RESTAURAR COLORES AL DESTRUIR
+    restaurarTodosLosColores();
+
+
 
     Object.keys(_cachTexturas).forEach(k => delete _cachTexturas[k]);
     _modoActual = null;
@@ -429,6 +455,16 @@ function mostrarUI() {
 
 function activarParte(indice) {
     if (indice >= PARTES.length) return;
+
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 6] QUITAR NARANJA DEL OBJETO ANTERIOR
+    //
+    // Primera línea de activarParte. Siempre quita el resaltado
+    // del objeto del paso anterior antes de activar el nuevo.
+    // ══════════════════════════════════════════════════════════════
+    quitarResaltadoActual();
+
+
     indiceActivo = indice;
     indiceImagenActual = 0;
     cancelarHold();
@@ -475,6 +511,24 @@ function activarParte(indice) {
 
     const primerObjeto = parte.pasos?.[0]?.objeto ?? parte.objeto;
 
+
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 7] FIJAR ÁNGULO DE PERILLA EN PASOS 2 EN ADELA
+    // ══════════════════════════════════════════════════════════════
+    if (indice > 0 && modeloCargado) {
+        const pasoEncendido = PARTES.find(p => p.tipo === 'rotar' && p.anguloObjetivo);
+        if (pasoEncendido) {
+            const modoEncendido = MODOS_PERILLA.find(m => m.nombre === pasoEncendido.anguloObjetivo);
+            if (modoEncendido) {
+                modeloCargado.traverse(obj => {
+                    if (obj.name === 'perilla001') obj.rotation.x = modoEncendido.angulo;
+                });
+                actualizarPantalla(modoEncendido.angulo);
+            }
+        }
+    }
+
+
     if (parte.camaraOffset) {
         enfocarObjeto(primerObjeto);
     } else {
@@ -488,9 +542,13 @@ function activarParte(indice) {
     crearSenal(primerObjeto);
     actualizarChecklist();
 
-    if (parte.pasos?.[0]?.imagen) {
-        cambiarImagenPantalla(parte.pasos[0].imagen);
-    } else if (parte.imagenesPantalla?.length) {
+    // ── IMAGEN DE PANTALLA AL ACTIVAR EL PASO ────────────────────
+    // Solo se muestra la imagen base definida en imagenesPantalla[0].
+    // Las imágenes dentro de pasos[].imagen son por clic: se aplican
+    // en onClickCanvas al acertar cada sub-paso, nunca aquí.
+    // Si un paso no tiene imagenesPantalla, la pantalla queda como
+    // estaba (o en negro si es el primer paso).
+    if (parte.imagenesPantalla?.length) {
         cambiarImagenPantalla(parte.imagenesPantalla[0]);
     }
 
@@ -498,9 +556,19 @@ function activarParte(indice) {
         controls.enableRotate = false;
         controls.enablePan = false;
         mostrarFeedbackPerilla(parte);
+        // ══════════════════════════════════════════════════════
+        // [CAMBIO 8a] RESALTAR EN TIPO ROTAR
+        // Pone en naranja el mesh de la perilla.
+        // ══════════════════════════════════════════════════════
+        resaltarObjetoActivo(parte.objeto);
     } else {
         controls.enableRotate = true;
         controls.enablePan = true;
+        // ══════════════════════════════════════════════════════
+        // [CAMBIO 8b] RESALTAR EN TIPO CLICK
+        // Pone en naranja el primer objeto del paso o sub-paso.
+        // ══════════════════════════════════════════════════════
+        resaltarObjetoActivo(primerObjeto);
     }
 }
 
@@ -535,6 +603,12 @@ function marcarTodoCompletado() {
     PARTES.forEach(p => marcarCompletada(p.id));
     const cs = document.getElementById('contenedorSenales');
     if (cs) cs.innerHTML = '';
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 9] QUITAR NARANJA AL COMPLETAR TODO
+    // Siempre llama quitarResaltadoActual() en marcarTodoCompletado.
+    // ══════════════════════════════════════════════════════════════
+    quitarResaltadoActual();
+
     controls.enableRotate = true;
     controls.enablePan = true;
     const instruccion = document.getElementById('instruccionS6');
@@ -575,6 +649,126 @@ window.irAParteS6 = function (indice) {
     if (indice > indiceActivo && icon?.innerHTML !== '✓') return;
     activarParte(indice);
 };
+
+/* =====================================================
+   SISTEMA DE RESALTADO — COPIA ÍNTEGRA EN CADA SECCIÓN
+   =====================================================
+ */
+function capturaMaterialesOriginales() {
+    if (!modeloCargado) return;
+    modeloCargado.traverse(obj => {
+        if (!obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (!_snapshot[clave]) {
+                _snapshot[clave] = mat.color.clone();
+            }
+        });
+    });
+}
+
+
+function resaltarObjetoActivo(nombreObjeto) {
+    if (!modeloCargado || !nombreObjeto) return;
+    // Restaurar el anterior si es diferente al nuevo
+    if (_nombreResaltadoActual && _nombreResaltadoActual !== nombreObjeto) {
+        _restaurarMesh(_nombreResaltadoActual);
+    }
+    _nombreResaltadoActual = nombreObjeto;
+    modeloCargado.traverse(obj => {
+        if (obj.name !== nombreObjeto || !obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach(mat => {
+            if (!mat?.color) return;
+            mat.color.setHex(COLOR_RESALTADO);
+            mat.needsUpdate = true;
+        });
+    });
+}
+
+
+function quitarResaltadoActual() {
+    if (!_nombreResaltadoActual) return;
+    _restaurarMesh(_nombreResaltadoActual);
+    _nombreResaltadoActual = null;
+}
+
+
+function restaurarTodosLosColores() {
+    if (!modeloCargado) return;
+    modeloCargado.traverse(obj => {
+        if (!obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (_snapshot[clave]) {
+                mat.color.copy(_snapshot[clave]);
+                mat.needsUpdate = true;
+            }
+        });
+    });
+    _nombreResaltadoActual = null;
+}
+
+
+function _restaurarMesh(nombreObjeto) {
+    if (!modeloCargado || !nombreObjeto) return;
+    modeloCargado.traverse(obj => {
+        if (obj.name !== nombreObjeto || !obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (_snapshot[clave]) {
+                mat.color.copy(_snapshot[clave]);
+                mat.needsUpdate = true;
+            }
+        });
+    });
+}
+
+
+function resaltarConfirmacion(objeto) {
+    if (!objeto?.isMesh) return;
+    const mats = Array.isArray(objeto.material) ? objeto.material : [objeto.material];
+    mats.forEach(mat => {
+        if (!mat?.color) return;
+        mat.color.setHex(COLOR_CONFIRMADO);
+        mat.needsUpdate = true;
+    });
+    setTimeout(() => {
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${objeto.name}_${idx}`;
+            if (_snapshot[clave]) {
+                mat.color.copy(_snapshot[clave]);
+                mat.needsUpdate = true;
+            }
+        });
+    }, 300);
+}
+
+
+/* =====================================================
+   RESTAURAR PERILLA AL RE-INGRESAR CON SECCIÓN COMPLETADA
+   ===================================================== */
+function restaurarEstadoPerilla() {
+    if (!modeloCargado) return;
+    const ultimoRotar = [...PARTES].reverse().find(
+        p => p.tipo === 'rotar' && p.anguloObjetivo
+    );
+    if (!ultimoRotar) return;
+    const modoDestino = MODOS_PERILLA.find(m => m.nombre === ultimoRotar.anguloObjetivo);
+    if (!modoDestino) return;
+    modeloCargado.traverse(obj => {
+        if (obj.name === 'perilla001') obj.rotation.x = modoDestino.angulo;
+    });
+    actualizarPantalla(modoDestino.angulo);
+}
+
 
 
 /* =====================================================
@@ -1049,6 +1243,8 @@ function onMouseMove(event) {
             actualizarPantalla(objetoRotando.rotation.x);
             const modoDetectado = MODOS_PERILLA.reduce((prev, curr) =>
                 Math.abs(curr.angulo - objetoRotando.rotation.x) < Math.abs(prev.angulo - objetoRotando.rotation.x) ? curr : prev);
+
+
             actualizarFeedbackPerilla(modoDetectado.nombre);
         }
         return;
@@ -1075,6 +1271,8 @@ function onMouseUp() {
     const parte = PARTES[indiceActivo];
     if (parte.tipo !== 'rotar' || panelAbierto) return;
 
+    //correcion 11 CAMBIO 10]
+    // ═══════════════════════════════════════════════════════════════
     if (parte.anguloObjetivo && objRotado) {
         const modoObjetivo = MODOS_PERILLA.find(m => m.nombre === parte.anguloObjetivo);
         if (modoObjetivo) {
@@ -1087,9 +1285,15 @@ function onMouseUp() {
         }
     }
 
-    mostrarToastPerilla(parte.anguloObjetivo ? `¡Modo ${parte.anguloObjetivo} alcanzado!` : '¡Listo!', true);
-    document.getElementById('feedbackPerillaS6')?.remove();
+    // Ángulo correcto: quitar naranja, feedback y avanzar
+    quitarResaltadoActual();
+    mostrarToastPerilla(
+        parte.anguloObjetivo ? `¡Modo ${parte.anguloObjetivo} alcanzado!` : '¡Listo!',
+        true
+    );
+    document.getElementById('feedbackPerillaS5')?.remove();
     reproducirSonidoCorrecto();
+
     if (parte.video) { mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte)); }
     else { avanzarDespuesDeVideo(parte); }
 }
@@ -1113,23 +1317,47 @@ function onClickCanvas(event) {
     if (!hits.length) return;
     const parte = PARTES[indiceActivo];
     if (parte.tipo === 'minijuego' || parte.tipo === 'hold') return; // hold se maneja con mousedown
+
+
+    // ══════════════════════════════════════════════════════════════
+    // [CAMBIO 11] GUARD: TIPO ROTAR NO AVANZA CON CLIC
+    //
+    // Los pasos tipo 'rotar' NUNCA se validan aquí.
+    // Solo onMouseUp (al soltar el drag) puede avanzarlos.
+    // Agrega esta línea al inicio de onClickCanvas en cada sección.
+    // ══════════════════════════════════════════════════════════════
+    if (parte.tipo === 'rotar') return;
+
     const nombreHit = hits[0].object.name;
 
     if (parte.pasos?.length) {
         const pasoActual = parte.pasos[indiceImagenActual];
         if (nombreHit !== pasoActual.objeto) return;
-        reproducirSonidoCorrecto(); efectoClick(hits[0].object);
+
+        quitarResaltadoActual();
+        reproducirSonidoCorrecto();
+        efectoClick(hits[0].object);
+        resaltarConfirmacion(hits[0].object);
+
+        // Aplicar la imagen del sub-paso que acaba de completarse
+        if (pasoActual.imagen) cambiarImagenPantalla(pasoActual.imagen);
+
+
+
         const siguientePaso = indiceImagenActual + 1;
         if (siguientePaso < parte.pasos.length) {
             indiceImagenActual = siguientePaso;
             const proxPaso = parte.pasos[siguientePaso];
-            if (proxPaso.imagen) cambiarImagenPantalla(proxPaso.imagen);
-            const instruccionEl = document.getElementById('instruccionS6');
+            const instruccionEl = document.getElementById('instruccionS5');
             if (instruccionEl) instruccionEl.textContent = proxPaso.instruccion ?? parte.instruccion;
-            crearSenal(proxPaso.objeto); window._senalObjeto = proxPaso.objeto;
+            resaltarObjetoActivo(proxPaso.objeto);  // naranja en el siguiente
+            crearSenal(proxPaso.objeto);
+            window._senalObjeto = proxPaso.objeto;
         } else {
-            if (parte.video) { mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte)); }
-            else { avanzarDespuesDeVideo(parte); }
+            setTimeout(() => {
+                if (parte.video) { mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte)); }
+                else { avanzarDespuesDeVideo(parte); }
+            }, 2000);
         }
         return;
     }

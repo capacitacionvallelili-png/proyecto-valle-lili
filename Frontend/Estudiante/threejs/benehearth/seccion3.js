@@ -3,51 +3,53 @@ import { inicializarEscena, cargarModelo, limpiarRenderer, THREE } from '../esce
 const MODOS_PERILLA = [
     { nombre: 'Manual',     angulo: -1.57, imagen: '/Estudiante/threejs/img/manual.png' },
     { nombre: 'Monitor',    angulo: -1,    imagen: '/Estudiante/threejs/img/MODOMONITOR.png' },
-    { nombre: 'Apagado',    angulo: 0,     imagen: '/Estudiante/threejs/img/negro.jpg' },
+    { nombre: 'Des',        angulo: 0,     imagen: '/Estudiante/threejs/img/negro.jpg' },
     { nombre: 'Marcapasos', angulo: 1,     imagen: '/Estudiante/threejs/img/marcapasos.png' },
     { nombre: 'DEA',        angulo: 2,     imagen: '/Estudiante/threejs/img/DEA.png' },
 ];
 
 // ─────────────────────────────────────────────────────────────
 // TOLERANCIA DE ÁNGULO PERILLA
-// Cuántos radianes de margen se acepta para dar el paso por bueno.
-// 0.45 ≈ ±26 grados. Sube el número para ser más permisivo.
 // ─────────────────────────────────────────────────────────────
 const TOLERANCIA_ANGULO_PERILLA = 0.45;
 
 // ─────────────────────────────────────────────────────────────
-// POSICIÓN FIJA DE LA CÁMARA (vista frontal por defecto)
-
+// POSICIÓN FIJA DE LA CÁMARA
 // ─────────────────────────────────────────────────────────────
 const CAMARA_POSICION = { x: -0.1, y: -0.1, z: 0.5 };
 const CAMARA_TARGET   = { x: -0.1, y: -0.1, z: 0   };
 
+// ─────────────────────────────────────────────────────────────
+// COLORES DE RESALTADO
+// COLOR_RESALTADO  : naranja — objeto activo esperando interacción.
+// COLOR_CONFIRMADO : verde   — destello momentáneo 300 ms al acertar.
+// Cambia estos valores para ajustar la paleta en otras secciones.
+// ─────────────────────────────────────────────────────────────
+const COLOR_RESALTADO  = 0xff6600;  // naranja
+const COLOR_CONFIRMADO = 0x4caf50;  // verde claro
 
 const PARTES = [
-    // ─────────────────────────────────────────────────────────
-    
-    // ─────────────────────────────────────────────────────────
     {
         id: 'perilla',
-        nombre: 'Encienda el equipo girando la perilla hacia cualquier lado',
+        nombre: 'Encienda el equipo girando la perilla hacia cualquiera de las opciones',
         objeto: 'perilla001',
         tipo: 'rotar',
-        anguloObjetivo: 'Monitor',   // nombre exacto de MODOS_PERILLA
+        anguloObjetivo: 'Manual',
         camaraOffset: { x: 0, y: 0, z: 1 },
-        instruccion: 'Haz click y gira la perilla para encender el equipo en modo Monitor',
+        instruccion: 'Haz click y arrastra el mouse hacia los lados para girar la perilla',
+        imagenesPantalla: [ '/Estudiante/threejs/img/negro.jpg' ],
     },
     {
         id: 'B_Menu',
         nombre: 'Seleccione el botón Menú y con la perilla de navegación busca prueba de usuario y seleccionala',
         objeto: 'B_Menu',
         tipo: 'click',
-        // Sin camaraOffset → cámara fija frontal
         instruccion: 'Haz click en el botón Menú',
+        imagenesPantalla: [ '/Estudiante/threejs/img/manual.png' ],
         pasos: [
-            { objeto: 'B_Menu',   imagen: '/Estudiante/threejs/img/MODOMONITOR.png', instruccion: 'Haz click en el botón Menú' },
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/Prueba/1.png',    instruccion: 'Haz click en el botón Menú' },
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/Prueba/2.png',    instruccion: 'Presiona la perilla de navegación' },
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/Prueba/3.png',    instruccion: 'Gira la perilla para seleccionar Prueba de usuario' },
+            { objeto: 'B_Menu',   imagen: '/Estudiante/threejs/img/Prueba/2.png', instruccion: 'Haz click en el botón Menú' },
+            { objeto: 'selector', imagen: '/Estudiante/threejs/img/Prueba/3.png', instruccion: 'Oprime la perilla para seleccionar Prueba de usuario' },
+            { objeto: 'selector', imagen: '/Estudiante/threejs/img/Prueba/4.png', instruccion: 'Oprime la perilla para seleccionar Prueba de usuario' },
         ],
         video: 'https://youtu.be/ApCi4gyqZ00'
     },
@@ -56,50 +58,27 @@ const PARTES = [
         nombre: 'Una vez seleccionadas las pruebas a realizar, se oprime iniciar',
         objeto: 'Flecha1',
         tipo: 'click',
-        // Sin camaraOffset → cámara fija frontal
         instruccion: 'Haz click sobre la flecha para iniciar las pruebas',
+        imagenesPantalla: [ '/Estudiante/threejs/img/Prueba/4.png' ],
         pasos: [
-            { objeto: 'Flecha1', imagen: '/Estudiante/threejs/img/Prueba/4.png', instruccion: 'Haz click sobre la flecha iniciar' },
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/Prueba/5.png', instruccion: 'Confirma con la perilla de navegación' },
+            { objeto: 'Flecha1',  imagen: '/Estudiante/threejs/img/Prueba/5.png', instruccion: 'Haz click sobre el botón para iniciar' },
+            { objeto: 'selector', imagen: '/Estudiante/threejs/img/Prueba/6.png', instruccion: 'Haz click sobre el botón para confirmar' },
         ],
         video: 'https://youtu.be/7NQLX7VeFvg',
     },
     {
         id: 'boton2',
-        nombre: 'Mantenga las palas en la bandeja y pulse carga en la pala',
+        nombre: 'Para la prueba de energía mantenga las palas en la bandeja y pulse el botón de carga en la pala',
         objeto: 'boton2',
         tipo: 'click',
-        // Con camaraOffset → la cámara SE MUEVE a esta posición relativa al objeto
-        // Ajusta z para acercarte/alejarte del botón lateral
         camaraOffset: { x: 0, y: 0, z: 1.3 },
+        imagenesPantalla: [ '/Estudiante/threejs/img/Prueba/6.png' ],
         pasos: [
-            { objeto: 'boton2', imagen: '/Estudiante/threejs/img/Prueba/6.png', instruccion: 'Haz click sobre el botón de carga' },
+            { objeto: 'boton2',  imagen: '/Estudiante/threejs/img/Prueba/7.png',   instruccion: 'Haz click sobre el botón de carga' },
+            { objeto: 'boton2',  imagen: '/Estudiante/threejs/img/Prueba/7.2.png', instruccion: 'Haz click sobre el botón de carga' },
+            { objeto: 'Boton3D', imagen: '/Estudiante/threejs/img/Prueba/7.3.png', instruccion: 'Haz click sobre los botones de descarga de las palas' },
         ],
         video: 'https://youtu.be/H3menRYiJm8'
-    },
-    {
-        id: 'prueba',
-        nombre: 'Para la prueba de controles sigue paso a paso lo que se muestra en la pantalla hasta completarlo',
-        objeto: 'perilla001',
-        tipo: 'click',
-        // Sin camaraOffset → cámara fija frontal (se ve todo el panel)
-        pasos: [
-            { objeto: 'perilla001',      imagen: '/Estudiante/threejs/img/Prueba/p1.png',  instruccion: 'Haz click en la perilla para completar ese paso' },
-            { objeto: 'SelecEnergia',    imagen: '/Estudiante/threejs/img/Prueba/p2.png',  instruccion: 'Ahora continua con el selector de energía' },
-            { objeto: 'Carga',           imagen: '/Estudiante/threejs/img/Prueba/p3.png',  instruccion: 'Ahora selecciona el botón de carga' },
-            { objeto: 'Descarga',        imagen: '/Estudiante/threejs/img/Prueba/p4.png',  instruccion: 'selecciona el botón de descarga' },
-            { objeto: 'Flecha1',         imagen: '/Estudiante/threejs/img/Prueba/p5.png',  instruccion: 'selecciona el primer botón de flecha' },
-            { objeto: 'Flecha2',         imagen: '/Estudiante/threejs/img/Prueba/p6.png',  instruccion: 'selecciona el segundo botón de flecha' },
-            { objeto: 'Flecha3',         imagen: '/Estudiante/threejs/img/Prueba/p7.png',  instruccion: 'selecciona el terce botón de flecha' },
-            { objeto: 'B_SelecDerivada', imagen: '/Estudiante/threejs/img/Prueba/p8.png',  instruccion: 'selecciona botón de derivada' },
-            { objeto: 'B_pausa',         imagen: '/Estudiante/threejs/img/Prueba/p9.png',  instruccion: 'selecciona botón de pausa' },
-            { objeto: 'B_Menu',          imagen: '/Estudiante/threejs/img/Prueba/p10.png', instruccion: 'selecciona botón de menú' },
-            { objeto: 'B_Resumen',       imagen: '/Estudiante/threejs/img/Prueba/p11.png', instruccion: 'selecciona botón de resumen' },
-            { objeto: 'B_PNI',           imagen: '/Estudiante/threejs/img/Prueba/p12.png', instruccion: 'selecciona botón de PNI' },
-            { objeto: 'B_Evento',        imagen: '/Estudiante/threejs/img/Prueba/p13.png', instruccion: 'selecciona botón de evento' },
-            { objeto: 'Circle055',       imagen: '/Estudiante/threejs/img/Prueba/p14.png', instruccion: 'Por ultimo selecciona el botón de la impresora' },
-            { objeto: 'Circle055',       imagen: '/Estudiante/threejs/img/Prueba/p15.png', instruccion: 'Por ultimo selecciona el botón de la impresora' },
-        ],
     },
     {
         id: 'rosca',
@@ -107,12 +86,32 @@ const PARTES = [
         objeto: 'rosca',
         objetosGrupo: ['Cube009', 'Cube009_1', 'rosca'],
         tipo: 'click',
-        // Con camaraOffset → se acerca al conector lateral
         camaraOffset: { x: 0.5, y: -0.1, z: 0.6 },
         instruccion: 'Haz click en el conector de las palas para hacer el cambio',
         video: 'https://youtu.be/LZhibWQD-NY',
-        imagenesPantalla: [
-            '/Estudiante/threejs/img/Prueba/8.png',
+        imagenesPantalla: [ '/Estudiante/threejs/img/Prueba/8.png' ],
+    },
+    {
+        id: 'prueba',
+        nombre: 'Para la prueba de controles sigue paso a paso lo que se muestra en la pantalla hasta completarlo',
+        objeto: 'perilla001',
+        tipo: 'click',
+        imagenesPantalla: [ '/Estudiante/threejs/img/Prueba/p1.png' ],
+        pasos: [
+            { objeto: 'perilla001',      imagen: '/Estudiante/threejs/img/Prueba/p2.png',  instruccion: 'Haz click en la perilla para completar ese paso' },
+            { objeto: 'SelecEnergia',    imagen: '/Estudiante/threejs/img/Prueba/p3.png',  instruccion: 'Ahora continua con el selector de energía' },
+            { objeto: 'Carga',           imagen: '/Estudiante/threejs/img/Prueba/p4.png',  instruccion: 'Ahora selecciona el botón de carga' },
+            { objeto: 'Descarga',        imagen: '/Estudiante/threejs/img/Prueba/p5.png',  instruccion: 'selecciona el botón de descarga' },
+            { objeto: 'Flecha1',         imagen: '/Estudiante/threejs/img/Prueba/p6.png',  instruccion: 'selecciona el primer botón de flecha' },
+            { objeto: 'Flecha2',         imagen: '/Estudiante/threejs/img/Prueba/p7.png',  instruccion: 'selecciona el segundo botón de flecha' },
+            { objeto: 'Flecha3',         imagen: '/Estudiante/threejs/img/Prueba/p8.png',  instruccion: 'selecciona el tercer botón de flecha' },
+            { objeto: 'B_SelecDerivada', imagen: '/Estudiante/threejs/img/Prueba/p9.png',  instruccion: 'selecciona botón de derivada' },
+            { objeto: 'B_pausa',         imagen: '/Estudiante/threejs/img/Prueba/p10.png', instruccion: 'selecciona botón de pausa' },
+            { objeto: 'B_Menu',          imagen: '/Estudiante/threejs/img/Prueba/p11.png', instruccion: 'selecciona botón de menú' },
+            { objeto: 'B_Resumen',       imagen: '/Estudiante/threejs/img/Prueba/p12.png', instruccion: 'selecciona botón de resumen' },
+            { objeto: 'B_PNI',           imagen: '/Estudiante/threejs/img/Prueba/p13.png', instruccion: 'selecciona botón de PNI' },
+            { objeto: 'B_Evento',        imagen: '/Estudiante/threejs/img/Prueba/p14.png', instruccion: 'selecciona botón de evento' },
+            { objeto: 'Circle055',       imagen: '/Estudiante/threejs/img/Prueba/p15.png', instruccion: 'Por último selecciona el botón de la impresora' },
         ],
     },
     {
@@ -120,12 +119,12 @@ const PARTES = [
         nombre: 'Confirmar la aparición de las columnas de colores en la pantalla',
         objeto: 'selector',
         tipo: 'click',
-        // Sin camaraOffset → cámara fija frontal
         instruccion: 'Haz click sobre la perilla para confirmar que viste la columna de colores',
         video: 'https://youtu.be/ach918-mgkA',
+        imagenesPantalla: [ '/Estudiante/threejs/img/Prueba/9.png' ],
         pasos: [
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/Prueba/9.png',  instruccion: 'Oprime la perilla para confirmar que viste las columnas de colores' },
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/Prueba/10.png', instruccion: 'Oprime en la perilla para confirmar' },
+            { objeto: 'selector', imagen: '/Estudiante/threejs/img/Prueba/10.png', instruccion: 'Oprime la perilla' },
+            { objeto: 'selector', imagen: '/Estudiante/threejs/img/Prueba/10.png', instruccion: 'Oprime en la perilla para confirmar que viste la columna de colores' },
         ],
     },
     {
@@ -133,10 +132,9 @@ const PARTES = [
         nombre: 'Una vez finalizadas las pruebas de usuario, apagar el equipo',
         objeto: 'perilla001',
         tipo: 'rotar',
-        anguloObjetivo: 'Apagado',   // debe girar hasta el modo Apagado (ángulo 0)
-        // Sin camaraOffset → cámara fija frontal
+        anguloObjetivo: 'Des',
         video: 'https://youtu.be/nGzA7Hc9twI',
-        instruccion: 'Gira la perilla hasta la posición Apagado para apagar el equipo'
+        instruccion: 'Gira la perilla hasta la posición Des para apagar el equipo'
     },
 ];
 
@@ -169,6 +167,20 @@ const _cachTexturas = {};
 let _modoActual = null;
 let indiceImagenActual = 0;
 
+// ─────────────────────────────────────────────────────────────
+// SNAPSHOT DE COLORES ORIGINALES
+//
+// Se llena UNA SOLA VEZ al cargar el modelo (capturaMaterialesOriginales).
+// Clave: "nombreMesh_indiceMaterial" → THREE.Color clonado ANTES de
+// cualquier modificación. Así siempre sabemos el color real del GLB,
+// sin importar cuántas veces se haya resaltado o restaurado.
+//
+// _nombreResaltadoActual guarda el nombre del mesh que está pintado
+// de naranja en este momento; solo puede haber UNO a la vez.
+// ─────────────────────────────────────────────────────────────
+const _snapshot = {};          // colores originales del GLB, inmutables
+let   _nombreResaltadoActual = null;   // mesh actualmente en naranja
+
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -191,15 +203,11 @@ export function iniciarSeccion3(contenedorId) {
     controls = base.controls;
     reloj = base.reloj;
 
-    // ─────────────────────────────────────────────────────────
-    // CONFIGURACIÓN DE CONTROLES
-    // Ajusta estos valores para cambiar cómo el usuario navega.
-    // ─────────────────────────────────────────────────────────
-    controls.enablePan   = true;   // Sin paneo (arrastrar con botón derecho/medio)
-    controls.minDistance = 0.3;     // Límite de zoom: no puede acercarse más de esto
-    controls.maxDistance = 0.4;     // Límite de zoom: no puede alejarse más de esto
-    controls.zoomSpeed   = 1;     // Velocidad de zoom (1.0 = normal, 0.4 = lento)
-    controls.rotateSpeed = 0.5;     // Velocidad de rotación (1.0 = normal)
+    controls.enablePan   = true;
+    controls.minDistance = 0.3;
+    controls.maxDistance = 0.4;
+    controls.zoomSpeed   = 1;
+    controls.rotateSpeed = 0.5;
 
     mostrarLoader(contenedorId);
 
@@ -211,22 +219,22 @@ export function iniciarSeccion3(contenedorId) {
             animaciones = anim;
             mixer = mix;
 
-            // ─────────────────────────────────────────────────
-            // POSICIÓN INICIAL DE LA CÁMARA
-            
-            // ─────────────────────────────────────────────────
             camara.position.set(CAMARA_POSICION.x, CAMARA_POSICION.y, CAMARA_POSICION.z);
             controls.target.set(CAMARA_TARGET.x, CAMARA_TARGET.y, CAMARA_TARGET.z);
             controls.update();
 
-            
-
-            // Guarda la posición inicial para poder volver a ella al final
             camaraOriginalPos    = camara.position.clone();
             camaraOriginalTarget = controls.target.clone();
 
-            // reiniciar posicion perilla
-             modeloCargado.traverse(obj => {
+            // ─────────────────────────────────────────────
+            // PASO 1: capturar colores originales del GLB
+            // Hay que hacerlo ANTES de cualquier otra operación
+            // que modifique materiales, para tener el snapshot limpio.
+            // ─────────────────────────────────────────────
+            capturaMaterialesOriginales();
+
+            // Resetear perilla a posición 0
+            modeloCargado.traverse(obj => {
                 if (obj.name === 'perilla001') {
                     obj.rotation.x = 0;
                     obj.rotation.y = 0;
@@ -249,7 +257,13 @@ export function iniciarSeccion3(contenedorId) {
 
             ocultarLoader();
             mostrarUI();
-            yaCompletada ? marcarTodoCompletado() : activarParte(0);
+
+            if (yaCompletada) {
+                restaurarEstadoPerilla();
+                marcarTodoCompletado();
+            } else {
+                activarParte(0);
+            }
         }
     );
 
@@ -292,7 +306,17 @@ export function destruirSeccion3() {
     document.getElementById('videoPopupS3')?.remove();
     document.getElementById('feedbackPerillaS3')?.remove();
 
+    // ─────────────────────────────────────────────────────────
+    // RESTAURAR TODOS LOS COLORES ANTES DE DESTRUIR
+    // Si el usuario cambia de sección con un objeto aún resaltado,
+    // esto lo deja en su color original. El modelo se destruye justo
+    // después, así que es principalmente para escenas compartidas.
+    // ─────────────────────────────────────────────────────────
+    restaurarTodosLosColores();
+
     Object.keys(_cachTexturas).forEach(k => delete _cachTexturas[k]);
+    Object.keys(_snapshot).forEach(k => delete _snapshot[k]);
+    _nombreResaltadoActual = null;
     _modoActual = null;
 
     if (escena) {
@@ -475,6 +499,10 @@ function mostrarUI() {
 
 function activarParte(indice) {
     if (indice >= PARTES.length) return;
+
+    // Quitar el naranja del objeto que estaba activo antes de cambiar
+    quitarResaltadoActual();
+
     indiceActivo = indice;
     indiceImagenActual = 0;
     perillaValidada = false;
@@ -490,13 +518,26 @@ function activarParte(indice) {
     const primerObjeto = parte.pasos?.[0]?.objeto ?? parte.objeto;
 
     // ─────────────────────────────────────────────────────────
-    // MOVIMIENTO DE CÁMARA POR PASO
-    
+    // PERILLA: a partir del paso 1 fijar el ángulo de encendido
+    // El paso 0 es el único donde el usuario gira la perilla.
+    // En todos los demás, la perilla debe estar en 'Manual'.
     // ─────────────────────────────────────────────────────────
+    if (indice > 0 && modeloCargado) {
+        const pasoEncendido = PARTES.find(p => p.tipo === 'rotar' && p.anguloObjetivo);
+        if (pasoEncendido) {
+            const modoEncendido = MODOS_PERILLA.find(m => m.nombre === pasoEncendido.anguloObjetivo);
+            if (modoEncendido) {
+                modeloCargado.traverse(obj => {
+                    if (obj.name === 'perilla001') obj.rotation.x = modoEncendido.angulo;
+                });
+                actualizarPantalla(modoEncendido.angulo);
+            }
+        }
+    }
+
     if (parte.camaraOffset) {
         enfocarObjeto(primerObjeto);
     } else {
-        // Volver a la vista frontal fija con animación suave
         animarCamara(
             new THREE.Vector3(CAMARA_POSICION.x, CAMARA_POSICION.y, CAMARA_POSICION.z),
             new THREE.Vector3(CAMARA_TARGET.x,   CAMARA_TARGET.y,   CAMARA_TARGET.z),
@@ -512,12 +553,14 @@ function activarParte(indice) {
     }
 
     if (parte.tipo === 'rotar') {
-        controls.enableRotate = false;   // bloquear órbita mientras gira la perilla
+        controls.enableRotate = false;
         controls.enablePan    = false;
         mostrarFeedbackPerilla(parte);
+        resaltarObjetoActivo(parte.objeto);
     } else {
         controls.enableRotate = true;
-        controls.enablePan    = true;   // pan siempre desactivado
+        controls.enablePan    = true;
+        resaltarObjetoActivo(primerObjeto);
     }
 }
 
@@ -556,6 +599,7 @@ function marcarTodoCompletado() {
     PARTES.forEach(p => marcarCompletada(p.id));
     const cs = document.getElementById('contenedorSenales');
     if (cs) cs.innerHTML = '';
+    quitarResaltadoActual();
     controls.enableRotate = true;
     controls.enablePan    = true;
     const instruccion = document.getElementById('instruccionS3');
@@ -568,18 +612,15 @@ function todasCompletadas() {
     if (cs) cs.innerHTML = '';
     window._senalObjeto = null;
     document.getElementById('feedbackPerillaS3')?.remove();
-
+    quitarResaltadoActual();
     const instruccion = document.getElementById('instruccionS3');
     if (instruccion) instruccion.textContent = '¡Prueba de usuario completada!';
-
     const btnCompletar = document.getElementById('btnCompletar');
     if (btnCompletar && !btnCompletar.textContent.includes('completada')) {
         btnCompletar.disabled      = false;
         btnCompletar.style.opacity = '1';
         btnCompletar.style.cursor  = 'pointer';
     }
-
-    // Volver a la vista frontal original al terminar todo
     if (camaraOriginalPos && camaraOriginalTarget) {
         animarCamara(camaraOriginalPos, camaraOriginalTarget, 1000);
     }
@@ -601,9 +642,178 @@ window.irAParteS3 = function (indice) {
 
 
 /* =====================================================
-   CÁMARA
+   SISTEMA DE RESALTADO NARANJA — UN SOLO OBJETO A LA VEZ
+   =====================================================
+
+   Arquitectura:
+   • _snapshot    : mapa "meshNombre_matIdx" → THREE.Color
+                    capturado UNA VEZ al cargar el modelo.
+                    Nunca se modifica → siempre contiene el color real del GLB.
+   • _nombreResaltadoActual : nombre del mesh actualmente en naranja (o null).
+                    Solo puede haber UNO. Antes de pintar el siguiente,
+                    siempre se restaura el anterior.
+
+   CÓMO REPLICAR EN OTRA SECCIÓN:
+   1. Declara `const _snapshot = {}` y `let _nombreResaltadoActual = null`.
+   2. Llama capturaMaterialesOriginales() justo después de cargar el modelo
+      y ANTES de cualquier operación que cambie colores.
+   3. En activarParte / sub-paso: llama resaltarObjetoActivo(nombre).
+   4. Al completar un sub-paso o cambiar de paso: llama quitarResaltadoActual().
+   5. Al destruir la sección: llama restaurarTodosLosColores() + limpia _snapshot.
    ===================================================== */
 
+/**
+ * capturaMaterialesOriginales
+ * Recorre todo el modelo y guarda una copia de cada color de material
+ * en _snapshot. Se llama una sola vez, antes de cualquier modificación.
+ */
+function capturaMaterialesOriginales() {
+    if (!modeloCargado) return;
+    modeloCargado.traverse(obj => {
+        if (!obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            // Solo guardar si aún no está en el snapshot (evitar duplicados)
+            if (!_snapshot[clave]) {
+                _snapshot[clave] = mat.color.clone();
+            }
+        });
+    });
+}
+
+/**
+ * resaltarObjetoActivo
+ * Pinta de naranja el mesh llamado `nombreObjeto`.
+ * Antes de hacerlo, restaura el objeto que estaba en naranja antes (si había).
+ * Solo un mesh puede estar resaltado a la vez.
+ */
+function resaltarObjetoActivo(nombreObjeto) {
+    if (!modeloCargado || !nombreObjeto) return;
+
+    // 1. Restaurar el objeto anterior (si es distinto al nuevo)
+    if (_nombreResaltadoActual && _nombreResaltadoActual !== nombreObjeto) {
+        _restaurarMesh(_nombreResaltadoActual);
+    }
+
+    // 2. Pintar el nuevo objeto de naranja
+    _nombreResaltadoActual = nombreObjeto;
+    modeloCargado.traverse(obj => {
+        if (obj.name !== nombreObjeto || !obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach(mat => {
+            if (!mat?.color) return;
+            mat.color.setHex(COLOR_RESALTADO);
+            mat.needsUpdate = true;
+        });
+    });
+}
+
+/**
+ * quitarResaltadoActual
+ * Restaura el color original del mesh que está actualmente en naranja
+ * y limpia _nombreResaltadoActual. Llama esto al cambiar de paso.
+ */
+function quitarResaltadoActual() {
+    if (!_nombreResaltadoActual) return;
+    _restaurarMesh(_nombreResaltadoActual);
+    _nombreResaltadoActual = null;
+}
+
+/**
+ * restaurarTodosLosColores
+ * Restaura el color original de TODOS los meshes del modelo
+ * usando el snapshot. Úsalo al destruir la sección para limpiar
+ * cualquier resaltado que haya quedado pendiente.
+ */
+function restaurarTodosLosColores() {
+    if (!modeloCargado) return;
+    modeloCargado.traverse(obj => {
+        if (!obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (_snapshot[clave]) {
+                mat.color.copy(_snapshot[clave]);
+                mat.needsUpdate = true;
+            }
+        });
+    });
+    _nombreResaltadoActual = null;
+}
+
+/**
+ * _restaurarMesh (privada)
+ * Restaura el color original de un mesh específico usando el snapshot.
+ */
+function _restaurarMesh(nombreObjeto) {
+    if (!modeloCargado || !nombreObjeto) return;
+    modeloCargado.traverse(obj => {
+        if (obj.name !== nombreObjeto || !obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (_snapshot[clave]) {
+                mat.color.copy(_snapshot[clave]);
+                mat.needsUpdate = true;
+            }
+        });
+    });
+}
+
+/**
+ * resaltarConfirmacion
+ * Destella el mesh en COLOR_CONFIRMADO (verde) por 300 ms al acertar,
+ * luego vuelve al color del snapshot (no al naranja, ya que al acertar
+ * se quita el resaltado activo antes de llamar esta función).
+ */
+function resaltarConfirmacion(objeto) {
+    if (!objeto?.isMesh) return;
+    const mats = Array.isArray(objeto.material) ? objeto.material : [objeto.material];
+    mats.forEach(mat => {
+        if (!mat?.color) return;
+        mat.color.setHex(COLOR_CONFIRMADO);
+        mat.needsUpdate = true;
+    });
+    setTimeout(() => {
+        // Restaurar desde snapshot, no desde estado actual (que puede ser naranja del sig. paso)
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${objeto.name}_${idx}`;
+            if (_snapshot[clave]) {
+                mat.color.copy(_snapshot[clave]);
+                mat.needsUpdate = true;
+            }
+        });
+    }, 300);
+}
+
+
+/* =====================================================
+   RESTAURAR PERILLA AL RE-INGRESAR CON SECCIÓN COMPLETADA
+   ===================================================== */
+
+function restaurarEstadoPerilla() {
+    if (!modeloCargado) return;
+    const ultimoRotar = [...PARTES].reverse().find(
+        p => p.tipo === 'rotar' && p.anguloObjetivo
+    );
+    if (!ultimoRotar) return;
+    const modoDestino = MODOS_PERILLA.find(m => m.nombre === ultimoRotar.anguloObjetivo);
+    if (!modoDestino) return;
+    modeloCargado.traverse(obj => {
+        if (obj.name === 'perilla001') obj.rotation.x = modoDestino.angulo;
+    });
+    actualizarPantalla(modoDestino.angulo);
+}
+
+
+/* =====================================================
+   CÁMARA
+   ===================================================== */
 
 function enfocarObjeto(nombreObjeto) {
     if (!modeloCargado) return;
@@ -615,19 +825,13 @@ function enfocarObjeto(nombreObjeto) {
     obj.getWorldPosition(pos);
     const off = PARTES[indiceActivo].camaraOffset;
 
-    const posDestino = new THREE.Vector3(
-        pos.x + off.x,
-        pos.y + off.y,
-        pos.z + off.z
+    animarCamara(
+        new THREE.Vector3(pos.x + off.x, pos.y + off.y, pos.z + off.z),
+        pos.clone(),
+        700
     );
-
-    animarCamara(posDestino, pos.clone(), 700);
 }
 
-/**
- * animarCamara — interpola suavemente la cámara hacia posDestino/targetDestino.
- * onComplete (opcional) se llama al terminar la animación.
- */
 function animarCamara(posDestino, targetDestino, duracionMs, onComplete = null) {
     if (!camara || !controls) return;
     const posInicio    = camara.position.clone();
@@ -654,11 +858,9 @@ function animarCamara(posDestino, targetDestino, duracionMs, onComplete = null) 
 function mostrarFeedbackPerilla(parte) {
     document.getElementById('feedbackPerillaS3')?.remove();
     if (!parte.anguloObjetivo) return;
-
     const contenedor = document.getElementById('areaThreeJs');
     const div = document.createElement('div');
     div.id = 'feedbackPerillaS3';
-    
     contenedor.appendChild(div);
 }
 
@@ -722,8 +924,8 @@ window.togglePanelS3 = function () {
     const overlay = document.getElementById('overlayPanelS3');
     if (!panel) return;
     panelLateralAbierto = !panelLateralAbierto;
-    panel.style.left           = panelLateralAbierto ? '0' : '-320px';
-    overlay.style.opacity      = panelLateralAbierto ? '1' : '0';
+    panel.style.left            = panelLateralAbierto ? '0' : '-320px';
+    overlay.style.opacity       = panelLateralAbierto ? '1' : '0';
     overlay.style.pointerEvents = panelLateralAbierto ? 'all' : 'none';
 };
 
@@ -754,7 +956,7 @@ function onMouseDown(event) {
         mouseXAnterior = event.clientX;
         mouseYAnterior = event.clientY;
         renderer.domElement.style.cursor = 'grabbing';
-        controls.enableRotate = false;   // bloquear órbita mientras arrastra la perilla
+        controls.enableRotate = false;
     }
 }
 
@@ -775,8 +977,6 @@ function onMouseMove(event) {
                 Math.PI / 2
             );
             actualizarPantalla(objetoRotando.rotation.x);
-
-            // Actualizar el indicador de modo mientras se gira
             const modoDetectado = MODOS_PERILLA.reduce((prev, curr) =>
                 Math.abs(curr.angulo - objetoRotando.rotation.x) <
                 Math.abs(prev.angulo - objetoRotando.rotation.x) ? curr : prev
@@ -811,26 +1011,20 @@ function onMouseUp() {
     const parte = PARTES[indiceActivo];
     if (parte.tipo !== 'rotar' || panelAbierto) return;
 
-    // ─────────────────────────────────────────────────────────
-    // VALIDACIÓN DE ÁNGULO DE PERILLA
-    // Solo avanza si el ángulo está dentro de la tolerancia
-    // del modo objetivo definido en la parte.
-    // ─────────────────────────────────────────────────────────
     if (parte.anguloObjetivo && objRotado) {
         const modoObjetivo = MODOS_PERILLA.find(m => m.nombre === parte.anguloObjetivo);
-        if (!modoObjetivo) {
-            console.warn(`[seccion3] anguloObjetivo "${parte.anguloObjetivo}" no existe en MODOS_PERILLA`);
-        } else {
+        if (modoObjetivo) {
             const diferencia = Math.abs(objRotado.rotation.x - modoObjetivo.angulo);
             if (diferencia > TOLERANCIA_ANGULO_PERILLA) {
                 mostrarToastPerilla(`Gira hacia "${parte.anguloObjetivo}"`, false);
-                controls.enableRotate = false;   // sigue bloqueado para reintentar
+                controls.enableRotate = false;
                 return;
             }
         }
     }
 
-    // Ángulo correcto → completar el paso
+    // Ángulo correcto: quitar naranja, feedback, avanzar
+    quitarResaltadoActual();
     mostrarToastPerilla(
         parte.anguloObjetivo ? `¡Modo ${parte.anguloObjetivo} alcanzado!` : '¡Listo!',
         true
@@ -877,30 +1071,41 @@ function onClickCanvas(event) {
     const hits = getMeshesYHits(event);
     if (!hits.length) return;
 
-    const parte    = PARTES[indiceActivo];
+    const parte     = PARTES[indiceActivo];
     const nombreHit = hits[0].object.name;
 
-    // ===== Pasos en orden estricto =====
+    // Pasos de tipo 'rotar' solo se validan en onMouseUp, nunca aquí
+    if (parte.tipo === 'rotar') return;
+
+    // ===== Pasos con sub-pasos =====
     if (parte.pasos?.length) {
         const pasoActual = parte.pasos[indiceImagenActual];
         if (nombreHit !== pasoActual.objeto) return;
 
+        // 1. Quitar naranja del objeto actual
+        quitarResaltadoActual();
+
         reproducirSonidoCorrecto();
         efectoClick(hits[0].object);
+        resaltarConfirmacion(hits[0].object);   // destello verde 300 ms
+
         if (pasoActual.imagen) cambiarImagenPantalla(pasoActual.imagen);
 
         const siguientePaso = indiceImagenActual + 1;
 
         if (siguientePaso < parte.pasos.length) {
+            // 2. Pasar naranja al siguiente sub-paso
             indiceImagenActual = siguientePaso;
             const proxPaso     = parte.pasos[siguientePaso];
 
             const instruccionEl = document.getElementById('instruccionS3');
             if (instruccionEl) instruccionEl.textContent = proxPaso.instruccion ?? parte.instruccion;
 
+            resaltarObjetoActivo(proxPaso.objeto);  // naranja en el siguiente
             crearSenal(proxPaso.objeto);
             window._senalObjeto = proxPaso.objeto;
         } else {
+            // Último sub-paso completado: avanzar al paso principal
             setTimeout(() => {
                 if (parte.video) {
                     mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte));
@@ -912,12 +1117,14 @@ function onClickCanvas(event) {
         return;
     }
 
-    // ===== Partes sin pasos =====
+    // ===== Partes sin sub-pasos =====
     const validos = parte.objetosGrupo ?? [parte.objeto];
     if (!validos.includes(nombreHit)) return;
 
+    quitarResaltadoActual();
     reproducirSonidoCorrecto();
     efectoClick(hits[0].object);
+    resaltarConfirmacion(hits[0].object);
 
     if (parte.imagenesPantalla?.length) {
         const siguienteImg = indiceImagenActual + 1;
@@ -982,7 +1189,6 @@ function efectoClick(objeto) {
 
 function actualizarPantalla(angulo) {
     if (!modeloCargado) return;
-
     const modo = MODOS_PERILLA.reduce((prev, curr) =>
         Math.abs(curr.angulo - angulo) < Math.abs(prev.angulo - angulo) ? curr : prev
     );
@@ -1017,9 +1223,8 @@ function aplicarTexturaPantalla(pantalla, textura) {
     textura.wrapS = textura.wrapT = THREE.ClampToEdgeWrapping;
     textura.repeat.set(1, 1);
     textura.offset.set(0, 0);
-    textura.flipY      = false;
+    textura.flipY       = false;
     textura.needsUpdate = true;
-
     const mats = Array.isArray(pantalla.material) ? pantalla.material : [pantalla.material];
     mats.forEach(mat => {
         mat.map   = textura;
@@ -1033,7 +1238,6 @@ function cambiarImagenPantalla(rutaImagen) {
     let pantalla = null;
     modeloCargado.traverse(o => { if (o.name === 'pantalla') pantalla = o; });
     if (!pantalla) return;
-
     if (_cachTexturas[rutaImagen]) {
         aplicarTexturaPantalla(pantalla, _cachTexturas[rutaImagen]);
         return;
@@ -1081,7 +1285,7 @@ function mostrarVideoPopup(parte, onTerminado) {
             <p id="avisoPopupS3" style="
                 color:#e05c3a;font-size:0.78rem;
                 text-align:center;margin:10px 0 0;">
-                 El video debe terminar para continuar
+                El video debe terminar para continuar
             </p>
         </div>`;
 
@@ -1101,12 +1305,10 @@ function iniciarYTPopupS3(onTerminado) {
         tag.src = 'https://www.youtube.com/iframe_api';
         document.head.appendChild(tag);
     }
-
     const activar = () => {
         const frame = document.getElementById('ytFramePopupS3');
         if (!frame || !window.YT?.Player) return;
         if (ytPlayer) { try { ytPlayer.destroy(); } catch { } ytPlayer = null; }
-
         ytPlayer = new YT.Player('ytFramePopupS3', {
             events: {
                 onStateChange: e => {
@@ -1122,7 +1324,6 @@ function iniciarYTPopupS3(onTerminado) {
             }
         });
     };
-
     window.YT?.Player ? activar() : (window.onYouTubeIframeAPIReady = activar);
 }
 
