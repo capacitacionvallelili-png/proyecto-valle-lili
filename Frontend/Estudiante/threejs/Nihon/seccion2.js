@@ -301,7 +301,7 @@ export function iniciarSeccion2(contenedorId) {
     audioCompleto.volume = 0.85;
 
     cargarModelo(
-        '/Estudiante/threejs/modelados/nihonFinal2.glb',
+        '/Estudiante/threejs/modelados/NihonFinal22.glb',
         escena, camara, controls,
         (modelo, anim, mix) => {
             modeloCargado = modelo;

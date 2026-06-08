@@ -25,7 +25,7 @@ export function iniciarSeccion1(contenedorId) {
     mostrarLoader(contenedorId);
 
     cargarModelo(
-        '/Estudiante/threejs/modelados/nihonFinal2.glb',
+        '/Estudiante/threejs/modelados/NihonFinal22.glb',
         escena, camara, controls,
         (modelo, animaciones, mix) => {
             mixer = mix;
