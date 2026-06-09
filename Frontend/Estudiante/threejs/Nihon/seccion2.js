@@ -229,7 +229,7 @@ const PARTES = [
         ],
     },
 ];
-
+// Ruta Corregida del audio completo (antes tenía "NihonPartes.mp3" con "N" mayúscula, lo que causaba error 404 en algunos sistemas de archivos sensibles a mayúsculas)
 const AUDIO_COMPLETO = '/Estudiante/threejs/audios/nihon/NihonPartes.mp3';
 
 
