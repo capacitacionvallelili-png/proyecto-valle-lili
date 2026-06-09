@@ -14,17 +14,10 @@ export { THREE };
 function obtenerRenderer(contenedor) {
     if (!window._threeRenderer) {
         window._threeRenderer = new THREE.WebGLRenderer({
-            antialias: false,          // ← desactiva antialiasing (costoso)
-            powerPreference: 'low-power', // ← pide menos recursos al GPU
-            precision: 'mediump',      // ← precisión media en shaders
-            logarithmicDepthBuffer: false,
+            antialias: true,
+            powerPreference: 'high-performance'
         });
-        
-        // Limita el pixel ratio para no sobrecargar
-        window._threeRenderer.setPixelRatio(1); // ← fijo en 1, sin importar la pantalla
-        
-        // Limita la memoria de texturas
-        window._threeRenderer.capabilities.maxTextures = 8;
+        window._threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     }
 
     window._threeRenderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
@@ -35,6 +28,7 @@ function obtenerRenderer(contenedor) {
 
     return window._threeRenderer;
 }
+
 /* ===== INICIALIZAR ESCENA ===== */
 export function inicializarEscena(contenedorId) {
     const contenedor = document.getElementById(contenedorId);
@@ -54,13 +48,16 @@ export function inicializarEscena(contenedorId) {
 
     const renderer = obtenerRenderer(contenedor);
 
+    // ── FIX: restaurar contexto si se perdió ──────────────────
     if (renderer.getContext().isContextLost()) {
         const ext = renderer.getContext().getExtension('WEBGL_lose_context');
         if (ext) ext.restoreContext();
     }
 
-    // ← Solo esta luz, sin DirectionalLight
-    escena.add(new THREE.AmbientLight(0xffffff, 1.2));
+    escena.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const luzDir = new THREE.DirectionalLight(0xffffff, 0.8);
+    luzDir.position.set(5, 10, 5);
+    escena.add(luzDir);
 
     const controls = new OrbitControls(camara, renderer.domElement);
     controls.enableDamping = true;
