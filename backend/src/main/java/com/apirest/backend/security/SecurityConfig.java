@@ -105,7 +105,8 @@ public class SecurityConfig {
                 "http://localhost:5500", // Live Server de VSC
                 "http://127.0.0.1:5500", // Alternativa de Live Server
                 "http://localhost:3000" ,// Por si usas otro servidor
-                 "http://127.0.0.1:5501"
+                "http://127.0.0.1:5501",
+                "https://frontend-production-8412.up.railway.app"
         ));
 
         // Métodos HTTP permitidos
