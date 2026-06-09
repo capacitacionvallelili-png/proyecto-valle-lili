@@ -174,7 +174,7 @@ export function iniciarSeccion6(contenedorId) {
     mostrarLoader(contenedorId);
 
     cargarModelo(
-        '/Estudiante/threejs/modelados/nihonFinal2.glb',
+        '/Estudiante/threejs/modelados/Nihon3.glb',
         escena, camara, controls,
         (modelo, anim, mix) => {
             modeloCargado = modelo;

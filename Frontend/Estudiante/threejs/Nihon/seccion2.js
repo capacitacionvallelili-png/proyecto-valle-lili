@@ -1,11 +1,6 @@
 /* =====================================================
    seccion2.js — Sección 2: Partes del dispositivo Nihon Koden
-   Features idénticas al Beneheart:
-   - Resaltado permanente por paso (emissive, UUID-based)
-   - Resaltado temporal sincronizado con audio (mat.color)
-   - Cámara condicional (offset → enfoca, sin offset → posición fija)
-   - Señal pulsante sobre el objeto activo
-   - Barra de progreso del segmento de audio
+  
    ===================================================== */
 
 import { inicializarEscena, cargarModelo, limpiarRenderer, THREE } from '../escena.js';
@@ -22,9 +17,7 @@ const FACTOR_EMISION = 0.45;
 
 /* =====================================================
    PARTES
-   resaltar        : nombres de objetos con emissive azul durante el paso
-   resaltarTemporal: [{ objetos, color, inicio, fin, tiempoRelativo? }]
-                     cambia mat.color sin tocar emissive
+   
    ===================================================== */
 const PARTES = [
     {
@@ -99,11 +92,11 @@ const PARTES = [
         audioInicio: 66,
         audioFin: 94,
         instruccion: 'Haz click sobre el botón de derivada',
-        //resaltar: ['Deriv'],
+        resaltar: ['Deriv'],
         texturasPantalla: [
             { tiempo: 0, imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png' },
             { tiempo: 14, imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv1.png' },
-            { tiempo: 18, imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv2.png' },
+            { tiempo: 18, imagen: '/Estudiante/threejs/img/nihon/derivada2ModoMonitor.png' },
         ],
         resaltarTemporal: [
             { objetos: ['Deriv'], color: 0x00ccff, intensidad: 0.6, inicio: 66, fin: 94 },
@@ -121,7 +114,8 @@ const PARTES = [
         instruccion: 'Haz click sobre el botón de sensibilidad',
         //resaltar: ['Sensibilidad'],
         texturasPantalla: [
-            { tiempo: 0, imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv2.png' },
+            { tiempo: 0, imagen: '/Estudiante/threejs/img/nihon/derivada2ModoMonitor.png' },
+            { tiempo: 9, imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv2.png' },
         ],
         resaltarTemporal: [
             { objetos: ['Sensibilidad'], color: 0x00ccff, intensidad: 0.6, inicio: 95, fin: 108 },
@@ -138,7 +132,7 @@ const PARTES = [
         audioInicio: 108,
         audioFin: 126,
         instruccion: 'Haz click sobre el botón de cardioversión',
-        //resaltar: ['sinc'],
+        resaltar: ['sinc'],
         texturasPantalla: [
             { tiempo: 0, imagen: '/Estudiante/threejs/img/nihon/cardioversion_activada.png' },
         ],
@@ -151,21 +145,21 @@ const PARTES = [
         id: 'marcapasos',
         nombre: 'Botones Modo Marcapasos',
         objeto: 'marcapasos',
-        objetosGrupo: ['Cone', 'Cone_1'],
+        //objetosGrupo: ['Cone'],
         tipo: 'click',
         camaraOffset: { x: 0, y: 0.5, z: 0.4 },
         audioInicio: 126,
         audioFin: 137,
         instruccion: 'Haz click sobre el botón de marcapasos',
-        resaltar: ['Cone', 'Cone_1'],
+        resaltar: ['marcapasos'],
         texturasPantalla: [
             { tiempo: 0, imagen: '/Estudiante/threejs/img/nihon/marcapasos_estimulacion_act_con_parches.png' },
         ],
-         resaltarTemporal: [
+        resaltarTemporal: [
             { objetos: ['marcapasos'], color: 0x00ccff, intensidad: 0.6, inicio: 126, fin: 137 },
 
         ],
-        
+
     },
     {
         id: 'impresora',
@@ -301,13 +295,17 @@ export function iniciarSeccion2(contenedorId) {
     audioCompleto.volume = 0.85;
 
     cargarModelo(
-        '/Estudiante/threejs/modelados/NihonFinal22.glb',
+        '/Estudiante/threejs/modelados/Nihon3.glb',
         escena, camara, controls,
         (modelo, anim, mix) => {
             modeloCargado = modelo;
             animaciones = anim;
             mixer = mix;
             mixer.timeScale = 0;
+
+            modeloCargado.traverse((obj) => {
+                console.log(obj.name);
+            });
 
             camara.position.set(CAMARA_POSICION.x, CAMARA_POSICION.y, CAMARA_POSICION.z);
             controls.target.set(CAMARA_TARGET.x, CAMARA_TARGET.y, CAMARA_TARGET.z);

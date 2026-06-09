@@ -4,11 +4,11 @@
 
 import { inicializarEscena, cargarModelo, limpiarRenderer, THREE } from '../escena.js';
 
-const API     = 'http://localhost:8080/Vallelili';
+const API     = 'https://backend-production-2be1d.up.railway.app/Vallelili';
 const TOKEN   = localStorage.getItem('token');
 const HEADERS = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN}` };
 
-const MODELO_GLB = '/Estudiante/threejs/modelados/NihonFinal22.glb';
+const MODELO_GLB = '/Estudiante/threejs/modelados/Nihon3.glb';
 
 const CAMARA_POSICION = { x: 0.6,  y: 0.5,  z: 1.7 };
 const CAMARA_TARGET   = { x: 0.8,  y: -0.5, z: 0   };
