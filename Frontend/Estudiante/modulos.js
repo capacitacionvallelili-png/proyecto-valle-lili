@@ -3,22 +3,22 @@
    type="module" en el HTML → funciones del HTML en window
    ===================================================== */
 
-import { iniciarSeccion1, destruirSeccion1 } from './threejs/benehearth/seccion1.js';
-import { iniciarSeccion2, destruirSeccion2 } from './threejs/benehearth/seccion2.js';
-import { iniciarSeccion3, destruirSeccion3 } from './threejs/benehearth/seccion3.js';
-import { iniciarSeccion4, destruirSeccion4 } from './threejs/benehearth/seccion4.js';
-import { iniciarSeccion5, destruirSeccion5 } from './threejs/benehearth/seccion5.js';
-import { iniciarSeccion6, destruirSeccion6 } from './threejs/benehearth/seccion6.js';
-import { iniciarSeccion7, destruirSeccion7 } from './threejs/benehearth/seccion7.js';
+import { iniciarSeccion1, destruirSeccion1 } from '/Estudiante/threejs/benehearth/seccion1.js';
+import { iniciarSeccion2, destruirSeccion2 } from '/Estudiante/threejs/benehearth/seccion2.js';
+import { iniciarSeccion3, destruirSeccion3 } from '/Estudiante/threejs/benehearth/seccion3.js';
+import { iniciarSeccion4, destruirSeccion4 } from '/Estudiante/threejs/benehearth/seccion4.js';
+import { iniciarSeccion5, destruirSeccion5 } from '/Estudiante/threejs/benehearth/seccion5.js';
+import { iniciarSeccion6, destruirSeccion6 } from '/Estudiante/threejs/benehearth/seccion6.js';
+import { iniciarSeccion7, destruirSeccion7 } from '/Estudiante/threejs/benehearth/seccion7.js';
 
 // imports para el nihon
-import { iniciarSeccion1 as nihonS1, destruirSeccion1 as nihonD1 } from './threejs/nihon/seccion1.js';
-import { iniciarSeccion2 as nihonS2, destruirSeccion2 as nihonD2 } from './threejs/nihon/seccion2.js';
-import { iniciarSeccion3 as nihonS3, destruirSeccion3 as nihonD3 } from './threejs/nihon/seccion3.js';
-import { iniciarSeccion4 as nihonS4, destruirSeccion4 as nihonD4 } from './threejs/nihon/seccion4.js';
-import { iniciarSeccion5 as nihonS5, destruirSeccion5 as nihonD5 } from './threejs/nihon/seccion5.js';
-import { iniciarSeccion6 as nihonS6, destruirSeccion6 as nihonD6 } from './threejs/nihon/seccion6.js';
-import { iniciarSeccion7 as nihonS7, destruirSeccion7 as nihonD7 } from './threejs/nihon/seccion7.js';
+import { iniciarSeccion1 as nihonS1, destruirSeccion1 as nihonD1 } from '/Estudiante/threejs/nihon/seccion1.js';
+import { iniciarSeccion2 as nihonS2, destruirSeccion2 as nihonD2 } from '/Estudiante/threejs/nihon/seccion2.js';
+import { iniciarSeccion3 as nihonS3, destruirSeccion3 as nihonD3 } from '/Estudiante/threejs/nihon/seccion3.js';
+import { iniciarSeccion4 as nihonS4, destruirSeccion4 as nihonD4 } from '/Estudiante/threejs/nihon/seccion4.js';
+import { iniciarSeccion5 as nihonS5, destruirSeccion5 as nihonD5 } from '/Estudiante/threejs/nihon/seccion5.js';
+import { iniciarSeccion6 as nihonS6, destruirSeccion6 as nihonD6 } from '/Estudiante/threejs/nihon/seccion6.js';
+import { iniciarSeccion7 as nihonS7, destruirSeccion7 as nihonD7 } from '/Estudiante/threejs/nihon/seccion7.js';
 
 //evaluacion benehearth 
 //  Import correcto
