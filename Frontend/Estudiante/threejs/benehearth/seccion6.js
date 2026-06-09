@@ -101,7 +101,7 @@ const PARTES = [
 const ELECTRODOS_CONFIG = [
     { id: 'R', label: 'R/RA', desc: 'R', color: '#e24b4a', targetPctX: 38.5, targetPctY: 26.2, radius: 27 },
     { id: 'L', label: 'L / LA', desc: 'L', color: '#ba7517', targetPctX: 61.6, targetPctY: 26.2, radius: 27 },
-    { id: 'F', label: 'F / FA', desc: 'F', color: '#1d9e75', targetPctX: 61.5, targetPctY: 68.1, radius: 27 },
+    { id: 'F', label: 'F / LL', desc: 'F', color: '#1d9e75', targetPctX: 61.5, targetPctY: 68.1, radius: 27 },
 ];
 
 

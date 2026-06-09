@@ -102,7 +102,7 @@ const PARTES = [
 const ELECTRODOS_CONFIG = [
     {
         id: 'R',
-        label: 'R',
+        label: 'R / RA',
         desc: 'R',
         color: '#e24b4a',
         targetPctX: 38.5,
@@ -111,7 +111,7 @@ const ELECTRODOS_CONFIG = [
     },
     {
         id: 'L',
-        label: 'L',
+        label: 'L / LA',
         desc: 'L',
         color: '#ba7517',
         targetPctX: 61.6,
@@ -120,7 +120,7 @@ const ELECTRODOS_CONFIG = [
     },
     {
         id: 'F',
-        label: 'F',
+        label: 'F / LL',
         desc: 'F',
         color: '#1d9e75',
         targetPctX: 61.5,
