@@ -3,6 +3,14 @@ const path    = require('path');
 const app     = express();
 const PORT    = process.env.PORT || 3000;
 
+express.static.mime.define({
+    'audio/mpeg':  ['mp3'],
+    'audio/ogg':   ['ogg'],
+    'model/gltf-binary': ['glb'],
+    'model/gltf+json':   ['gltf'],
+});
+
+
 const ROOT = __dirname;
 
 // ── Estáticos ──────────────────────────────────────────────────────────────
