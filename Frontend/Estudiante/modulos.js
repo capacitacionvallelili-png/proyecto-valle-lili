@@ -12,18 +12,18 @@ import { iniciarSeccion6, destruirSeccion6 } from '/Estudiante/threejs/beneheart
 import { iniciarSeccion7, destruirSeccion7 } from '/Estudiante/threejs/benehearth/seccion7.js';
 
 // imports para el nihon
-import { iniciarSeccion1 as nihonS1, destruirSeccion1 as nihonD1 } from '/Estudiante/threejs/nihon/seccion1.js';
-import { iniciarSeccion2 as nihonS2, destruirSeccion2 as nihonD2 } from '/Estudiante/threejs/nihon/seccion2.js';
-import { iniciarSeccion3 as nihonS3, destruirSeccion3 as nihonD3 } from '/Estudiante/threejs/nihon/seccion3.js';
-import { iniciarSeccion4 as nihonS4, destruirSeccion4 as nihonD4 } from '/Estudiante/threejs/nihon/seccion4.js';
-import { iniciarSeccion5 as nihonS5, destruirSeccion5 as nihonD5 } from '/Estudiante/threejs/nihon/seccion5.js';
-import { iniciarSeccion6 as nihonS6, destruirSeccion6 as nihonD6 } from '/Estudiante/threejs/nihon/seccion6.js';
-import { iniciarSeccion7 as nihonS7, destruirSeccion7 as nihonD7 } from '/Estudiante/threejs/nihon/seccion7.js';
+import { iniciarSeccion1 as nihonS1, destruirSeccion1 as nihonD1 } from '/Estudiante/threejs/Nihon/seccion1.js';
+import { iniciarSeccion2 as nihonS2, destruirSeccion2 as nihonD2 } from '/Estudiante/threejs/Nihon/seccion2.js';
+import { iniciarSeccion3 as nihonS3, destruirSeccion3 as nihonD3 } from '/Estudiante/threejs/Nihon/seccion3.js';
+import { iniciarSeccion4 as nihonS4, destruirSeccion4 as nihonD4 } from '/Estudiante/threejs/Nihon/seccion4.js';
+import { iniciarSeccion5 as nihonS5, destruirSeccion5 as nihonD5 } from '/Estudiante/threejs/Nihon/seccion5.js';
+import { iniciarSeccion6 as nihonS6, destruirSeccion6 as nihonD6 } from '/Estudiante/threejs/Nihon/seccion6.js';
+import { iniciarSeccion7 as nihonS7, destruirSeccion7 as nihonD7 } from '/Estudiante/threejs/Nihon/seccion7.js';
 
 //evaluacion benehearth 
 //  Import correcto
-import { iniciarEvaluacion, destruirEvaluacion } from './threejs/benehearth/evaluacion.js';
-import { iniciarEvaluacion as nihonEval, destruirEvaluacion as nihonDestrEval } from './threejs/nihon/evaluacion.js';
+import { iniciarEvaluacion, destruirEvaluacion } from '/Estudiante/threejs/benehearth/evaluacion.js';
+import { iniciarEvaluacion as nihonEval, destruirEvaluacion as nihonDestrEval } from '/Estudiante/threejs/Nihon/evaluacion.js';
 
 /* ===== CONSTANTES ===== */
 const API = 'https://backend-production-2be1d.up.railway.app/Vallelili';
