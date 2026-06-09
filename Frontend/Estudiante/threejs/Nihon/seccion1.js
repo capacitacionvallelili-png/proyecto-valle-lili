@@ -267,7 +267,7 @@ window.togglePanelNihon = function () {
 
 /* ===== AUDIO ===== */
 function iniciarAudio(seccionYaCompletada) {
-    audio = new Audio('/Estudiante/threejs/audios/nihon/IntroNIhon.MP3');
+    audio = new Audio('/Estudiante/threejs/audios/nihon/IntroNihon.mp3');
     audio.volume = 0.7;
     audioTerminado = false;
 
