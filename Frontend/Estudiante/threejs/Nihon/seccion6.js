@@ -1,125 +1,132 @@
 import { inicializarEscena, cargarModelo, limpiarRenderer, THREE } from '../escena.js';
 
 const MODOS_PERILLA = [
-    { nombre: 'Manual', angulo: -1.57, imagen: '/Estudiante/threejs/img/manual.png' },
-    { nombre: 'Monitor', angulo: -0.4, imagen: '/Estudiante/threejs/img/MODOMONITOR.png' },
-    { nombre: 'Apagado', angulo: 0, imagen: '/Estudiante/threejs/img/negro.jpg' },
-    { nombre: 'Marcapasos', angulo: 1, imagen: '/Estudiante/threejs/img/marcapasos.png' },
-    { nombre: 'DEA', angulo: 2, imagen: '/Estudiante/threejs/img/DEA.png' },
+    { nombre: 'Manual',     angulo: -1.57, imagen: '/Estudiante/threejs/img/manual.png' },
+    { nombre: 'Monitor',    angulo: -0.4,  imagen: '/Estudiante/threejs/img/MODOMONITOR.png' },
+    { nombre: 'Apagado',    angulo: 0,     imagen: '/Estudiante/threejs/img/negro.jpg' },
+    { nombre: 'Marcapasos', angulo: 1,     imagen: '/Estudiante/threejs/img/marcapasos.png' },
+    { nombre: 'DEA',        angulo: 2,     imagen: '/Estudiante/threejs/img/DEA.png' },
 ];
 
+const TOLERANCIA_ANGULO_PERILLA = 0.45;
+
+const CAMARA_POSICION = { x: 0.7, y: 0.5, z: 1.2 };
+const CAMARA_TARGET   = { x: 0.8, y: -0.9, z: 0 };
+
+// ─────────────────────────────────────────────────────────────────
+// [PEGAR EN CADA SECCIÓN NIHON — BLOQUE A]
+// Constantes de color. Cambia los hex si quieres otra paleta.
+// ─────────────────────────────────────────────────────────────────
+const COLOR_RESALTADO  = 0x59DEFF;  // azul claro — objeto activo
+const COLOR_CONFIRMADO = 0x4caf50;  // verde      — destello al acertar
+
+// ─────────────────────────────────────────────────────────────────
+// [PEGAR EN CADA SECCIÓN NIHON — BLOQUE B]
+// Segundo de la animación GLB donde la perilla queda "encendida".
+// Ajusta el número según la sección.
+// ─────────────────────────────────────────────────────────────────
+const SEGUNDO_ENCENDIDO = 218.5;   // segundo donde la perilla queda encendida (paso 0)
+const SEGUNDO_ENERGIA   = 221.7;   // segundo donde la perilla queda en nivel de energía (paso 3)
+
 const PARTES = [
-    {
-        id: 'electrodos',
-        nombre: 'Conecte el cable de EKG al paciente con los electrodos bien adheridos',
-        tipo: 'minijuego',
-        camaraOffset: { x: 0.5, y: -0.1, z: 0.7 },
-        instruccion: 'Arrastra cada electrodo a su posición correcta en el paciente',
-        imagenesPantalla: [
-            '/Estudiante/threejs/img/nihon/modo_monitor_palas.png',
-        ]
-    },
+
     {
         id: 'perilla',
         nombre: 'Gire la perilla principal hasta MONITOR para encender el equipo.',
         tipo: 'click',
-        camaraOffset: { x: 0, y: -0.1, z: 0.8 },
-        imagenesPantalla: [
-            '/Estudiante/threejs/img/negro.jpg',
-        ],
+        //camaraOffset: { x: 0, y: -0.1, z: 0.8 },
+        imagenesPantalla: [ '/Estudiante/threejs/img/negro.jpg' ],
         pasos: [
-            { objeto: 'perilla', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png', instruccion: "gira la perilla hasta modo monitor" },
+            { objeto: 'perilla', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png', instruccion: 'Gira la perilla hasta modo monitor' },
         ],
     },
 
+    {
+        id: 'electrodos',
+        nombre: 'Conecte el cable de EKG al paciente con los electrodos bien adheridos',
+        tipo: 'minijuego',
+        
+        instruccion: 'Arrastra cada electrodo a su posición correcta en el paciente',
+        imagenesPantalla: [ '/Estudiante/threejs/img/nihon/modo_monitor_palas.png' ],
+    },
+    
     {
         id: 'Deriv1',
-        nombre: 'Si la pantalla dice "PALAS" pero usted tiene conectados los electrodos, no verá la señal. Presione el botón "DERI" hasta que aparezca en pantalla la opción deseada (por ejemplo: Derivada 1, 2 o 3).  ',
+        nombre: 'Si la pantalla dice "PALAS" pero tiene electrodos conectados, presione el botón de derivada hasta ver la derivada deseada.',
         tipo: 'click',
-        camaraOffset: { x: 0, y: -0.1, z: 0.8 },
-        imagenesPantalla: [
-            '/Estudiante/threejs/img/nihon/modo_monitor_palas.png',
-        ],
+       // camaraOffset: { x: 0, y: -0.1, z: 0.8 },
+        imagenesPantalla: [ '/Estudiante/threejs/img/nihon/modo_monitor_palas.png' ],
         pasos: [
-            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv1.png', instruccion: 'Haz click sobre el botón de Deriv para pasar de pala a derivada' },
-            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv2.png', instruccion: 'Haz click sobre el botón de Deriv para pasar a derivada 2' },
-            //{ objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv3.png', instruccion: 'Haz click sobre el botón de Deriv para pasar a derivada 3' },
+            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv1.png', instruccion: 'Haz click sobre el botón  para pasar de pala a derivada' },
+            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/cardioversion_desactivada_electrodos_puestos.png', instruccion: 'Haz click sobre el botón  para pasar a derivada 2' },
         ],
+        video:"https://youtu.be/B4AxqSH-1rU"
     },
+
+    
     {
-        id: 'Deriv',
-        nombre: ' Presione el botón SINCRÓNICO (SYNC) para activar el modo. Aplique gel conductor sobre las palas y colóquelas sobre el pecho del paciente.',
+        id: 'energia',
+        nombre: 'Gire la perilla para seleccionar la energía.',
         tipo: 'click',
-        camaraOffset: { x: 0, y: 0.8, z: 0.9 },
-        imagenesPantalla: [
-            '/Estudiante/threejs/img/nihon/modo_monitor_deriv2.png',
-        ],
-        pasos: [
-            { objeto: 'sinc', imagen: '/Estudiante/threejs/img/nihon/cardioversion_activada.png', instruccion: 'Haz click sobre el botón de SINC para activar el modo' },
-        ],
+        //camaraOffset: { x: 0, y: -0.1, z: 0.8 },
+        imagenesPantalla: [ '/Estudiante/threejs/img/cardioversion_desactivada_electrodos_puestos.png' ],
+        objeto:"perilla"
+        
     },
 
     {
-        id: '2',
-        nombre: 'Presione el botón 2 para cargar la energían, Puede cargarlo desde las palas o desde el panel frontal.',
+        id: 'Deriv',
+        nombre: 'Presione el botón SINCRÓNICO (SYNC) para activar el modo. Aplique gel conductor sobre las palas y colóquelas sobre el pecho del paciente.',
         tipo: 'click',
-        camaraOffset: { x: 0, y: 0, z: 1.2 },
+        //camaraOffset: { x: 0, y: 0.8, z: 0.9 },
+        imagenesPantalla: [ '/Estudiante/threejs/img/nihon/derivada2ModoMonitor.png' ],
         pasos: [
-            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png', instruccion: 'Haz click en el botón de descarga de las palas' },
+            { objeto: 'sinc', imagen: '/Estudiante/threejs/img/nihon/cardioversion_activada.png', instruccion: 'Haz click sobre el botón SINC para activar el modo' },
+        ],
+        video:"https://youtu.be/zTVuLagN19c"
+    },
+    {
+        id: '2',
+        nombre: 'Presione el botón de carga. Puede cargarlo desde las palas o desde el panel frontal.',
+        tipo: 'click',
+        imagenesPantalla: [ '/Estudiante/threejs/img/nihon/cardioversion_activada.png' ],
+        pasos: [
+            { objeto: 'carga', imagen: '/Estudiante/threejs/img/nihon/cardioversion_activada_energia_cargada.png', instruccion: 'Oprime  el botón de carga, para esta simulación hazlo desde el panel frontal' },
         ],
     },
     {
         id: '3',
-        nombre: 'presione y MANTENGA PRESIONADOS los botones de descarga (3) en ambas palas por algunos segundos.',
+        nombre: 'Presione y MANTENGA PRESIONADOS los botones de descarga en ambas palas por algunos segundos.',
         tipo: 'click',
-        camaraOffset: { x: 0, y: 0, z: 1.2 },
+         camaraOffset: { x: 0, y: 0.3, z: -0.8 },
+        imagenesPantalla: [ '/Estudiante/threejs/img/nihon/cardioversion_activada_energia_cargada.png' ],
         pasos: [
-            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png', instruccion: 'Haz click en el botón de descarga de las palas' },
+            { objeto: 'botonDer', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png', instruccion: 'Presiona por algunos segundos los botones de descarga de las palas, en esta simulación solo necesitas oprimir uno' },
         ],
     },
-      {
+    {
         id: '4',
-        nombre: 'Verifique que la descarga se realizó. En pantalla aparecerá el indicador de descarga. Si se requiere otra cardioversión, verifique que el modo SINCRÓNICO sigue activo.',
+        nombre: 'Verifique que la descarga se realizó. Si se requiere otra cardioversión, verifique que el modo SINCRÓNICO aún se encuentre activo.',
         tipo: 'click',
-        camaraOffset: { x: 0, y: 0, z: 1.2 },
+        //camaraOffset: { x: 0, y: 0, z: 1.2 },
+        imagenesPantalla: [ '/Estudiante/threejs/img/nihon/sincronizacionRealizada.png' ],
         pasos: [
-            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png', instruccion: 'Haz click en el botón de descarga de las palas' },
+            { objeto: 'sinc', imagen: '/Estudiante/threejs/img/nihon/cardioversion_activada_2.png', instruccion: 'Verifica que SYNC sigue activo para otra descarga' },
         ],
+        video:"https://youtu.be/vlzB4tTCZsE"
     },
 ];
+
+
 
 
 /* =====================================================
    CONFIGURACIÓN DEL MINIJUEGO DE ELECTRODOS
    ===================================================== */
 const ELECTRODOS_CONFIG = [
-    {
-        id: 'R',
-        label: 'R/RA',
-        desc: '',
-        color: '#e24b4a',
-        targetPctX: 38.5,
-        targetPctY: 26.2,
-        radius: 27,
-    },
-    {
-        id: 'L',
-        label: 'L / LA',
-        desc: 'L',
-        color: '#ba7517',
-        targetPctX: 61.6,
-        targetPctY: 26.2,
-        radius: 27,
-    },
-    {
-        id: 'F',
-        label: 'F / FA',
-        desc: 'F',
-        color: '#1d9e75',
-        targetPctX: 61.5,
-        targetPctY: 68.1,
-        radius: 27,
-    },
+    { id: 'R', label: 'R/RA',   desc: 'R', color: '#e24b4a', targetPctX: 38.5, targetPctY: 26.2, radius: 27 },
+    { id: 'L', label: 'L / LA', desc: 'L', color: '#ba7517', targetPctX: 61.6, targetPctY: 26.2, radius: 27 },
+    { id: 'F', label: 'F / LL', desc: 'F', color: '#1d9e75', targetPctX: 61.5, targetPctY: 68.1, radius: 27 },
 ];
 
 
@@ -149,6 +156,21 @@ const _cachTexturas = {};
 let _modoActual = null;
 let indiceImagenActual = 0;
 
+// ── Estado del hold de descarga (paso 6) ─────────────────────────
+let _holdMesh        = null;   // mesh que se está sosteniendo
+let _holdStart       = 0;      // timestamp inicio del hold
+let _holdBarraAnim   = null;   // requestAnimationFrame de la barra
+const HOLD_DURACION  = 3000;   // ms que hay que sostener
+
+// ─────────────────────────────────────────────────────────────────
+// [PEGAR EN CADA SECCIÓN NIHON — BLOQUE C]
+// Variables del sistema de resaltado y del reloj de animación.
+// Pega estas 3 líneas en el bloque de estado interno.
+// ─────────────────────────────────────────────────────────────────
+const _snapshot = {};
+let   _nombreResaltadoActual = null;
+let   relojAnim = null;   // ← BUG CORREGIDO: faltaba esta declaración en seccion4
+
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -165,11 +187,11 @@ export function iniciarSeccion6(contenedorId) {
         btnCompletar?.textContent.includes('completada');
 
     const base = inicializarEscena(contenedorId);
-    escena = base.escena;
-    camara = base.camara;
-    renderer = base.renderer;
-    controls = base.controls;
-    reloj = base.reloj;
+    escena    = base.escena;
+    camara    = base.camara;
+    renderer  = base.renderer;
+    controls  = base.controls;
+    reloj     = base.reloj;
 
     mostrarLoader(contenedorId);
 
@@ -178,11 +200,36 @@ export function iniciarSeccion6(contenedorId) {
         escena, camara, controls,
         (modelo, anim, mix) => {
             modeloCargado = modelo;
-            animaciones = anim;
-            mixer = mix;
+            animaciones   = anim;
+            mixer         = mix;
 
-            camaraOriginalPos = camara.position.clone();
+            camara.position.set(CAMARA_POSICION.x, CAMARA_POSICION.y, CAMARA_POSICION.z);
+            controls.target.set(CAMARA_TARGET.x,   CAMARA_TARGET.y,   CAMARA_TARGET.z);
+            controls.update();
+
+            // Límites de zoom — DENTRO del callback para que no los sobreescriba escena.js
+            controls.enablePan   = true;
+            controls.minDistance = 1.3;
+            controls.maxDistance = 4.5;
+            controls.zoomSpeed   = 1.4;
+            controls.rotateSpeed = 0.5;
+
+            camaraOriginalPos    = camara.position.clone();
             camaraOriginalTarget = controls.target.clone();
+
+            // ─────────────────────────────────────────────────────
+            // [PEGAR EN CADA SECCIÓN NIHON — BLOQUE D]
+            // Captura colores originales ANTES de tocar materiales.
+            // ─────────────────────────────────────────────────────
+            capturaMaterialesOriginales();
+
+            // ─────────────────────────────────────────────────────
+            // [PEGAR EN CADA SECCIÓN NIHON — BLOQUE E]
+            // Inicializar relojAnim. NO tocar el mixer aquí:
+            // la animación corre libre hasta que el usuario
+            // interactúa con la perilla en el paso 0.
+            // ─────────────────────────────────────────────────────
+            relojAnim = new THREE.Clock();
 
             _modoActual = null;
             let pantalla = null;
@@ -199,14 +246,24 @@ export function iniciarSeccion6(contenedorId) {
 
             ocultarLoader();
             mostrarUI();
-            yaCompletada ? marcarTodoCompletado() : activarParte(0);
+
+            if (yaCompletada) {
+                marcarTodoCompletado();
+            } else {
+                activarParte(0);
+            }
         }
     );
 
     function animar() {
         animFrameId = requestAnimationFrame(animar);
         if (!escena || !camara || !renderer) return;
-        mixer?.update(reloj.getDelta());
+        // ─────────────────────────────────────────────────────
+        // [PEGAR EN CADA SECCIÓN NIHON — BLOQUE F]
+        // Usar relojAnim para el mixer. Con timeScale=0 el mixer
+        // no avanza aunque se llame update().
+        // ─────────────────────────────────────────────────────
+        if (mixer && relojAnim) mixer.update(relojAnim.getDelta());
         controls.update();
         actualizarSenales();
         renderer.render(escena, camara);
@@ -214,10 +271,11 @@ export function iniciarSeccion6(contenedorId) {
     animar();
 
     const canvas = renderer.domElement;
-    canvas.addEventListener('mousedown', onMouseDown);
-    canvas.addEventListener('mousemove', onMouseMove);
-    canvas.addEventListener('mouseup', onMouseUp);
-    canvas.addEventListener('click', onClickCanvas);
+    canvas.addEventListener('mousedown',  onMouseDown);
+    canvas.addEventListener('mousemove',  onMouseMove);
+    canvas.addEventListener('mouseup',    onMouseUp);
+    canvas.addEventListener('mouseleave', onMouseUp);   // cancelar hold si sale del canvas
+    canvas.addEventListener('click',      onClickCanvas);
 }
 
 export function destruirSeccion6() {
@@ -228,10 +286,11 @@ export function destruirSeccion6() {
     animFrameId = null;
 
     if (renderer) {
-        renderer.domElement.removeEventListener('mousedown', onMouseDown);
-        renderer.domElement.removeEventListener('mousemove', onMouseMove);
-        renderer.domElement.removeEventListener('mouseup', onMouseUp);
-        renderer.domElement.removeEventListener('click', onClickCanvas);
+        renderer.domElement.removeEventListener('mousedown',  onMouseDown);
+        renderer.domElement.removeEventListener('mousemove',  onMouseMove);
+        renderer.domElement.removeEventListener('mouseup',    onMouseUp);
+        renderer.domElement.removeEventListener('mouseleave', onMouseUp);
+        renderer.domElement.removeEventListener('click',      onClickCanvas);
     }
 
     document.getElementById('areaThreeJs')?.replaceChildren();
@@ -241,8 +300,28 @@ export function destruirSeccion6() {
     document.getElementById('videoPopupSNihon6')?.remove();
     document.getElementById('minijuegoElectrodosSNihon6')?.remove();
 
+    // ─────────────────────────────────────────────────────────────
+    // [PEGAR EN CADA SECCIÓN NIHON — BLOQUE G]
+    // Restaurar colores y resetear animación al destruir.
+    // Cambia solo los IDs de los elementos HTML (SNihon4 → SNihon5…).
+    // ─────────────────────────────────────────────────────────────
+    restaurarTodosLosColores();
+
+    if (mixer && animaciones.length > 0) {
+        animaciones.forEach(a => {
+            const ac = mixer.clipAction(a);
+            ac.reset();
+            ac.time = 0;
+        });
+        mixer.timeScale = 1;
+        mixer.update(0);
+    }
+
     Object.keys(_cachTexturas).forEach(k => delete _cachTexturas[k]);
+    Object.keys(_snapshot).forEach(k => delete _snapshot[k]);   // ← BUG CORREGIDO: faltaba en seccion4
+    _nombreResaltadoActual = null;
     _modoActual = null;
+    relojAnim   = null;
 
     if (escena) {
         while (escena.children.length > 0) escena.remove(escena.children[0]);
@@ -261,6 +340,32 @@ export function destruirSeccion6() {
     indiceActivo = 0;
     panelAbierto = false;
     panelLateralAbierto = false;
+}
+
+
+/* =====================================================
+   NIHON: CONTROL DE ANIMACIÓN DE PERILLA
+   =====================================================
+   [PEGAR EN CADA SECCIÓN NIHON — BLOQUE H]
+   Copia pausarAnimacionEn() y resetearAnimacion() sin cambios.
+   Solo ajusta SEGUNDO_ENCENDIDO arriba del archivo.
+   ===================================================== */
+
+function pausarAnimacionEn(segundos) {
+    if (!mixer || !animaciones.length) return;
+    mixer.timeScale = 0;
+    animaciones.forEach(a => {
+        const ac = mixer.clipAction(a);
+        ac.reset();
+        ac.play();
+        ac.paused = true;
+        ac.time   = segundos;
+    });
+    mixer.update(0);
+}
+
+function resetearAnimacion() {
+    pausarAnimacionEn(0);
 }
 
 
@@ -315,7 +420,7 @@ function mostrarUI() {
 
     ui.innerHTML = `
         <div id="checklistSNihon6" style="
-            position:absolute;top:16px;right:16px;width:400px;
+            position:absolute;top:16px;right:16px;width:350px;
             background:white;border-radius:12px;padding:14px;pointer-events:all;
             box-shadow:0 4px 20px rgba(0,0,0,0.12);font-family:'DM Sans',sans-serif;z-index:3;">
             <p style="font-size:0.78rem;font-weight:600;color:#1e5c3a;
@@ -353,7 +458,7 @@ function mostrarUI() {
             color:#5a7a62;background:rgba(255,255,255,0.9);
             padding:6px 16px;border-radius:20px;pointer-events:none;z-index:3;
             box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-            ${PARTES[0].instruccion}
+            ${PARTES[0].instruccion ?? PARTES[0].pasos?.[0]?.instruccion ?? ''}
         </div>
 
         <div id="contenedorSenales" style="
@@ -386,8 +491,11 @@ function mostrarUI() {
                     color:#5a7a62;font-size:1.2rem;padding:4px;">✕</button>
             </div>
             <p style="margin:0 0 12px;">
-                La Cardioversión Sincronizada es un modo de descarga eléctrica programada que el equipo libera en un momento preciso del ciclo cardíaco, sincronizada con el complejo QRS del paciente, con el fin de tratar arritmias como la taquicardia supraventricular o el flutter auricular sin provocar una fibrilación ventricular accidental. Recuerde que parae descargar la energía en el paciente en este modo, sostenga por 1 a 2 segundos. El equipo descarga automáticamente cuando detecta el momento correcto del ritmo. Además, Verifique que el semáforo de contacto esté en color VERDE.
-Finalmente, Si las marcas punteadas (QRS) no aparecen en pantalla después de activar SYNC, el equipo no está detectando bien el ritmo. Cambie la derivada o verifique los electrodos.
+                La Cardioversión Sincronizada libera una descarga en el momento preciso del ciclo
+                cardíaco (QRS), para tratar arritmias como taquicardia supraventricular o flutter
+                auricular. Sostenga los botones 1–2 s — el equipo descarga cuando detecta el QRS.
+                Verifique que el semáforo de contacto esté en VERDE. Si las marcas QRS no aparecen
+                en pantalla tras activar SYNC, cambie la derivada o verifique los electrodos.
             </p>
         </div>
 
@@ -421,7 +529,14 @@ Finalmente, Si las marcas punteadas (QRS) no aparecen en pantalla después de ac
 
 function activarParte(indice) {
     if (indice >= PARTES.length) return;
-    indiceActivo = indice;
+
+    // ─────────────────────────────────────────────────────────────
+    // [PEGAR EN CADA SECCIÓN NIHON — BLOQUE I]
+    // Quitar resaltado anterior + lógica de animación según paso.
+    // ─────────────────────────────────────────────────────────────
+    quitarResaltadoActual();
+
+    indiceActivo       = indice;
     indiceImagenActual = 0;
     const parte = PARTES[indice];
 
@@ -431,31 +546,28 @@ function activarParte(indice) {
     const instruccionEl = document.getElementById('instruccionSNihon6');
     if (instruccionEl) instruccionEl.textContent = instruccionTexto;
 
-    // Si es minijuego: mostrar botón de inicio, NO lanzar overlay directo
+    // Minijuego: flujo especial
     if (parte.tipo === 'minijuego') {
         actualizarChecklist();
         const cs = document.getElementById('contenedorSenales');
         if (cs) cs.innerHTML = '';
         window._senalObjeto = null;
         if (controls) controls.enableRotate = true;
-
         const instrEl = document.getElementById('instruccionSNihon6');
         if (instrEl) {
-            instrEl.style.whiteSpace = 'normal';
+            instrEl.style.whiteSpace    = 'normal';
             instrEl.style.pointerEvents = 'all';
             instrEl.innerHTML = `
                 <span style="color:#5a7a62;margin-right:10px;">
                     Para conectar los electrodos al paciente dale al botón de iniciar
                 </span>
-                <button
-                    onclick="window._lanzarMinijuegoSNihon6()"
+                <button onclick="window._lanzarMinijuegoSNihon6()"
                     style="background:#1e5c3a;color:white;border:none;
                         padding:5px 14px;border-radius:16px;font-size:0.78rem;
                         font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">
                     Iniciar
                 </button>`;
         }
-
         window._lanzarMinijuegoSNihon6 = () => {
             mostrarMinijuegoElectrodos(parte, () => avanzarDespuesDeVideo(parte));
         };
@@ -463,32 +575,67 @@ function activarParte(indice) {
     }
 
     const primerObjeto = parte.pasos?.[0]?.objeto ?? parte.objeto;
-    enfocarObjeto(primerObjeto);
+
+    // ─────────────────────────────────────────────────────────────
+    // ANIMACIÓN SEGÚN EL PASO:
+    // indice 0 (perilla) → libre, el usuario la gira.
+    // indice 1 (minijuego) → libre, la perilla ya quedó en SEGUNDO_ENCENDIDO.
+    // indice 2-3 → congelada en SEGUNDO_ENCENDIDO.
+    // indice 4+ (después de seleccionar energía) → congelada en SEGUNDO_ENERGIA.
+    // ─────────────────────────────────────────────────────────────
+    if (indice >= 4) {
+        pausarAnimacionEn(SEGUNDO_ENERGIA);
+    } else if (indice > 0) {
+        pausarAnimacionEn(SEGUNDO_ENCENDIDO);
+    }
+    // indice 0: animación libre (perilla sin tocar)
+
+    if (parte.camaraOffset) {
+        enfocarObjeto(primerObjeto);
+    } else {
+        animarCamara(
+            new THREE.Vector3(CAMARA_POSICION.x, CAMARA_POSICION.y, CAMARA_POSICION.z),
+            new THREE.Vector3(CAMARA_TARGET.x,   CAMARA_TARGET.y,   CAMARA_TARGET.z),
+            600
+        );
+    }
+
     crearSenal(primerObjeto);
     actualizarChecklist();
 
-    // parte corregida
+    // Imagen base del paso (las de pasos[].imagen se aplican al hacer clic)
     if (parte.imagenesPantalla?.length) {
         cambiarImagenPantalla(parte.imagenesPantalla[0]);
     }
 
-    if (controls) controls.enableRotate = parte.tipo !== 'rotar';
+    // ─────────────────────────────────────────────────────────────
+    // [PEGAR EN CADA SECCIÓN NIHON — BLOQUE K]
+    // Resaltar el objeto activo en COLOR_RESALTADO.
+    // ─────────────────────────────────────────────────────────────
+    if (parte.tipo === 'rotar') {
+        controls.enableRotate = false;
+        controls.enablePan    = false;
+        resaltarObjetoActivo(parte.objeto);
+    } else {
+        controls.enableRotate = true;
+        controls.enablePan    = true;
+        resaltarObjetoActivo(primerObjeto);
+    }
 }
 
 function actualizarChecklist() {
     PARTES.forEach((parte, i) => {
         const check = document.getElementById(`check-${parte.id}`);
-        const icon = document.getElementById(`icon-${parte.id}`);
-        const span = check?.querySelector('span');
+        const icon  = document.getElementById(`icon-${parte.id}`);
+        const span  = check?.querySelector('span');
         if (!check || !icon || icon.innerHTML === '✓') return;
-
         const esActiva = i === indiceActivo;
-        check.style.background = esActiva ? '#e8f5ee' : 'transparent';
+        check.style.background  = esActiva ? '#e8f5ee' : 'transparent';
         check.style.borderColor = esActiva ? '#1e5c3a' : '#e0e6e0';
-        icon.style.background = esActiva ? '#1e5c3a' : '#e0e6e0';
-        icon.innerHTML = esActiva ? '→' : String(i + 1);
+        icon.style.background   = esActiva ? '#1e5c3a' : '#e0e6e0';
+        icon.innerHTML          = esActiva ? '→' : String(i + 1);
         if (span) {
-            span.style.color = esActiva ? '#1e5c3a' : '#9ab0a0';
+            span.style.color      = esActiva ? '#1e5c3a' : '#9ab0a0';
             span.style.fontWeight = esActiva ? '600' : '400';
         }
     });
@@ -496,12 +643,12 @@ function actualizarChecklist() {
 
 function marcarCompletada(idParte) {
     const check = document.getElementById(`check-${idParte}`);
-    const icon = document.getElementById(`icon-${idParte}`);
+    const icon  = document.getElementById(`icon-${idParte}`);
     if (!check || !icon) return;
-    check.style.background = '#e8f5ee';
+    check.style.background  = '#e8f5ee';
     check.style.borderColor = '#1e5c3a';
-    icon.style.background = '#1e5c3a';
-    icon.innerHTML = '✓';
+    icon.style.background   = '#1e5c3a';
+    icon.innerHTML          = '✓';
     const span = check.querySelector('span');
     if (span) { span.style.color = '#1e5c3a'; span.style.fontWeight = '600'; }
 }
@@ -510,26 +657,25 @@ function marcarTodoCompletado() {
     PARTES.forEach(p => marcarCompletada(p.id));
     const cs = document.getElementById('contenedorSenales');
     if (cs) cs.innerHTML = '';
+    quitarResaltadoActual();
     if (controls) controls.enableRotate = true;
     const instruccion = document.getElementById('instruccionSNihon6');
-    if (instruccion) instruccion.textContent = 'Modo monitor completado, selecciona de nuevo un paso de la lista y recuerda';
+    if (instruccion) instruccion.textContent = 'Cardioversión completada, selecciona de nuevo un paso de la lista y recuerda';
 }
 
 function todasCompletadas() {
     const cs = document.getElementById('contenedorSenales');
     if (cs) cs.innerHTML = '';
     window._senalObjeto = null;
-
+    quitarResaltadoActual();
     const instruccion = document.getElementById('instruccionSNihon6');
-    if (instruccion) instruccion.textContent = '¡Modo monitor manual completado!';
-
+    if (instruccion) instruccion.textContent = '¡Cardioversión completada!';
     const btnCompletar = document.getElementById('btnCompletar');
     if (btnCompletar && !btnCompletar.textContent.includes('completada')) {
-        btnCompletar.disabled = false;
+        btnCompletar.disabled      = false;
         btnCompletar.style.opacity = '1';
-        btnCompletar.style.cursor = 'pointer';
+        btnCompletar.style.cursor  = 'pointer';
     }
-
     if (camaraOriginalPos && camaraOriginalTarget) {
         animarCamara(camaraOriginalPos, camaraOriginalTarget, 1000);
     }
@@ -550,6 +696,95 @@ window.irAParteSNihon6 = function (indice) {
 
 
 /* =====================================================
+   SISTEMA DE RESALTADO
+   =====================================================
+   [PEGAR EN CADA SECCIÓN NIHON — BLOQUE L]
+   Copia estas 6 funciones sin cambios. No tienen IDs de UI.
+   ===================================================== */
+
+function capturaMaterialesOriginales() {
+    if (!modeloCargado) return;
+    modeloCargado.traverse(obj => {
+        if (!obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (!_snapshot[clave]) _snapshot[clave] = mat.color.clone();
+        });
+    });
+}
+
+function resaltarObjetoActivo(nombreObjeto) {
+    if (!modeloCargado || !nombreObjeto) return;
+    if (_nombreResaltadoActual && _nombreResaltadoActual !== nombreObjeto) {
+        _restaurarMesh(_nombreResaltadoActual);
+    }
+    _nombreResaltadoActual = nombreObjeto;
+    modeloCargado.traverse(obj => {
+        if (obj.name !== nombreObjeto || !obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach(mat => {
+            if (!mat?.color) return;
+            mat.color.setHex(COLOR_RESALTADO);
+            mat.needsUpdate = true;
+        });
+    });
+}
+
+function quitarResaltadoActual() {
+    if (!_nombreResaltadoActual) return;
+    _restaurarMesh(_nombreResaltadoActual);
+    _nombreResaltadoActual = null;
+}
+
+function restaurarTodosLosColores() {
+    if (!modeloCargado) return;
+    modeloCargado.traverse(obj => {
+        if (!obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (_snapshot[clave]) { mat.color.copy(_snapshot[clave]); mat.needsUpdate = true; }
+        });
+    });
+    _nombreResaltadoActual = null;
+}
+
+function _restaurarMesh(nombreObjeto) {
+    if (!modeloCargado || !nombreObjeto) return;
+    modeloCargado.traverse(obj => {
+        if (obj.name !== nombreObjeto || !obj.isMesh) return;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${obj.name}_${idx}`;
+            if (_snapshot[clave]) { mat.color.copy(_snapshot[clave]); mat.needsUpdate = true; }
+        });
+    });
+}
+
+function resaltarConfirmacion(objeto) {
+    if (!objeto?.isMesh) return;
+    const mats = Array.isArray(objeto.material) ? objeto.material : [objeto.material];
+    mats.forEach(mat => {
+        if (!mat?.color) return;
+        mat.color.setHex(COLOR_CONFIRMADO);
+        mat.needsUpdate = true;
+    });
+    setTimeout(() => {
+        mats.forEach((mat, idx) => {
+            if (!mat?.color) return;
+            const clave = `${objeto.name}_${idx}`;
+            if (_snapshot[clave]) { mat.color.copy(_snapshot[clave]); mat.needsUpdate = true; }
+        });
+    }, 300);
+}
+
+
+
+/* =====================================================
    MINIJUEGO DE ELECTRODOS
    ===================================================== */
 
@@ -557,7 +792,6 @@ function mostrarMinijuegoElectrodos(parte, onCompletado) {
     panelAbierto = true;
     document.getElementById('minijuegoElectrodosSNihon6')?.remove();
 
-    // Keyframes — solo se insertan una vez en el documento
     if (!document.getElementById('mjKeyframes')) {
         const style = document.createElement('style');
         style.id = 'mjKeyframes';
@@ -577,84 +811,41 @@ function mostrarMinijuegoElectrodos(parte, onCompletado) {
     const overlay = document.createElement('div');
     overlay.id = 'minijuegoElectrodosSNihon6';
     overlay.style.cssText = `
-        position:absolute;inset:0;
-        background:rgba(0,0,0,0.82);
-        display:flex;flex-direction:column;
-        align-items:center;justify-content:center;
-        z-index:20;font-family:'DM Sans',sans-serif;
-        padding:16px;box-sizing:border-box;`;
+        position:absolute;inset:0;background:rgba(0,0,0,0.82);
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        z-index:20;font-family:'DM Sans',sans-serif;padding:16px;box-sizing:border-box;`;
 
     overlay.innerHTML = `
-        <div style="
-            width:100%;max-width:900px;
-            background:white;border-radius:16px;
-            padding:20px;box-sizing:border-box;
-            display:flex;flex-direction:column;gap:14px;">
-
+        <div style="width:100%;max-width:900px;background:white;border-radius:16px;
+            padding:20px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px;">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                 <div>
-                    <p style="margin:0;font-size:0.9rem;font-weight:600;color:#1e5c3a;">
-                        Coloca los electrodos
-                    </p>
-                    <p style="margin:4px 0 0;font-size:0.78rem;color:#5a7a62;">
-                        Arrastra cada electrodo al punto correcto del cuerpo del paciente
-                    </p>
+                    <p style="margin:0;font-size:0.9rem;font-weight:600;color:#1e5c3a;">Coloca los electrodos</p>
+                    <p style="margin:4px 0 0;font-size:0.78rem;color:#5a7a62;">Arrastra cada electrodo al punto correcto del cuerpo del paciente</p>
                 </div>
-                <span id="contadorElectrodos" style="
-                    font-size:0.75rem;color:#9ab0a0;
-                    background:#f0f5f0;padding:4px 10px;
-                    border-radius:20px;">0 / ${ELECTRODOS_CONFIG.length}</span>
+                <span id="contadorElectrodos" style="font-size:0.75rem;color:#9ab0a0;background:#f0f5f0;padding:4px 10px;border-radius:20px;">0 / ${ELECTRODOS_CONFIG.length}</span>
             </div>
-
             <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;">
-
                 <div style="display:flex;flex-direction:column;gap:6px;min-width:80px;">
-                    <p style="margin:0 0 4px;font-size:0.72rem;color:#9ab0a0;
-                        text-transform:uppercase;letter-spacing:0.05em;">Electrodos</p>
-                    <div id="bandejaElectrodos" style="
-                        display:flex;flex-direction:column;gap:10px;
-                        padding:10px;
-                        background:#f5f8f5;
-                        border:1.5px dashed #c8d8c8;
-                        border-radius:10px;
-                        min-height:60px;
-                        align-items:center;">
-                    </div>
+                    <p style="margin:0 0 4px;font-size:0.72rem;color:#9ab0a0;text-transform:uppercase;letter-spacing:0.05em;">Electrodos</p>
+                    <div id="bandejaElectrodos" style="display:flex;flex-direction:column;gap:10px;padding:10px;background:#f5f8f5;border:1.5px dashed #c8d8c8;border-radius:10px;min-height:60px;align-items:center;"></div>
                 </div>
-
                 <div style="position:relative;flex:1;min-width:220px;">
-                    <img
-                        id="torsoImg"
-                        src="/Estudiante/threejs/img/torso.png"
-                        draggable="false"
-                        style="width:100%;max-width:550px;display:block;
-                            border-radius:10px;user-select:none;pointer-events:none;">
+                    <img id="torsoImg" src="/Estudiante/threejs/img/torso.png" draggable="false"
+                        style="width:100%;max-width:550px;display:block;border-radius:10px;user-select:none;pointer-events:none;">
                     <div id="zonasDrop" style="position:absolute;inset:0;"></div>
                     <div id="electrodosColocados" style="position:absolute;inset:0;pointer-events:none;"></div>
                 </div>
             </div>
-
-            <div id="feedbackElectrodos" style="
-                min-height:22px;font-size:0.8rem;
-                text-align:center;color:#5a7a62;
-                transition:color 0.2s;"></div>
-
+            <div id="feedbackElectrodos" style="min-height:22px;font-size:0.8rem;text-align:center;color:#5a7a62;transition:color 0.2s;"></div>
             <div id="wrapContinuarElectrodos" style="display:none;justify-content:center;">
-                <button id="btnContinuarElectrodos" style="
-                    background:#1e5c3a;color:white;border:none;
-                    padding:10px 28px;border-radius:8px;
-                    font-size:0.88rem;font-weight:600;
-                    cursor:pointer;font-family:'DM Sans',sans-serif;">
-                    Continuar 
-                </button>
+                <button id="btnContinuarElectrodos" style="background:#1e5c3a;color:white;border:none;padding:10px 28px;border-radius:8px;font-size:0.88rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Continuar</button>
             </div>
         </div>`;
 
     contenedor.appendChild(overlay);
-
     const mjState = { colocados: {} };
 
-    // ── Helper: bandeja de electrodos ──
     function renderBandeja() {
         const bandeja = document.getElementById('bandejaElectrodos');
         if (!bandeja) return;
@@ -663,172 +854,84 @@ function mostrarMinijuegoElectrodos(parte, onCompletado) {
             if (mjState.colocados[e.id]) return;
             const el = document.createElement('div');
             el.dataset.eid = e.id;
-            el.style.cssText = `
-                width:46px;height:46px;border-radius:50%;
-                background:${e.color};
-                color:white;font-weight:700;font-size:14px;
-                display:flex;align-items:center;justify-content:center;
-                cursor:grab;user-select:none;
-                border:2.5px solid rgba(255,255,255,0.5);
-                box-shadow:0 2px 6px rgba(0,0,0,0.18);`;
-            el.title = e.desc;
-            el.textContent = e.label;
+            el.style.cssText = `width:46px;height:46px;border-radius:50%;background:${e.color};color:white;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:grab;user-select:none;border:2.5px solid rgba(255,255,255,0.5);box-shadow:0 2px 6px rgba(0,0,0,0.18);`;
+            el.title = e.desc; el.textContent = e.label;
             bandeja.appendChild(el);
         });
     }
-
-    // ── Helper: zonas drop usando porcentajes ──
-    // Centro en px = (targetPctX / 100) * img.offsetWidth
-    // No hay viewBox ni conversiones — los porcentajes son directos.
     function renderZonas() {
         const zonas = document.getElementById('zonasDrop');
-        const img = document.getElementById('torsoImg');
+        const img   = document.getElementById('torsoImg');
         if (!zonas || !img) return;
         zonas.innerHTML = '';
-
-        const w = img.offsetWidth;
-        const h = img.offsetHeight;
-
+        const w = img.offsetWidth, h = img.offsetHeight;
         ELECTRODOS_CONFIG.forEach(e => {
             if (mjState.colocados[e.id]) return;
             const zona = document.createElement('div');
             zona.id = `zona-drop-${e.id}`;
-
-            const cx = (e.targetPctX / 100) * w;   // centro X en px
-            const cy = (e.targetPctY / 100) * h;   // centro Y en px
-            const r = e.radius;
-
-            zona.style.cssText = `
-                position:absolute;
-                width:${r * 2}px;height:${r * 2}px;
-                left:${cx - r}px;top:${cy - r}px;
-                border-radius:50%;
-                border:2px dashed #434343;
-                background:rgba(150,160,150,0.12);
-                pointer-events:none;
-                animation:pulsarZona 1.6s ease-in-out infinite;`;
-            // zona.textContent = "   ";
+            const cx = (e.targetPctX/100)*w, cy = (e.targetPctY/100)*h, r = e.radius;
+            zona.style.cssText = `position:absolute;width:${r*2}px;height:${r*2}px;left:${cx-r}px;top:${cy-r}px;border-radius:50%;border:2px dashed #434343;background:rgba(150,160,150,0.12);pointer-events:none;animation:pulsarZona 1.6s ease-in-out infinite;`;
             zonas.appendChild(zona);
         });
     }
-
-    // ── Helper: dibujar electrodo colocado sobre la imagen ──
     function colocarElectrodo(edata) {
         const colocados = document.getElementById('electrodosColocados');
         const img = document.getElementById('torsoImg');
         if (!colocados || !img) return;
-
-        const cx = (edata.targetPctX / 100) * img.offsetWidth;
-        const cy = (edata.targetPctY / 100) * img.offsetHeight;
-        const r = 23;
-
+        const cx = (edata.targetPctX/100)*img.offsetWidth, cy = (edata.targetPctY/100)*img.offsetHeight, r = 23;
         const el = document.createElement('div');
-        el.style.cssText = `
-            position:absolute;
-            width:${r * 2}px;height:${r * 2}px;
-            left:${cx - r}px;top:${cy - r}px;
-            border-radius:50%;
-            background:${edata.color};
-            display:flex;align-items:center;justify-content:center;
-            color:white;font-weight:700;font-size:14px;
-            border:2.5px solid white;
-            box-shadow:0 2px 8px rgba(0,0,0,0.3);
-            animation:aparecerElectrodo 0.25s ease-out;`;
+        el.style.cssText = `position:absolute;width:${r*2}px;height:${r*2}px;left:${cx-r}px;top:${cy-r}px;border-radius:50%;background:${edata.color};display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;border:2.5px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);animation:aparecerElectrodo 0.25s ease-out;`;
         el.textContent = edata.label;
         colocados.appendChild(el);
     }
 
-    // Inicializar bandeja y zonas
     renderBandeja();
     const imgEl = document.getElementById('torsoImg');
-    if (imgEl.complete && imgEl.naturalWidth > 0) {
-        renderZonas();
-    } else {
-        imgEl.addEventListener('load', renderZonas, { once: true });
-    }
+    if (imgEl.complete && imgEl.naturalWidth > 0) { renderZonas(); }
+    else { imgEl.addEventListener('load', renderZonas, { once: true }); }
     const ro = new ResizeObserver(renderZonas);
     ro.observe(imgEl);
 
-    // Botón continuar
     document.getElementById('btnContinuarElectrodos').addEventListener('click', () => {
-        ro.disconnect();
-        cerrarMinijuego();
-        if (parte.video) {
-            mostrarVideoPopup(parte, () => onCompletado());
-        } else {
-            onCompletado();
-        }
+        ro.disconnect(); cerrarMinijuego();
+        if (parte.video) { mostrarVideoPopup(parte, () => onCompletado()); }
+        else { onCompletado(); }
     });
 
-    // ── Lógica de arrastre ──
-    let ghost = null;
-    let eidArrastrando = null;
-
-    function iniciarArrastre(eid, clientX, clientY) {
+    let ghost = null, eidArrastrando = null;
+    function iniciarArrastre(eid, cx, cy) {
         if (mjState.colocados[eid]) return;
         eidArrastrando = eid;
         const edata = ELECTRODOS_CONFIG.find(e => e.id === eid);
-
         ghost = document.createElement('div');
-        ghost.style.cssText = `
-            position:fixed;
-            width:46px;height:46px;border-radius:50%;
-            background:${edata.color};
-            color:white;font-weight:700;font-size:14px;
-            display:flex;align-items:center;justify-content:center;
-            pointer-events:none;z-index:9999;opacity:0.92;
-            border:2.5px solid rgba(255,255,255,0.7);
-            transform:translate(-50%,-50%);
-            box-shadow:0 4px 12px rgba(0,0,0,0.25);`;
+        ghost.style.cssText = `position:fixed;width:46px;height:46px;border-radius:50%;background:${edata.color};color:white;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:9999;opacity:0.92;border:2.5px solid rgba(255,255,255,0.7);transform:translate(-50%,-50%);box-shadow:0 4px 12px rgba(0,0,0,0.25);`;
         ghost.textContent = edata.label;
         document.body.appendChild(ghost);
-        moverGhost(clientX, clientY);
+        moverGhost(cx, cy);
     }
-
-    function moverGhost(cx, cy) {
-        if (!ghost) return;
-        ghost.style.left = cx + 'px';
-        ghost.style.top = cy + 'px';
-    }
-
+    function moverGhost(cx, cy) { if (ghost) { ghost.style.left=cx+'px'; ghost.style.top=cy+'px'; } }
     function terminarArrastre(cx, cy) {
         if (!eidArrastrando || !ghost) return;
-        ghost.remove();
-        ghost = null;
-
-        const eid = eidArrastrando;
-        eidArrastrando = null;
+        ghost.remove(); ghost = null;
+        const eid = eidArrastrando; eidArrastrando = null;
         const edata = ELECTRODOS_CONFIG.find(e => e.id === eid);
-
-        // Posición del drop como porcentaje de la imagen
         const img = document.getElementById('torsoImg');
         const rect = img.getBoundingClientRect();
-        const pctX = ((cx - rect.left) / rect.width) * 100;
-        const pctY = ((cy - rect.top) / rect.height) * 100;
-
-        // Convertir radius a % para comparar en la misma unidad
-        const rPctX = (edata.radius / rect.width) * 100;
-        const rPctY = (edata.radius / rect.height) * 100;
-
-        const dx = (pctX - edata.targetPctX) / rPctX;
-        const dy = (pctY - edata.targetPctY) / rPctY;
-        const dist = Math.sqrt(dx * dx + dy * dy); // < 1 = dentro del círculo
-
+        const pctX = ((cx-rect.left)/rect.width)*100, pctY = ((cy-rect.top)/rect.height)*100;
+        const rPctX = (edata.radius/rect.width)*100, rPctY = (edata.radius/rect.height)*100;
+        const dx = (pctX-edata.targetPctX)/rPctX, dy = (pctY-edata.targetPctY)/rPctY;
+        const dist = Math.sqrt(dx*dx+dy*dy);
         const feedback = document.getElementById('feedbackElectrodos');
-
         if (dist <= 1) {
             mjState.colocados[eid] = true;
             reproducirSonidoCorrecto();
             colocarElectrodo(edata);
             feedback.style.color = '#1e5c3a';
             feedback.textContent = `${edata.desc} — posición correcta`;
-
-            const total = ELECTRODOS_CONFIG.length;
-            const hechos = Object.keys(mjState.colocados).length;
+            const total = ELECTRODOS_CONFIG.length, hechos = Object.keys(mjState.colocados).length;
             document.getElementById('contadorElectrodos').textContent = `${hechos} / ${total}`;
             document.getElementById(`zona-drop-${eid}`)?.remove();
             renderBandeja();
-
             if (hechos === total) {
                 setTimeout(() => {
                     feedback.textContent = '¡Todos los electrodos están colocados correctamente!';
@@ -837,37 +940,25 @@ function mostrarMinijuegoElectrodos(parte, onCompletado) {
             }
         } else {
             feedback.style.color = '#e24b4a';
-            feedback.textContent = `Posición incorrecta para ${edata.label},  inténtalo de nuevo`;
+            feedback.textContent = `Posición incorrecta para ${edata.label}, inténtalo de nuevo`;
             setTimeout(() => { feedback.textContent = ''; }, 2200);
         }
     }
-
     function onMove(e) { moverGhost(e.clientX, e.clientY); }
     function onMoveTouch(e) { e.preventDefault(); moverGhost(e.touches[0].clientX, e.touches[0].clientY); }
-    function onUp(e) {
-        terminarArrastre(e.clientX, e.clientY);
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
-    }
-    function onUpTouch(e) {
-        const t = e.changedTouches[0];
-        terminarArrastre(t.clientX, t.clientY);
-        document.removeEventListener('touchmove', onMoveTouch);
-        document.removeEventListener('touchend', onUpTouch);
-    }
+    function onUp(e) { terminarArrastre(e.clientX, e.clientY); document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); }
+    function onUpTouch(e) { const t=e.changedTouches[0]; terminarArrastre(t.clientX, t.clientY); document.removeEventListener('touchmove', onMoveTouch); document.removeEventListener('touchend', onUpTouch); }
 
     overlay.addEventListener('mousedown', e => {
         const eid = e.target.closest('[data-eid]')?.dataset?.eid;
-        if (!eid) return;
-        e.preventDefault();
+        if (!eid) return; e.preventDefault();
         iniciarArrastre(eid, e.clientX, e.clientY);
         document.addEventListener('mousemove', onMove);
         document.addEventListener('mouseup', onUp);
     });
     overlay.addEventListener('touchstart', e => {
         const eid = e.target.closest('[data-eid]')?.dataset?.eid;
-        if (!eid) return;
-        e.preventDefault();
+        if (!eid) return; e.preventDefault();
         iniciarArrastre(eid, e.touches[0].clientX, e.touches[0].clientY);
         document.addEventListener('touchmove', onMoveTouch, { passive: false });
         document.addEventListener('touchend', onUpTouch);
@@ -881,6 +972,122 @@ function cerrarMinijuego() {
 
 
 /* =====================================================
+   HOLD DE DESCARGA — paso 6 (id='3')
+   =====================================================
+   El usuario debe mantener el botón presionado ~3 segundos.
+   Se muestra una barra de progreso mientras sostiene.
+   Si suelta antes, puede volver a intentarlo.
+   ===================================================== */
+
+function _iniciarHoldDescarga(mesh) {
+    if (_holdMesh) return;   // ya hay un hold en curso
+    _holdMesh  = mesh;
+    _holdStart = performance.now();
+
+    quitarResaltadoActual();
+    resaltarObjetoActivo(mesh.name);
+
+    // Crear barra de progreso
+    _crearBarraHold();
+
+    // Animar la barra
+    function animar() {
+        const elapsed = performance.now() - _holdStart;
+        const pct     = Math.min(elapsed / HOLD_DURACION * 100, 100);
+        const fill    = document.getElementById('holdBarraFill6');
+        if (fill) fill.style.width = pct + '%';
+        if (pct < 100) {
+            _holdBarraAnim = requestAnimationFrame(animar);
+        } else {
+            _completarHoldDescarga();
+        }
+    }
+    _holdBarraAnim = requestAnimationFrame(animar);
+}
+
+function _cancelarHoldDescarga() {
+    if (!_holdMesh) return;
+    cancelAnimationFrame(_holdBarraAnim);
+    _holdBarraAnim = null;
+    _restaurarMesh(_holdMesh.name);
+    _holdMesh  = null;
+    _holdStart = 0;
+    _eliminarBarraHold();
+    // Volver a resaltar el objeto esperando
+    const parte = PARTES[indiceActivo];
+    const obj   = parte.pasos?.[indiceImagenActual]?.objeto ?? parte.objeto;
+    if (obj) resaltarObjetoActivo(obj);
+}
+
+function _completarHoldDescarga() {
+    cancelAnimationFrame(_holdBarraAnim);
+    _holdBarraAnim = null;
+    const mesh = _holdMesh;
+    _holdMesh  = null;
+    _holdStart = 0;
+    _eliminarBarraHold();
+
+    quitarResaltadoActual();
+    reproducirSonidoCorrecto();
+    efectoClick(mesh);
+    resaltarConfirmacion(mesh);
+
+    const parte     = PARTES[indiceActivo];
+    const pasoActual = parte.pasos?.[indiceImagenActual];
+    if (pasoActual?.imagen) cambiarImagenPantalla(pasoActual.imagen);
+
+    const siguientePaso = indiceImagenActual + 1;
+    if (siguientePaso < (parte.pasos?.length ?? 0)) {
+        indiceImagenActual = siguientePaso;
+        const proxPaso     = parte.pasos[siguientePaso];
+        const instrEl = document.getElementById('instruccionSNihon6');
+        if (instrEl) instrEl.textContent = proxPaso.instruccion ?? parte.instruccion;
+        resaltarObjetoActivo(proxPaso.objeto);
+        crearSenal(proxPaso.objeto);
+        window._senalObjeto = proxPaso.objeto;
+    } else {
+        setTimeout(() => {
+            if (parte.video) { mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte)); }
+            else { avanzarDespuesDeVideo(parte); }
+        }, 1000);
+    }
+}
+
+function _crearBarraHold() {
+    _eliminarBarraHold();
+    const cc = document.getElementById('areaThreeJs');
+    if (!cc) return;
+
+    const wrap = document.createElement('div');
+    wrap.id = 'holdWrap6';
+    wrap.style.cssText = `
+        position:absolute;bottom:70px;left:50%;transform:translateX(-50%);
+        z-index:25;display:flex;flex-direction:column;align-items:center;gap:6px;
+        pointer-events:none;`;
+
+    wrap.innerHTML = `
+        <div style="
+            background:rgba(30,92,58,0.92);color:white;
+            padding:6px 18px;border-radius:20px;
+            font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;
+            white-space:nowrap;">
+            Mantén presionado...
+        </div>
+        <div style="
+            width:220px;height:8px;background:#e0e6e0;border-radius:4px;overflow:hidden;">
+            <div id="holdBarraFill6" style="
+                height:100%;width:0%;background:#1e5c3a;
+                border-radius:4px;transition:none;">
+            </div>
+        </div>`;
+    cc.appendChild(wrap);
+}
+
+function _eliminarBarraHold() {
+    document.getElementById('holdWrap6')?.remove();
+}
+
+/* =====================================================
    CÁMARA
    ===================================================== */
 
@@ -889,26 +1096,23 @@ function enfocarObjeto(nombreObjeto) {
     let obj = null;
     modeloCargado.traverse(o => { if (o.name === nombreObjeto) obj = o; });
     if (!obj) return;
-
     const pos = new THREE.Vector3();
     obj.getWorldPosition(pos);
     const off = PARTES[indiceActivo].camaraOffset;
     animarCamara(
         new THREE.Vector3(pos.x + off.x, pos.y + off.y, pos.z + off.z),
-        pos.clone(),
-        800
+        pos.clone(), 800
     );
 }
 
 function animarCamara(posDestino, targetDestino, duracionMs) {
     if (!camara || !controls) return;
-    const posInicio = camara.position.clone();
+    const posInicio    = camara.position.clone();
     const targetInicio = controls.target.clone();
-    const inicio = performance.now();
-
+    const inicio       = performance.now();
     function step(ahora) {
-        const t = Math.min((ahora - inicio) / duracionMs, 1);
-        const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        const t    = Math.min((ahora - inicio) / duracionMs, 1);
+        const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
         camara.position.lerpVectors(posInicio, posDestino, ease);
         controls.target.lerpVectors(targetInicio, targetDestino, ease);
         controls.update();
@@ -927,7 +1131,6 @@ function crearSenal(nombreObjeto) {
     if (!contenedor) return;
     contenedor.innerHTML = '';
     window._senalObjeto = nombreObjeto;
-
     const senal = document.createElement('div');
     senal.id = 'senalActiva';
     senal.style.cssText = 'position:absolute;width:36px;height:36px;top:0;left:0;pointer-events:none;';
@@ -949,43 +1152,39 @@ function crearSenal(nombreObjeto) {
 function actualizarSenales() {
     const senal = document.getElementById('senalActiva');
     if (!senal || !modeloCargado || !window._senalObjeto) return;
-
     let obj = null;
     modeloCargado.traverse(o => { if (o.name === window._senalObjeto) obj = o; });
     if (!obj) return;
-
     const pos = new THREE.Vector3();
     obj.getWorldPosition(pos);
     pos.project(camara);
-
     const canvas = renderer.domElement;
     const x = (pos.x * 0.5 + 0.5) * canvas.clientWidth;
     const y = (-pos.y * 0.5 + 0.5) * canvas.clientHeight;
-
     senal.style.display = pos.z > 1 ? 'none' : 'block';
-    senal.style.left = x + 'px';
-    senal.style.top = y + 'px';
+    senal.style.left    = x + 'px';
+    senal.style.top     = y + 'px';
 }
 
 window.togglePanelSNihon6 = function () {
-    const panel = document.getElementById('panelLateralSNihon6');
+    const panel   = document.getElementById('panelLateralSNihon6');
     const overlay = document.getElementById('overlayPanelSNihon6');
     if (!panel) return;
     panelLateralAbierto = !panelLateralAbierto;
-    panel.style.left = panelLateralAbierto ? '0' : '-320px';
-    overlay.style.opacity = panelLateralAbierto ? '1' : '0';
+    panel.style.left            = panelLateralAbierto ? '0' : '-320px';
+    overlay.style.opacity       = panelLateralAbierto ? '1' : '0';
     overlay.style.pointerEvents = panelLateralAbierto ? 'all' : 'none';
 };
 
 
 /* =====================================================
-   EVENTOS DE MOUSE (Three.js canvas)
+   EVENTOS DE MOUSE
    ===================================================== */
 
 function getMeshesYHits(event) {
     const rect = renderer.domElement.getBoundingClientRect();
-    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    mouse.x = ((event.clientX - rect.left) / rect.width)  *  2 - 1;
+    mouse.y = -((event.clientY - rect.top)  / rect.height) * 2 + 1;
     raycaster.setFromCamera(mouse, camara);
     const meshes = [];
     modeloCargado.traverse(o => { if (o.isMesh) meshes.push(o); });
@@ -994,13 +1193,22 @@ function getMeshesYHits(event) {
 
 function onMouseDown(event) {
     if (!modeloCargado) return;
-    const hits = getMeshesYHits(event);
+    const hits  = getMeshesYHits(event);
     if (!hits.length) return;
-
     const parte = PARTES[indiceActivo];
+
+    // ── Hold: paso 6 (descarga) ───────────────────────────────────
+    if (indiceActivo === 6) {
+        const pasoActual = parte.pasos?.[indiceImagenActual];
+        if (pasoActual && hits[0].object.name === pasoActual.objeto) {
+            _iniciarHoldDescarga(hits[0].object);
+        }
+        return;
+    }
+
     if (parte.tipo === 'rotar' && hits[0].object.name === parte.objeto) {
-        rotandoObjeto = true;
-        objetoRotando = hits[0].object;
+        rotandoObjeto  = true;
+        objetoRotando  = hits[0].object;
         mouseXAnterior = event.clientX;
         mouseYAnterior = event.clientY;
         renderer.domElement.style.cursor = 'grabbing';
@@ -1009,104 +1217,90 @@ function onMouseDown(event) {
 
 function onMouseMove(event) {
     if (!modeloCargado) return;
-
     if (rotandoObjeto && objetoRotando) {
-        const deltaX = event.clientX - mouseXAnterior;
+        const deltaX   = event.clientX - mouseXAnterior;
         mouseXAnterior = event.clientX;
         mouseYAnterior = event.clientY;
-
-        if (objetoRotando.name === 'selector') {
-            objetoRotando.rotation.x += deltaX * 0.01;
-        } else {
-            objetoRotando.rotation.x = THREE.MathUtils.clamp(
-                objetoRotando.rotation.x + deltaX * 0.01,
-                -Math.PI / 2,
-                Math.PI / 2
-            );
-            actualizarPantalla(objetoRotando.rotation.x);
-        }
+        objetoRotando.rotation.x = THREE.MathUtils.clamp(
+            objetoRotando.rotation.x + deltaX * 0.01,
+            -Math.PI / 2, Math.PI / 2
+        );
+        actualizarPantalla(objetoRotando.rotation.x);
         return;
     }
-
-    const hits = getMeshesYHits(event);
+    const hits  = getMeshesYHits(event);
     const parte = PARTES[indiceActivo];
-
     let objetosEsperados;
     if (parte.pasos?.length) {
         objetosEsperados = [parte.pasos[indiceImagenActual]?.objeto].filter(Boolean);
     } else {
         objetosEsperados = parte.objetosGrupo ?? [parte.objeto];
     }
-
     renderer.domElement.style.cursor = (
         hits.length > 0 && objetosEsperados.includes(hits[0].object.name)
-    ) ? (parte.tipo === 'rotar' ? 'grab' : 'pointer') : 'default';
+    ) ? 'pointer' : 'default';
 }
 
 function onMouseUp() {
+    // Cancel hold if user releases early
+    _cancelarHoldDescarga();
+
     if (!rotandoObjeto) return;
     rotandoObjeto = false;
     objetoRotando = null;
     renderer.domElement.style.cursor = 'default';
-
-    const parte = PARTES[indiceActivo];
-    if (parte.tipo !== 'rotar' || panelAbierto) return;
-
-    reproducirSonidoCorrecto();
-
-    if (parte.video) {
-        mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte));
-    } else {
-        avanzarDespuesDeVideo(parte);
-    }
 }
 
 function onClickCanvas(event) {
     if (!modeloCargado || rotandoObjeto || panelAbierto) return;
-
     const hits = getMeshesYHits(event);
     if (!hits.length) return;
-
-    const parte = PARTES[indiceActivo];
-
-    // Los pasos tipo minijuego se activan desde el botón, no desde el canvas
+    const parte     = PARTES[indiceActivo];
     if (parte.tipo === 'minijuego') return;
-
     const nombreHit = hits[0].object.name;
 
-    // parte corregida
+    // ── HOLD mechanic: paso 6 (descarga, id='3') ─────────────────
+    // El usuario debe mantener presionado ~3 segundos.
+    // Se maneja con mousedown/mouseup separado (ver onMouseDown/onMouseUp).
+    // Aquí solo ignoramos el click normal para ese paso.
+    if (indiceActivo === 6) return;
+
     if (parte.pasos?.length) {
         const pasoActual = parte.pasos[indiceImagenActual];
         if (nombreHit !== pasoActual.objeto) return;
 
+        // ─────────────────────────────────────────────────────
+        // [PEGAR EN CADA SECCIÓN NIHON — BLOQUE M]
+        // Quitar naranja, feedback, imagen, resaltar siguiente.
+        // ─────────────────────────────────────────────────────
+        quitarResaltadoActual();
         reproducirSonidoCorrecto();
         efectoClick(hits[0].object);
+        resaltarConfirmacion(hits[0].object);
 
-        // Primero muestra la imagen del paso actual
         if (pasoActual.imagen) cambiarImagenPantalla(pasoActual.imagen);
 
         const siguientePaso = indiceImagenActual + 1;
-
         if (siguientePaso < parte.pasos.length) {
-            // Hay más pasos — avanza el índice y actualiza señal e instrucción
             indiceImagenActual = siguientePaso;
-            const proxPaso = parte.pasos[siguientePaso];
-
-            const instruccionEl = document.getElementById('instruccionSNihon6');
+            const proxPaso     = parte.pasos[siguientePaso];
+            // ── IMPORTANTE: usa el ID correcto de esta sección ──
+            const instruccionEl = document.getElementById('instruccionSNihon6');  // ← BUG CORREGIDO: era SNihon3
             if (instruccionEl) instruccionEl.textContent = proxPaso.instruccion ?? parte.instruccion;
-
+            resaltarObjetoActivo(proxPaso.objeto);
             crearSenal(proxPaso.objeto);
             window._senalObjeto = proxPaso.objeto;
-
         } else {
-            // Último paso — espera un momento para que se vea la imagen y completa
+            // ── Pausar animación solo al completar el paso 0 (perilla) ──
+            // En los demás pasos NO se vuelve a llamar, ya está pausada
+            // desde activarParte(indice > 0).
+            // Pausar solo al completar la perilla (índice 1 en esta sección)
+            // Al completar la perilla (índice 0), pausar en SEGUNDO_ENCENDIDO
+            if (indiceActivo === 0) pausarAnimacionEn(SEGUNDO_ENCENDIDO);
             setTimeout(() => {
-                if (parte.video) {
-                    mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte));
-                } else {
-                    avanzarDespuesDeVideo(parte);
-                }
-            }, 900);
+                if (parte.video) { mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte)); }
+                else { avanzarDespuesDeVideo(parte); }
+            }, 1800);
         }
         return;
     }
@@ -1114,50 +1308,49 @@ function onClickCanvas(event) {
     const validos = parte.objetosGrupo ?? [parte.objeto];
     if (!validos.includes(nombreHit)) return;
 
+    quitarResaltadoActual();
     reproducirSonidoCorrecto();
     efectoClick(hits[0].object);
+    resaltarConfirmacion(hits[0].object);
+
+    // ── Paso 3 (energia): pausar en SEGUNDO_ENERGIA al hacer clic ──
+    // A partir de aquí todos los pasos siguientes quedarán en ese segundo.
+    if (indiceActivo === 3) pausarAnimacionEn(SEGUNDO_ENERGIA);
 
     if (parte.imagenesPantalla?.length) {
         const siguienteImg = indiceImagenActual + 1;
         if (siguienteImg < parte.imagenesPantalla.length) {
             indiceImagenActual = siguienteImg;
             cambiarImagenPantalla(parte.imagenesPantalla[siguienteImg]);
-
             const instruccionEl = document.getElementById('instruccionSNihon6');
             if (instruccionEl && parte.instrucciones?.[siguienteImg]) {
                 instruccionEl.textContent = parte.instrucciones[siguienteImg];
             }
-
             const esUltima = siguienteImg === parte.imagenesPantalla.length - 1;
             if (!esUltima) return;
         }
     }
 
-    if (parte.video) {
-        mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte));
-    } else {
-        avanzarDespuesDeVideo(parte);
-    }
+    if (parte.video) { mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte)); }
+    else { avanzarDespuesDeVideo(parte); }
 }
 
 
 /* =====================================================
-   SONIDO DE ACIERTO
+   SONIDO
    ===================================================== */
 
 function reproducirSonidoCorrecto() {
     try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
+        const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+        const osc  = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
+        osc.connect(gain); gain.connect(ctx.destination);
         osc.frequency.setValueAtTime(880, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
         gain.gain.setValueAtTime(0.25, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.18);
+        osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.18);
     } catch { }
 }
 
@@ -1172,63 +1365,35 @@ function efectoClick(objeto) {
     if (objeto.material?.color) {
         const colorOrig = objeto.material.color.clone();
         objeto.material.color.multiplyScalar(0.65);
-        setTimeout(() => {
-            objeto.scale.copy(escOrig);
-            objeto.material.color.copy(colorOrig);
-        }, 160);
-    } else {
-        setTimeout(() => objeto.scale.copy(escOrig), 160);
-    }
+        setTimeout(() => { objeto.scale.copy(escOrig); objeto.material.color.copy(colorOrig); }, 160);
+    } else { setTimeout(() => objeto.scale.copy(escOrig), 160); }
 }
 
 function actualizarPantalla(angulo) {
     if (!modeloCargado) return;
-
     const modo = MODOS_PERILLA.reduce((prev, curr) =>
         Math.abs(curr.angulo - angulo) < Math.abs(prev.angulo - angulo) ? curr : prev
     );
-
     if (_modoActual === modo.nombre) return;
     _modoActual = modo.nombre;
-
     let pantalla = null;
     modeloCargado.traverse(o => { if (o.name === 'pantalla001') pantalla = o; });
     if (!pantalla) return;
-
     if (!modo.imagen) {
-        if (pantalla.material) {
-            pantalla.material.map = null;
-            pantalla.material.color.set(0x000000);
-            pantalla.material.needsUpdate = true;
-        }
+        if (pantalla.material) { pantalla.material.map = null; pantalla.material.color.set(0x000000); pantalla.material.needsUpdate = true; }
         return;
     }
-
-    if (_cachTexturas[modo.imagen]) {
-        aplicarTexturaPantalla(pantalla, _cachTexturas[modo.imagen]);
-    } else {
-        new THREE.TextureLoader().load(modo.imagen, textura => {
-            _cachTexturas[modo.imagen] = textura;
-            aplicarTexturaPantalla(pantalla, textura);
-        });
-    }
+    if (_cachTexturas[modo.imagen]) { aplicarTexturaPantalla(pantalla, _cachTexturas[modo.imagen]); }
+    else { new THREE.TextureLoader().load(modo.imagen, t => { _cachTexturas[modo.imagen] = t; aplicarTexturaPantalla(pantalla, t); }); }
 }
 
 function aplicarTexturaPantalla(pantalla, textura) {
     if (!pantalla.material) return;
     textura.wrapS = textura.wrapT = THREE.ClampToEdgeWrapping;
-    textura.repeat.set(1, 1);
-    textura.offset.set(0, 0);
-    textura.flipY = false;
-    textura.needsUpdate = true;
-
-    const mats = Array.isArray(pantalla.material)
-        ? pantalla.material : [pantalla.material];
-    mats.forEach(mat => {
-        mat.map = textura;
-        mat.color.set(0xffffff);
-        mat.needsUpdate = true;
-    });
+    textura.repeat.set(1,1); textura.offset.set(0,0);
+    textura.flipY = false; textura.needsUpdate = true;
+    const mats = Array.isArray(pantalla.material) ? pantalla.material : [pantalla.material];
+    mats.forEach(mat => { mat.map = textura; mat.color.set(0xffffff); mat.needsUpdate = true; });
 }
 
 function cambiarImagenPantalla(rutaImagen) {
@@ -1236,15 +1401,8 @@ function cambiarImagenPantalla(rutaImagen) {
     let pantalla = null;
     modeloCargado.traverse(o => { if (o.name === 'pantalla001') pantalla = o; });
     if (!pantalla) return;
-
-    if (_cachTexturas[rutaImagen]) {
-        aplicarTexturaPantalla(pantalla, _cachTexturas[rutaImagen]);
-        return;
-    }
-    new THREE.TextureLoader().load(rutaImagen, textura => {
-        _cachTexturas[rutaImagen] = textura;
-        aplicarTexturaPantalla(pantalla, textura);
-    });
+    if (_cachTexturas[rutaImagen]) { aplicarTexturaPantalla(pantalla, _cachTexturas[rutaImagen]); return; }
+    new THREE.TextureLoader().load(rutaImagen, t => { _cachTexturas[rutaImagen] = t; aplicarTexturaPantalla(pantalla, t); });
 }
 
 
@@ -1255,80 +1413,48 @@ function cambiarImagenPantalla(rutaImagen) {
 function mostrarVideoPopup(parte, onTerminado) {
     panelAbierto = true;
     document.getElementById('videoPopupSNihon6')?.remove();
-
     const contenedor = document.getElementById('areaThreeJs');
     const popup = document.createElement('div');
     popup.id = 'videoPopupSNihon6';
-    popup.style.cssText = `
-        position:absolute;inset:0;
-        background:rgba(0,0,0,0.88);
-        display:flex;flex-direction:column;
-        align-items:center;justify-content:center;
-        z-index:20;font-family:'DM Sans',sans-serif;`;
-
+    popup.style.cssText = `position:absolute;inset:0;background:rgba(0,0,0,0.88);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;font-family:'DM Sans',sans-serif;`;
     popup.innerHTML = `
         <div style="width:82%;max-width:720px;">
-            <p style="color:white;font-size:0.85rem;font-weight:600;
-                text-align:center;margin:0 0 12px;opacity:0.85;">
-                Video complementario — debes verlo completo para continuar
-            </p>
-            <div style="position:relative;padding-bottom:56.25%;height:0;
-                overflow:hidden;border-radius:12px;background:#000;">
-                <iframe id="ytFramePopupSNihon6"
-                    src="${construirUrlVideo(parte)}"
-                    style="position:absolute;top:0;left:0;
-                           width:100%;height:100%;border:none;"
-                    allowfullscreen>
-                </iframe>
+            <p style="color:white;font-size:0.85rem;font-weight:600;text-align:center;margin:0 0 12px;opacity:0.85;">Video complementario — debes verlo completo para continuar</p>
+            <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;background:#000;">
+                <iframe id="ytFramePopupSNihon6" src="${construirUrlVideo(parte)}"
+                    style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen></iframe>
             </div>
-            <p id="avisoPopupSNihon6" style="
-                color:#e05c3a;font-size:0.78rem;
-                text-align:center;margin:10px 0 0;">
-                El video debe terminar para continuar
-            </p>
+            <p id="avisoPopupSNihon6" style="color:#e05c3a;font-size:0.78rem;text-align:center;margin:10px 0 0;">El video debe terminar para continuar</p>
         </div>`;
-
     contenedor.appendChild(popup);
     setTimeout(() => iniciarYTPopupSNihon6(onTerminado), 600);
 }
 
-function cerrarVideoPopup() {
-    document.getElementById('videoPopupSNihon6')?.remove();
-    panelAbierto = false;
-}
+function cerrarVideoPopup() { document.getElementById('videoPopupSNihon6')?.remove(); panelAbierto = false; }
 
 function iniciarYTPopupSNihon6(onTerminado) {
     if (!document.getElementById('ytApiScript')) {
         const tag = document.createElement('script');
-        tag.id = 'ytApiScript';
-        tag.src = 'https://www.youtube.com/iframe_api';
+        tag.id = 'ytApiScript'; tag.src = 'https://www.youtube.com/iframe_api';
         document.head.appendChild(tag);
     }
-
     const activar = () => {
         const frame = document.getElementById('ytFramePopupSNihon6');
         if (!frame || !window.YT?.Player) return;
         if (ytPlayer) { try { ytPlayer.destroy(); } catch { } ytPlayer = null; }
-
         ytPlayer = new YT.Player('ytFramePopupSNihon6', {
-            events: {
-                onStateChange: e => {
-                    if (e.data === YT.PlayerState.ENDED) {
-                        document.getElementById('avisoPopupSNihon6')?.remove();
-                        setTimeout(() => {
-                            cerrarVideoPopup();
-                            if (ytPlayer) {
-                                try { ytPlayer.destroy(); } catch { }
-                                ytPlayer = null;
-                            }
-                            onTerminado?.();
-                        }, 600);
-                    }
+            events: { onStateChange: e => {
+                if (e.data === YT.PlayerState.ENDED) {
+                    document.getElementById('avisoPopupSNihon6')?.remove();
+                    setTimeout(() => {
+                        cerrarVideoPopup();
+                        if (ytPlayer) { try { ytPlayer.destroy(); } catch { } ytPlayer = null; }
+                        onTerminado?.();
+                    }, 600);
                 }
-            }
+            }}
         });
     };
-
     window.YT?.Player ? activar() : (window.onYouTubeIframeAPIReady = activar);
 }
 
@@ -1345,10 +1471,7 @@ function construirUrlVideo(parte) {
    ===================================================== */
 
 function pararMedia() {
-    if (ytPlayer) {
-        try { ytPlayer.stopVideo(); ytPlayer.destroy(); } catch { }
-        ytPlayer = null;
-    }
+    if (ytPlayer) { try { ytPlayer.stopVideo(); ytPlayer.destroy(); } catch { } ytPlayer = null; }
     document.getElementById('videoPopupSNihon6')?.remove();
     document.getElementById('minijuegoElectrodosSNihon6')?.remove();
     panelAbierto = false;
