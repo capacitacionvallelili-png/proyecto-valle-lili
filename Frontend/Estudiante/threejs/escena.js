@@ -14,10 +14,17 @@ export { THREE };
 function obtenerRenderer(contenedor) {
     if (!window._threeRenderer) {
         window._threeRenderer = new THREE.WebGLRenderer({
-            antialias: true,
-            powerPreference: 'high-performance'
+            antialias: false,          // ← desactiva antialiasing (costoso)
+            powerPreference: 'low-power', // ← pide menos recursos al GPU
+            precision: 'mediump',      // ← precisión media en shaders
+            logarithmicDepthBuffer: false,
         });
-        window._threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        // Limita el pixel ratio para no sobrecargar
+        window._threeRenderer.setPixelRatio(1); // ← fijo en 1, sin importar la pantalla
+        
+        // Limita la memoria de texturas
+        window._threeRenderer.capabilities.maxTextures = 8;
     }
 
     window._threeRenderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
@@ -28,7 +35,6 @@ function obtenerRenderer(contenedor) {
 
     return window._threeRenderer;
 }
-
 /* ===== INICIALIZAR ESCENA ===== */
 export function inicializarEscena(contenedorId) {
     const contenedor = document.getElementById(contenedorId);
@@ -48,10 +54,13 @@ export function inicializarEscena(contenedorId) {
 
     const renderer = obtenerRenderer(contenedor);
 
-    escena.add(new THREE.AmbientLight(0xffffff, 0.7));
-    const luzDir = new THREE.DirectionalLight(0xffffff, 0.8);
-    luzDir.position.set(5, 10, 5);
-    escena.add(luzDir);
+    if (renderer.getContext().isContextLost()) {
+        const ext = renderer.getContext().getExtension('WEBGL_lose_context');
+        if (ext) ext.restoreContext();
+    }
+
+    // ← Solo esta luz, sin DirectionalLight
+    escena.add(new THREE.AmbientLight(0xffffff, 1.2));
 
     const controls = new OrbitControls(camara, renderer.domElement);
     controls.enableDamping = true;
@@ -157,12 +166,18 @@ export function limpiarRenderer(destroy = false) {
     if (!window._threeRenderer) return;
 
     const canvas = window._threeRenderer.domElement;
+    
+    // Solo desconecta del DOM, nunca destruyas el contexto entre secciones
     if (canvas.parentNode) {
         canvas.parentNode.removeChild(canvas);
     }
 
+    // Solo destruye si se pasa destroy=true explícitamente (ej: cerrar sesión)
     if (destroy) {
-        try { window._threeRenderer.dispose(); } catch { }
+        try { 
+            window._threeRenderer.forceContextLoss();
+            window._threeRenderer.dispose(); 
+        } catch { }
         window._threeRenderer = null;
         window._cacheModelos = {};
     }
