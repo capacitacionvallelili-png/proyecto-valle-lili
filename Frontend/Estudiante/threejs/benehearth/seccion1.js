@@ -26,8 +26,8 @@ export function iniciarSeccion1(contenedorId) {
 
     // 
     cargarModelo(
-        //'/Estudiante/threejs/modelados/benehearthFinal2.glb',
-        '/Estudiante/threejs/modelados/Final.glb',
+        //'/Estudiante/threejs/modelados/texturas2040_4.glb',
+        '/Estudiante/threejs/modelados/texturas2040_4.glb',
         escena, camara, controls,
         (modelo, animaciones, mix) => {
             mixer = mix;

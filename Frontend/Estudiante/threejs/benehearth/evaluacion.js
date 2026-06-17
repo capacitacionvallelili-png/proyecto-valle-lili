@@ -148,7 +148,7 @@ function _restaurarColores() {
 }
 
 function _buscarMeshEnCache(nombre) {
-    const modelo = window._cacheModelos?.['/Estudiante/threejs/modelados/Final.glb'];
+    const modelo = window._cacheModelos?.['/Estudiante/threejs/modelados/texturas2040_4.glb'];
     if (!modelo) return null;
     let found = null;
     modelo.traverse(o => { if (o.name === nombre) found = o; });
@@ -370,7 +370,7 @@ function _mostrarPregunta3DClick(contenedor, pregunta, indice) {
     _escena3d = base.escena; _camara3d = base.camara; _renderer3d = base.renderer;
     _controls3d = base.controls; _reloj3d = base.reloj;
     _raycaster3d = new THREE.Raycaster(); _mouse3d = new THREE.Vector2();
-    cargarModelo('/Estudiante/threejs/modelados/Final.glb', _escena3d, _camara3d, _controls3d,
+    cargarModelo('/Estudiante/threejs/modelados/texturas2040_4.glb', _escena3d, _camara3d, _controls3d,
         (modelo) => {
             _modelo3d = modelo;
             _modelo3d.traverse(o => { if (o.name === 'perilla001') o.rotation.x = -1.57; });
@@ -454,7 +454,7 @@ function _mostrarPregunta3DSelector(contenedor, pregunta, indice) {
     _controls3d = base.controls; _reloj3d = base.reloj;
     _raycaster3d = new THREE.Raycaster(); _mouse3d = new THREE.Vector2();
     _indiceCicloP3 = 0;
-    cargarModelo('/Estudiante/threejs/modelados/Final.glb', _escena3d, _camara3d, _controls3d,
+    cargarModelo('/Estudiante/threejs/modelados/texturas2040_4.glb', _escena3d, _camara3d, _controls3d,
         (modelo) => {
             _modelo3d = modelo;
             _modelo3d.traverse(o => { if (o.name === 'perilla001') o.rotation.x = -0.9; });

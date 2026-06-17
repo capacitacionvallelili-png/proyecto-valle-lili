@@ -200,7 +200,7 @@ export function iniciarSeccion7(contenedorId) {
     mostrarLoader(contenedorId);
 
     cargarModelo(
-        '/Estudiante/threejs/modelados/Final.glb',
+        '/Estudiante/threejs/modelados/texturas2040_3.glb',
         escena, camara, controls,
         (modelo, anim, mix) => {
             modeloCargado = modelo;

@@ -312,7 +312,7 @@ export function iniciarSeccion2(contenedorId) {
     audioCompleto.volume = 0.85;
 
     cargarModelo(
-        '/Estudiante/threejs/modelados/Final.glb',
+        '/Estudiante/threejs/modelados/texturas2040_4.glb',
         escena, camara, controls,
         (modelo, anim, mix) => {
             modeloCargado = modelo;
