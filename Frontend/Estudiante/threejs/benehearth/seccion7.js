@@ -4,7 +4,7 @@ const MODOS_PERILLA = [
     { nombre: 'Manual', angulo: -1.57, imagen: '/Estudiante/threejs/img/manual.png' },
     { nombre: 'Monitor', angulo: -1, imagen: '/Estudiante/threejs/img/MODOMONITOR.png' },
     { nombre: 'Apagado', angulo: 0, imagen: '/Estudiante/threejs/img/negro.jpg' },
-    { nombre: 'Marcapasos', angulo: 1, imagen: '/Estudiante/threejs/img/marcapasos.png' },
+    { nombre: 'Marcapasos', angulo: 1, imagen: '/Estudiante/threejs/img/marcapasos/marcapasos.png' },
     { nombre: 'DEA', angulo: 2, imagen: '/Estudiante/threejs/img/DEA.png' },
 ];
 
@@ -33,62 +33,70 @@ const PARTES = [
         instruccion: "Gira la perilla hasta el modo marcapasos"
 
     },
-    // ─── PASO CON MINIJUEGO DE ELECTRODOS ───────────────────────────────────
+    // ─── PASO CON MINIJUEGO DE PALAS (RA / LL) ──────────────────────────────
 
     {
         id: 'selector',
-        nombre: 'Solo si el médico indica Modo fijo: En la pantalla, ubique la opción Modo Marcap. Gire la perilla de navegación hasta seleccionar [Modo fijo] y presiónela para confirmar. Si no se indica, continúe al siguiente paso el equipo ya está en Modo a demanda.',
+        nombre: 'Conecte las palas de marcapasos al paciente correctamente. Verifique que estén bien ubicadas antes de continuar.',
         objeto: 'selector',
-        tipo: 'click',
+        tipo: 'minijuego',
         //camaraOffset: { x: 0, y: 0, z: 0.9 },
-        instruccion: 'Si recibe la indicación del medico gira la perilla de navegación'
+         imagenesPantalla: ['/Estudiante/threejs/img/marcapasos/marcapasos.png'],
+         video:"https://youtu.be/-bBl3ntabnw",
+        instruccion: 'Conecte las palas de marcapasos al paciente correctamente.'
 
     },
     {
         id: 'selector1',
-        nombre: 'Observe la pantalla. Verá el trazado de ECG. Gire la perilla de navegación para seleccionar una derivada donde la onda R se vea claramente.',
+        nombre: 'Gire la perilla de navegación para ajustar la frecuencia y la salida de corriente del marcapasos al valor indicado por el médico',
         objeto: 'selector',
         tipo: 'click',
+        imagenesPantalla: ['/Estudiante/threejs/img/marcapasos/70.png'],
         // camaraOffset: { x: 0, y: 0, z: 0.9 },
-        objeto: 'selector', imagen: '/Estudiante/threejs/img/marcapasos.png', instruccion: 'Gire la perilla para seleccionar una derivada donde se vea bien la onda'
+        pasos: [
+            { objeto: 'selector', imagen: '/Estudiante/threejs/img/marcapasos/90.png', instruccion: 'Gire la perilla de navegación para ajustar la frecuencia' },
+            { objeto: 'selector', imagen: '/Estudiante/threejs/img/marcapasos/55.png', instruccion: 'Gire la perilla de navegación para ajustar la salida' },
+            { objeto: 'selector', imagen: '/Estudiante/threejs/img/marcapasos/200.png', instruccion: 'Gire la perilla de navegación para ajustar la salida' },
+           
+
+        ],
+        video:"https://youtu.be/GKLwS2iLHvQ"
 
     },
     {
         id: 'selector2',
-        nombre: 'Verifique que aparecen marcadores blancos sobre cada onda R en el trazado. Si los marcadores no coinciden con las ondas R o aparecen en otro lugar, seleccione una derivada diferente.',
-        objeto: 'selector',
+        nombre: 'Presione el botón de pantalla [Inic estim] para iniciar la estimulación. La pantalla mostrará el mensaje "Estimulac".',
+        objeto: 'Flecha1',
         tipo: 'click',
+        imagenesPantalla: ['/Estudiante/threejs/img/marcapasos/paso4_iniciarEstimulacion.png'],
         //camaraOffset: { x: 0, y: 0, z: 0.9 },
         pasos: [
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/marcapasos.png', instruccion: 'Seleccione otra derivada diferente' },
+            { objeto: 'Flecha1', imagen: '/Estudiante/threejs/img/marcapasos/paso4_detenerEstimulacion.png', instruccion: 'Seleccione iniciar estimulación' },
 
         ],
-        //video: 'https://youtu.be/pIyeGQ2r87Y',
+        
     },
     {
         id: 'selector3',
-        nombre: 'Gire la perilla de navegación para ajustar la frecuencia del marcapasos al valor indicado por el médico',
+        nombre: ' Solo si el médico indica Modo fijo: En la pantalla, ubique la opción Modo Marcap. Gire la perilla de navegación hasta seleccionar [Modo fijo] y presiónela para confirmar. Si no se indica, continúe al siguiente paso el equipo ya está en Modo a demanda.',
         objeto: 'selector',
         tipo: 'click',
         //camaraOffset: { x: 0, y: 0, z: 0.9 },
+        imagenesPantalla:["/Estudiante/threejs/img/marcapasos/paso5_modoDemanda.png"],
         pasos: [
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/marcapasos.png', instruccion: 'Seleccione otra derivada diferente' },
+            { objeto: 'selector', imagen: '/Estudiante/threejs/img/marcapasos/paso5_modoFijo.png', instruccion: 'Seleccione la perilla de navegacion para cambiar el modo' },
 
         ],
-        //video: 'https://youtu.be/pIyeGQ2r87Y',
+        video: 'https://youtu.be/PdivPcaKe8I',
     },
 
     {
         id: 'selector4',
-        nombre: 'Presione el botón de pantalla [Inic estim] para iniciar la estimulación. La pantalla mostrará el mensaje "Estimulac".',
+        nombre: 'Observe la pantalla. Verá el trazado de ECG. Gire la perilla de navegación para seleccionar una derivada donde la onda R se vea claramente.',
         objeto: 'selector',
         tipo: 'click',
-        // camaraOffset: { x: 0, y: 0, z: 0.9 },
-        pasos: [
-            { objeto: 'selector', imagen: '/Estudiante/threejs/img/marcapasos.png', instruccion: 'Presione el botón de pantalla' },
+        imagenesPantalla:["/Estudiante/threejs/img/marcapasos/paso6_visualizacionECG.png"],
 
-        ],
-        //video: 'https://youtu.be/pIyeGQ2r87Y',
     },
 
 
@@ -97,35 +105,33 @@ const PARTES = [
 
 
 /* =====================================================
-   CONFIGURACIÓN DEL MINIJUEGO DE ELECTRODOS
-   ===================================================== */
-const ELECTRODOS_CONFIG = [
+   CONFIGURACIÓN DEL MINIJUEGO DE PALAS (RA / LL)
+   ═══════════════════════════════════════════════════════
+   Mismo mecanismo de drag&drop que el minijuego de palas
+   de seccion5 (misma posición targetPctX/Y), pero con
+   etiquetas RA / LL y un único color azul clarito para
+   ambas, en lugar de los 2 colores distintos de esternón/ápex.
+   ═══════════════════════════════════════════════════════ */
+const COLOR_PALA_S7 = '#7ec8e3'; // azul clarito — mismo para ambas palas
+
+const PALAS_CONFIG = [
     {
-        id: 'R',
-        label: 'R / RA',
-        desc: 'R',
-        color: '#e24b4a',
-        targetPctX: 38.5,
-        targetPctY: 26.2,
-        radius: 27,
+        id: '1',
+        label: 'LL',
+        desc: 'LL',
+        color: COLOR_PALA_S7,
+        targetPctX: 62,
+        targetPctY: 60,
+        radius: 30,
     },
     {
-        id: 'L',
-        label: 'L / LA',
-        desc: 'L',
-        color: '#ba7517',
-        targetPctX: 61.6,
-        targetPctY: 26.2,
-        radius: 27,
-    },
-    {
-        id: 'F',
-        label: 'F / LL',
-        desc: 'F',
-        color: '#1d9e75',
-        targetPctX: 61.5,
-        targetPctY: 68.1,
-        radius: 27,
+        id: '2',
+        label: 'RA',
+        desc: 'RA',
+        color: COLOR_PALA_S7,
+        targetPctX: 38,
+        targetPctY: 35,
+        radius: 30,
     },
 ];
 
@@ -200,7 +206,7 @@ export function iniciarSeccion7(contenedorId) {
     mostrarLoader(contenedorId);
 
     cargarModelo(
-        '/Estudiante/threejs/modelados/texturas2040_3.glb',
+        '/Estudiante/threejs/modelados/texturas2040_4.glb',
         escena, camara, controls,
         (modelo, anim, mix) => {
             modeloCargado = modelo;
@@ -296,7 +302,7 @@ export function destruirSeccion7() {
     document.getElementById('loaderSeccion7')?.remove();
     document.getElementById('checklistS7')?.remove();
     document.getElementById('videoPopupS7')?.remove();
-    document.getElementById('minijuegoElectrodosS7')?.remove();
+    document.getElementById('minijuegoPalasS7')?.remove();
 
     //Correcion 6
     document.getElementById('feedbackPerillaS7')?.remove(); // [G] limpiar feedback perilla
@@ -523,7 +529,7 @@ function activarParte(indice) {
             instrEl.style.pointerEvents = 'all';
             instrEl.innerHTML = `
                 <span style="color:#5a7a62;margin-right:10px;">
-                    Para conectar los electrodos al paciente dale al botón de iniciar
+                    Ubica los parches sobre el paciente en la posición correcta
                 </span>
                 <button
                     onclick="window._lanzarMinijuegoS7()"
@@ -535,7 +541,7 @@ function activarParte(indice) {
         }
 
         window._lanzarMinijuegoS7 = () => {
-            mostrarMinijuegoElectrodos(parte, () => avanzarDespuesDeVideo(parte));
+            mostrarMinijuegoPalasS7(parte, () => avanzarDespuesDeVideo(parte));
         };
         return;
     }
@@ -808,24 +814,31 @@ function restaurarEstadoPerilla() {
 
 
 /* =====================================================
-   MINIJUEGO DE ELECTRODOS
-   ===================================================== */
+   MINIJUEGO DE PALAS (RA / LL)
+   ═══════════════════════════════════════════════════════
+   Adaptado del minijuego de palas de seccion5
+   (mostrarMinijuegoPalas). Misma mecánica de drag&drop,
+   mismas posiciones objetivo, pero usando PALAS_CONFIG
+   con etiquetas RA/LL y color único azul clarito.
+   IDs y nombres de función con sufijo S7 para no chocar
+   con seccion5 si ambos archivos llegaran a coexistir.
+   ═══════════════════════════════════════════════════════ */
 
-function mostrarMinijuegoElectrodos(parte, onCompletado) {
+function mostrarMinijuegoPalasS7(parte, onCompletado) {
     panelAbierto = true;
-    document.getElementById('minijuegoElectrodosS7')?.remove();
+    document.getElementById('minijuegoPalasS7')?.remove();
 
-    // Keyframes — solo se insertan una vez en el documento
-    if (!document.getElementById('mjKeyframes')) {
+    // Keyframes — solo una vez en el documento
+    if (!document.getElementById('mjPalasKeyframesS7')) {
         const style = document.createElement('style');
-        style.id = 'mjKeyframes';
+        style.id = 'mjPalasKeyframesS7';
         style.textContent = `
-            @keyframes pulsarZona {
-                0%,100%{opacity:0.6;transform:scale(1);}
-                50%{opacity:1;transform:scale(1.08);}
+            @keyframes pulsarZonaPalaS7 {
+                0%,100%{opacity:0.55;transform:scale(1);}
+                50%{opacity:1;transform:scale(1.07);}
             }
-            @keyframes aparecerElectrodo {
-                from{transform:scale(0.5);opacity:0;}
+            @keyframes aparecerPalaS7 {
+                from{transform:scale(0.4);opacity:0;}
                 to{transform:scale(1);opacity:1;}
             }`;
         document.head.appendChild(style);
@@ -833,7 +846,7 @@ function mostrarMinijuegoElectrodos(parte, onCompletado) {
 
     const contenedor = document.getElementById('areaThreeJs');
     const overlay = document.createElement('div');
-    overlay.id = 'minijuegoElectrodosS7';
+    overlay.id = 'minijuegoPalasS7';
     overlay.style.cssText = `
         position:absolute;inset:0;
         background:rgba(0,0,0,0.82);
@@ -849,29 +862,32 @@ function mostrarMinijuegoElectrodos(parte, onCompletado) {
             padding:20px;box-sizing:border-box;
             display:flex;flex-direction:column;gap:14px;">
 
+            <!-- Encabezado -->
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                 <div>
                     <p style="margin:0;font-size:0.9rem;font-weight:600;color:#1e5c3a;">
-                        Coloca los electrodos
+                        Ubica los parches sobre el paciente
                     </p>
                     <p style="margin:4px 0 0;font-size:0.78rem;color:#5a7a62;">
-                        Arrastra cada electrodo al punto correcto del cuerpo del paciente
+                        Arrastra cada parche a su posición correcta en el cuerpo del paciente
                     </p>
                 </div>
-                <span id="contadorElectrodos" style="
+                <span id="contadorPalasS7" style="
                     font-size:0.75rem;color:#9ab0a0;
                     background:#f0f5f0;padding:4px 10px;
-                    border-radius:20px;">0 / ${ELECTRODOS_CONFIG.length}</span>
+                    border-radius:20px;">0 / ${PALAS_CONFIG.length}</span>
             </div>
 
+            <!-- Área principal: bandeja + torso -->
             <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;">
 
-                <div style="display:flex;flex-direction:column;gap:6px;min-width:80px;">
+                <!-- Bandeja de palas -->
+                <div style="display:flex;flex-direction:column;gap:6px;min-width:110px;">
                     <p style="margin:0 0 4px;font-size:0.72rem;color:#9ab0a0;
-                        text-transform:uppercase;letter-spacing:0.05em;">Electrodos</p>
-                    <div id="bandejaElectrodos" style="
-                        display:flex;flex-direction:column;gap:10px;
-                        padding:10px;
+                        text-transform:uppercase;letter-spacing:0.05em;">Palas</p>
+                    <div id="bandejaPalasS7" style="
+                        display:flex;flex-direction:column;gap:12px;
+                        padding:12px;
                         background:#f5f8f5;
                         border:1.5px dashed #c8d8c8;
                         border-radius:10px;
@@ -880,25 +896,28 @@ function mostrarMinijuegoElectrodos(parte, onCompletado) {
                     </div>
                 </div>
 
+                <!-- Torso con zonas drop -->
                 <div style="position:relative;flex:1;min-width:220px;">
                     <img
-                        id="torsoImg"
+                        id="torsoImgPalasS7"
                         src="/Estudiante/threejs/img/torso.png"
                         draggable="false"
                         style="width:100%;max-width:550px;display:block;
                             border-radius:10px;user-select:none;pointer-events:none;">
-                    <div id="zonasDrop" style="position:absolute;inset:0;"></div>
-                    <div id="electrodosColocados" style="position:absolute;inset:0;pointer-events:none;"></div>
+                    <div id="zonasDropPalasS7" style="position:absolute;inset:0;"></div>
+                    <div id="palasColocadasS7" style="position:absolute;inset:0;pointer-events:none;"></div>
                 </div>
             </div>
 
-            <div id="feedbackElectrodos" style="
+            <!-- Feedback -->
+            <div id="feedbackPalasS7" style="
                 min-height:22px;font-size:0.8rem;
                 text-align:center;color:#5a7a62;
                 transition:color 0.2s;"></div>
 
-            <div id="wrapContinuarElectrodos" style="display:none;justify-content:center;">
-                <button id="btnContinuarElectrodos" style="
+            <!-- Botón continuar (oculto hasta completar) -->
+            <div id="wrapContinuarPalasS7" style="display:none;justify-content:center;">
+                <button id="btnContinuarPalasS7" style="
                     background:#1e5c3a;color:white;border:none;
                     padding:10px 28px;border-radius:8px;
                     font-size:0.88rem;font-weight:600;
@@ -912,95 +931,98 @@ function mostrarMinijuegoElectrodos(parte, onCompletado) {
 
     const mjState = { colocados: {} };
 
-    // ── Helper: bandeja de electrodos ──
+    // ── Helper: bandeja de palas ──
     function renderBandeja() {
-        const bandeja = document.getElementById('bandejaElectrodos');
+        const bandeja = document.getElementById('bandejaPalasS7');
         if (!bandeja) return;
         bandeja.innerHTML = '';
-        ELECTRODOS_CONFIG.forEach(e => {
-            if (mjState.colocados[e.id]) return;
+        PALAS_CONFIG.forEach(p => {
+            if (mjState.colocados[p.id]) return;
             const el = document.createElement('div');
-            el.dataset.eid = e.id;
+            el.dataset.eid = p.id;
+            // Forma de pala: rectángulo redondeado con etiqueta
             el.style.cssText = `
-                width:46px;height:46px;border-radius:50%;
-                background:${e.color};
-                color:white;font-weight:700;font-size:14px;
+                width:64px;height:44px;border-radius:10px;
+                background:${p.color};
+                color:white;font-weight:700;font-size:12px;
                 display:flex;align-items:center;justify-content:center;
                 cursor:grab;user-select:none;
                 border:2.5px solid rgba(255,255,255,0.5);
-                box-shadow:0 2px 6px rgba(0,0,0,0.18);`;
-            el.title = e.desc;
-            el.textContent = e.label;
+                box-shadow:0 2px 6px rgba(0,0,0,0.22);
+                text-align:center;padding:0 4px;`;
+            el.title = p.desc;
+            el.textContent = p.label;
             bandeja.appendChild(el);
         });
     }
 
     // ── Helper: zonas drop usando porcentajes ──
-    // Centro en px = (targetPctX / 100) * img.offsetWidth
-    // No hay viewBox ni conversiones — los porcentajes son directos.
     function renderZonas() {
-        const zonas = document.getElementById('zonasDrop');
-        const img = document.getElementById('torsoImg');
+        const zonas = document.getElementById('zonasDropPalasS7');
+        const img = document.getElementById('torsoImgPalasS7');
         if (!zonas || !img) return;
         zonas.innerHTML = '';
 
         const w = img.offsetWidth;
         const h = img.offsetHeight;
 
-        ELECTRODOS_CONFIG.forEach(e => {
-            if (mjState.colocados[e.id]) return;
+        PALAS_CONFIG.forEach(p => {
+            if (mjState.colocados[p.id]) return;
             const zona = document.createElement('div');
-            zona.id = `zona-drop-${e.id}`;
+            zona.id = `zona-drop-pala-s7-${p.id}`;
 
-            const cx = (e.targetPctX / 100) * w;   // centro X en px
-            const cy = (e.targetPctY / 100) * h;   // centro Y en px
-            const r = e.radius;
+            const cx = (p.targetPctX / 100) * w;
+            const cy = (p.targetPctY / 100) * h;
+            const r = p.radius;
 
             zona.style.cssText = `
                 position:absolute;
                 width:${r * 2}px;height:${r * 2}px;
                 left:${cx - r}px;top:${cy - r}px;
                 border-radius:50%;
-                border:2px dashed ${e.color};
-                background:${e.color}18;
+                border:2px dashed #434343;
+                background:rgba(150,160,150,0.12);
                 display:flex;align-items:center;justify-content:center;
-                font-size:11px;color:${e.color};font-weight:700;
+                font-size:10px;color:${p.color};font-weight:700;
                 pointer-events:none;
-                animation:pulsarZona 1.6s ease-in-out infinite;`;
-            zona.textContent = e.label;
+                animation:pulsarZonaPalaS7 1.6s ease-in-out infinite;
+                text-align:center;padding:4px;`;
+            //zona.textContent = p.label;
             zonas.appendChild(zona);
         });
     }
 
-    // ── Helper: dibujar electrodo colocado sobre la imagen ──
-    function colocarElectrodo(edata) {
-        const colocados = document.getElementById('electrodosColocados');
-        const img = document.getElementById('torsoImg');
-        if (!colocados || !img) return;
+    // ── Helper: dibujar pala colocada ──
+    function colocarPala(pdata) {
+        const colocadas = document.getElementById('palasColocadasS7');
+        const img = document.getElementById('torsoImgPalasS7');
+        if (!colocadas || !img) return;
 
-        const cx = (edata.targetPctX / 100) * img.offsetWidth;
-        const cy = (edata.targetPctY / 100) * img.offsetHeight;
-        const r = 23;
+        const cx = (pdata.targetPctX / 100) * img.offsetWidth;
+        const cy = (pdata.targetPctY / 100) * img.offsetHeight;
+        const w = 64;
+        const h = 44;
 
         const el = document.createElement('div');
         el.style.cssText = `
             position:absolute;
-            width:${r * 2}px;height:${r * 2}px;
-            left:${cx - r}px;top:${cy - r}px;
-            border-radius:50%;
-            background:${edata.color};
+            width:${w}px;height:${h}px;
+            left:${cx - w / 2}px;top:${cy - h / 2}px;
+            border-radius:10px;
+            background:${pdata.color};
             display:flex;align-items:center;justify-content:center;
-            color:white;font-weight:700;font-size:14px;
+            color:white;font-weight:700;font-size:12px;
             border:2.5px solid white;
-            box-shadow:0 2px 8px rgba(0,0,0,0.3);
-            animation:aparecerElectrodo 0.25s ease-out;`;
-        el.textContent = edata.label;
-        colocados.appendChild(el);
+            box-shadow:0 3px 10px rgba(0,0,0,0.35);
+            animation:aparecerPalaS7 0.25s ease-out;
+            text-align:center;padding:0 4px;`;
+        el.textContent = pdata.label;
+        colocadas.appendChild(el);
     }
 
-    // Inicializar bandeja y zonas
+    // Inicializar
     renderBandeja();
-    const imgEl = document.getElementById('torsoImg');
+    const imgEl = document.getElementById('torsoImgPalasS7');
     if (imgEl.complete && imgEl.naturalWidth > 0) {
         renderZonas();
     } else {
@@ -1010,9 +1032,9 @@ function mostrarMinijuegoElectrodos(parte, onCompletado) {
     ro.observe(imgEl);
 
     // Botón continuar
-    document.getElementById('btnContinuarElectrodos').addEventListener('click', () => {
+    document.getElementById('btnContinuarPalasS7').addEventListener('click', () => {
         ro.disconnect();
-        cerrarMinijuego();
+        cerrarMinijuegoPalasS7();
         if (parte.video) {
             mostrarVideoPopup(parte, () => onCompletado());
         } else {
@@ -1027,20 +1049,21 @@ function mostrarMinijuegoElectrodos(parte, onCompletado) {
     function iniciarArrastre(eid, clientX, clientY) {
         if (mjState.colocados[eid]) return;
         eidArrastrando = eid;
-        const edata = ELECTRODOS_CONFIG.find(e => e.id === eid);
+        const pdata = PALAS_CONFIG.find(p => p.id === eid);
 
         ghost = document.createElement('div');
         ghost.style.cssText = `
             position:fixed;
-            width:46px;height:46px;border-radius:50%;
-            background:${edata.color};
-            color:white;font-weight:700;font-size:14px;
+            width:64px;height:44px;border-radius:10px;
+            background:${pdata.color};
+            color:white;font-weight:700;font-size:12px;
             display:flex;align-items:center;justify-content:center;
             pointer-events:none;z-index:9999;opacity:0.92;
             border:2.5px solid rgba(255,255,255,0.7);
             transform:translate(-50%,-50%);
-            box-shadow:0 4px 12px rgba(0,0,0,0.25);`;
-        ghost.textContent = edata.label;
+            box-shadow:0 4px 12px rgba(0,0,0,0.3);
+            text-align:center;padding:0 4px;`;
+        ghost.textContent = pdata.label;
         document.body.appendChild(ghost);
         moverGhost(clientX, clientY);
     }
@@ -1058,46 +1081,44 @@ function mostrarMinijuegoElectrodos(parte, onCompletado) {
 
         const eid = eidArrastrando;
         eidArrastrando = null;
-        const edata = ELECTRODOS_CONFIG.find(e => e.id === eid);
+        const pdata = PALAS_CONFIG.find(p => p.id === eid);
 
-        // Posición del drop como porcentaje de la imagen
-        const img = document.getElementById('torsoImg');
+        const img = document.getElementById('torsoImgPalasS7');
         const rect = img.getBoundingClientRect();
         const pctX = ((cx - rect.left) / rect.width) * 100;
         const pctY = ((cy - rect.top) / rect.height) * 100;
 
-        // Convertir radius a % para comparar en la misma unidad
-        const rPctX = (edata.radius / rect.width) * 100;
-        const rPctY = (edata.radius / rect.height) * 100;
+        const rPctX = (pdata.radius / rect.width) * 100;
+        const rPctY = (pdata.radius / rect.height) * 100;
 
-        const dx = (pctX - edata.targetPctX) / rPctX;
-        const dy = (pctY - edata.targetPctY) / rPctY;
-        const dist = Math.sqrt(dx * dx + dy * dy); // < 1 = dentro del círculo
+        const dx = (pctX - pdata.targetPctX) / rPctX;
+        const dy = (pctY - pdata.targetPctY) / rPctY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
 
-        const feedback = document.getElementById('feedbackElectrodos');
+        const feedback = document.getElementById('feedbackPalasS7');
 
         if (dist <= 1) {
             mjState.colocados[eid] = true;
             reproducirSonidoCorrecto();
-            colocarElectrodo(edata);
+            colocarPala(pdata);
             feedback.style.color = '#1e5c3a';
-            feedback.textContent = `${edata.desc} — posición correcta`;
+            feedback.textContent = `✓ ${pdata.desc} — posición correcta`;
 
-            const total = ELECTRODOS_CONFIG.length;
+            const total = PALAS_CONFIG.length;
             const hechos = Object.keys(mjState.colocados).length;
-            document.getElementById('contadorElectrodos').textContent = `${hechos} / ${total}`;
-            document.getElementById(`zona-drop-${eid}`)?.remove();
+            document.getElementById('contadorPalasS7').textContent = `${hechos} / ${total}`;
+            document.getElementById(`zona-drop-pala-s7-${eid}`)?.remove();
             renderBandeja();
 
             if (hechos === total) {
                 setTimeout(() => {
-                    feedback.textContent = '¡Todos los electrodos están colocados correctamente!';
-                    document.getElementById('wrapContinuarElectrodos').style.display = 'flex';
+                    feedback.textContent = 'Parches colocadas correctamente!';
+                    document.getElementById('wrapContinuarPalasS7').style.display = 'flex';
                 }, 350);
             }
         } else {
             feedback.style.color = '#e24b4a';
-            feedback.textContent = `Posición incorrecta para ${edata.label},  inténtalo de nuevo`;
+            feedback.textContent = `Posición incorrecta para "${pdata.label}" — inténtalo de nuevo`;
             setTimeout(() => { feedback.textContent = ''; }, 2200);
         }
     }
@@ -1134,8 +1155,8 @@ function mostrarMinijuegoElectrodos(parte, onCompletado) {
     }, { passive: false });
 }
 
-function cerrarMinijuego() {
-    document.getElementById('minijuegoElectrodosS7')?.remove();
+function cerrarMinijuegoPalasS7() {
+    document.getElementById('minijuegoPalasS7')?.remove();
     panelAbierto = false;
 }
 
@@ -1342,7 +1363,7 @@ function onMouseMove(event) {
 function onMouseUp() {
     if (!rotandoObjeto) return;
     rotandoObjeto = false;
-    const objRotado = objetoRotando;;
+    const objRotado = objetoRotando;
     renderer.domElement.style.cursor = 'default';
 
     const parte = PARTES[indiceActivo];
@@ -1368,7 +1389,7 @@ function onMouseUp() {
         parte.anguloObjetivo ? `¡Modo ${parte.anguloObjetivo} alcanzado!` : '¡Listo!',
         true
     );
-    document.getElementById('feedbackPerillaS5')?.remove();
+    document.getElementById('feedbackPerillaS7')?.remove();
     reproducirSonidoCorrecto();
 
     if (parte.video) { mostrarVideoPopup(parte, () => avanzarDespuesDeVideo(parte)); }
@@ -1705,6 +1726,6 @@ function pararMedia() {
         ytPlayer = null;
     }
     document.getElementById('videoPopupS7')?.remove();
-    document.getElementById('minijuegoElectrodosS7')?.remove();
+    document.getElementById('minijuegoPalasS7')?.remove();
     panelAbierto = false;
 }

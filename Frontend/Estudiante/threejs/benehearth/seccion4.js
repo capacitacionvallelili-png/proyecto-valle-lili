@@ -61,9 +61,9 @@ const PARTES = [
         imagenesPantalla: [ '/Estudiante/threejs/img/MODOMONITOR.png' ],
         tipo: 'click',
         pasos: [
-            { objeto: 'B_SelecDerivada', imagen: '/Estudiante/threejs/img/19.png',          instruccion: 'Con la perilla de navegación puedes cambiar a las opciones de derivada' },
-            { objeto: 'B_SelecDerivada', imagen: '/Estudiante/threejs/img/20.png',          instruccion: 'Con la perilla de navegación puedes cambiar a las opciones de derivada' },
-            { objeto: 'B_SelecDerivada', imagen: '/Estudiante/threejs/img/21.png',          instruccion: 'Con la perilla de navegación puedes cambiar a las opciones de derivada' },
+            { objeto: 'B_SelecDerivada', imagen: '/Estudiante/threejs/img/19.png',          instruccion: 'Con el botón de derivada puedes cambiar  las opciones de derivada' },
+            { objeto: 'B_SelecDerivada', imagen: '/Estudiante/threejs/img/20.png',          instruccion: 'Con el botón de derivada puedes cambiar  las opciones de derivada' },
+            { objeto: 'B_SelecDerivada', imagen: '/Estudiante/threejs/img/21.png',          instruccion: 'Con el botón de derivada puedes cambiar  las opciones de derivada' },
         ],
         video: 'https://youtu.be/TW_0ryNz290',
     },

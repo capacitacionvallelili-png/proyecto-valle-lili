@@ -4,6 +4,10 @@
 
 import { inicializarEscena, cargarModelo, limpiarRenderer, THREE } from '../escena.js';
 
+// Posición fija de cámara al cargar la escena
+const CAMARA_POSICION = { x: 0.6, y: 0.5, z: 1.7 };
+const CAMARA_TARGET   = { x: 0.8, y: -0.5, z: 0   };
+
 let escena, camara, renderer, controls, reloj;
 let mixer = null;
 let animFrameId = null;
@@ -29,6 +33,12 @@ export function iniciarSeccion1(contenedorId) {
         escena, camara, controls,
         (modelo, animaciones, mix) => {
             mixer = mix;
+
+            // Posicionar la cámara en la vista fija definida
+            camara.position.set(CAMARA_POSICION.x, CAMARA_POSICION.y, CAMARA_POSICION.z);
+            controls.target.set(CAMARA_TARGET.x, CAMARA_TARGET.y, CAMARA_TARGET.z);
+            controls.update();
+
             ocultarLoader();
             mostrarUI();
         }

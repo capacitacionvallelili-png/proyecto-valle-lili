@@ -30,13 +30,13 @@ const VIDEOS = [
     id: 'nk-1',
     category: 'nihon-kohden',
     youtubeId: 'PrYEbICcfS0',
-    title: 'Partes del Desfibrilador Nihon Kohden: Guía Completa del Equipo Biomédico',
+    title: 'Partes del Desfibrilador Nihon Kohden: Guía Completa del Equipo Médico',
     description: 'En este video se explican las principales partes del desfibrilador Nihon Kohden, un equipo fundamental en la atención de emergencias cardíacas.',
   },
   {
     id: 'nk-2',
     category: 'nihon-kohden',
-    youtubeId: 'kw5qZMGohu8',
+    youtubeId: '4SwWNiyTK-c',                          // URL actualizada
     title: 'Uso de Palas Internas en Desfibrilación Nihon Kohden | Procedimiento Explicado',
     description: 'Este video presenta el uso de las palas internas en procedimientos de desfibrilación, explicando su aplicación en contextos clínicos específicos.',
   },
@@ -50,14 +50,14 @@ const VIDEOS = [
   {
     id: 'nk-4',
     category: 'nihon-kohden',
-    youtubeId: '22WRO9VuhKM',
+    youtubeId: '3JOBm5-b33c',                          // URL actualizada
     title: 'Desfibrilación Manual (Asincrónica) Nihon Kohden | ¿Cuándo y Cómo Usarla?',
     description: 'Este video explica el funcionamiento de la desfibrilación manual o asincrónica, utilizada en situaciones de emergencia como fibrilación ventricular.',
   },
   {
     id: 'nk-5',
     category: 'nihon-kohden',
-    youtubeId: 'IMIq0s1NMRo',
+    youtubeId: 'CewnzvdoIUY',                          // URL actualizada
     title: 'Cardioversión Sincrónica Desfibrilador Nihon Kohden | Procedimiento y Aplicación Clínica',
     description: 'En este video se explica la cardioversión en modo sincrónico, utilizada para tratar ciertas arritmias de manera controlada.',
   },
@@ -67,6 +67,13 @@ const VIDEOS = [
     youtubeId: 'XJNm1XbJJEs',
     title: 'Modo Monitor en Desfibrilador Nihon Kohden | Interpretación y Uso',
     description: 'Este video presenta el modo monitor del desfibrilador, permitiendo visualizar y analizar la actividad eléctrica del corazón en tiempo real.',
+  },
+  {
+    id: 'nk-7',
+    category: 'nihon-kohden',
+    youtubeId: 'Tsdpya8RDg4',                          // Video nuevo
+    title: 'Modo Marcapasos | Nihon Kohden | Configuración y uso en emergencias',
+    description: 'En este video aprenderás cómo utilizar el modo marcapasos en equipos Nihon Kohden y qué hacer ante ritmos de paro como fibrilación ventricular. Te mostramos el proceso para suspender la terapia de marcapasos, configurar los joules, cargar el equipo y realizar una descarga o cardioversión según la necesidad del paciente.',
   },
 
   /* ── Mindray Beneheart D6 ────────────────────────────────── */
@@ -105,6 +112,13 @@ const VIDEOS = [
     title: 'Desfibrilación Manual en el Mindray BeneHeart D6 | Uso en Emergencias',
     description: 'Este video muestra el procedimiento de desfibrilación manual (modo asincrónico) en el equipo Mindray BeneHeart D6.',
   },
+  {
+    id: 'md-6',
+    category: 'mindray',
+    youtubeId: 'u-dicgysYo8',
+    title: 'Modo Marcapasos en el Mindray BeneHeart D6 | Tutorial Paso a Paso',
+    description: 'En este video se presenta el procedimiento para la configuración y uso del modo marcapasos del desfibrilador Mindray BeneHeart D6, explicando de manera clara y secuencial los pasos necesarios para su correcta operación. El contenido está orientado a fortalecer los conocimientos del personal asistencial y promover el uso seguro de la tecnología biomédica en entornos clínicos, siguiendo las recomendaciones de manejo del equipo y las buenas prácticas institucionales.',
+  },
 ];
 
 /* ── STATE ─────────────────────────────────────────────────── */
@@ -117,6 +131,13 @@ const videoGrid     = document.getElementById('videoGrid');
 const sectionHeader = document.getElementById('sectionHeader');
 const emptyState    = document.getElementById('emptyState');
 const heroStats     = document.getElementById('heroStats');
+const videoModal       = document.getElementById('videoModal');
+const modalTitle       = document.getElementById('modalTitle');
+const modalClose       = document.getElementById('modalClose');
+const modalCategory    = document.getElementById('modalCategory');
+const modalYtLink      = document.getElementById('modalYtLink');
+const modalPlayBtn     = document.getElementById('modalPlayBtn');
+const modalThumbPreview= document.getElementById('modalThumbPreview');
 
 /* ── HELPERS ───────────────────────────────────────────────── */
 
@@ -144,6 +165,83 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+/* ── MODAL ──────────────────────────────────────────────────── */
+
+let currentVideo = null;
+
+function openModal(video) {
+  currentVideo = video;
+  const cat = CATEGORIES[video.category];
+
+  modalTitle.textContent          = video.title;
+  modalThumbPreview.src           = thumbUrl(video.youtubeId);
+  modalThumbPreview.alt           = video.title;
+  modalYtLink.href                = watchUrl(video.youtubeId);
+  modalCategory.textContent       = cat.name;
+  modalCategory.className         = `modal-category modal-category--${cat.colorClass}`;
+
+  videoModal.hidden = false;
+  document.body.style.overflow = 'hidden';
+  modalPlayBtn.focus();
+}
+
+function closeModal() {
+  videoModal.hidden = true;
+  currentVideo = null;
+  document.body.style.overflow = '';
+}
+
+/**
+ * Abre el video en una ventana flotante pequeña (popup).
+ * Dimensiones tipo reproductor: 900×560 centrado en la pantalla.
+ * Esto evita el Error 153 porque se carga la página real de YouTube,
+ * no un embed. El usuario no "sale" de la biblioteca — la ventana
+ * principal permanece abierta al fondo.
+ */
+function openVideoPopup(video) {
+  const w = 920, h = 560;
+  const left = Math.max(0, Math.round(window.screen.width  / 2 - w / 2));
+  const top  = Math.max(0, Math.round(window.screen.height / 2 - h / 2));
+  const features = [
+    `width=${w}`, `height=${h}`,
+    `left=${left}`, `top=${top}`,
+    'resizable=yes', 'scrollbars=no',
+    'toolbar=no', 'menubar=no',
+    'location=no', 'status=no',
+  ].join(',');
+
+  const popup = window.open(
+    `https://www.youtube.com/watch?v=${video.youtubeId}&autoplay=1`,
+    `yt_${video.id}`,
+    features
+  );
+
+  // Si el navegador bloqueó el popup, abrir en pestaña nueva como fallback
+  if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+    window.open(watchUrl(video.youtubeId), '_blank', 'noopener,noreferrer');
+  }
+}
+
+function initModal() {
+  // Botón de play → abrir popup
+  modalPlayBtn.addEventListener('click', () => {
+    if (currentVideo) openVideoPopup(currentVideo);
+  });
+
+  // Cerrar con X
+  modalClose.addEventListener('click', closeModal);
+
+  // Cerrar al hacer clic en el backdrop
+  videoModal.addEventListener('click', (e) => {
+    if (e.target === videoModal) closeModal();
+  });
+
+  // Cerrar con Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !videoModal.hidden) closeModal();
+  });
 }
 
 /* ── RENDER FUNCTIONS ──────────────────────────────────────── */
@@ -184,6 +282,10 @@ function renderSectionHeader(videos) {
   `;
 }
 
+/**
+ * Thumbnail card — clic abre modal con iframe embebido (sin salir de la página).
+ * El enlace "Ver en YouTube" en el footer sí abre YouTube en pestaña nueva.
+ */
 function createVideoCard(video, index) {
   const cat  = CATEGORIES[video.category];
   const card = document.createElement('article');
@@ -192,12 +294,12 @@ function createVideoCard(video, index) {
   card.style.animationDelay = `${Math.min(index, 8) * 55}ms`;
 
   card.innerHTML = `
-    <a
+    <div
       class="video-wrapper"
-      href="${watchUrl(video.youtubeId)}"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Ver ${escapeHtml(video.title)} en YouTube"
+      role="button"
+      tabindex="0"
+      aria-label="Reproducir: ${escapeHtml(video.title)}"
+      data-video-id="${escapeHtml(video.id)}"
     >
       <img
         class="video-wrapper__thumb"
@@ -216,9 +318,9 @@ function createVideoCard(video, index) {
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/>
         </svg>
-        YouTube
+        Reproducir
       </div>
-    </a>
+    </div>
     <div class="video-card__body">
       <div class="video-card__meta">
         <span class="video-card__category video-card__category--${cat.colorClass}">
@@ -242,6 +344,16 @@ function createVideoCard(video, index) {
     </div>
   `;
 
+  // Click / Enter on thumbnail → open modal
+  const wrapper = card.querySelector('.video-wrapper');
+  const trigger = (e) => {
+    if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    openModal(video);
+  };
+  wrapper.addEventListener('click', trigger);
+  wrapper.addEventListener('keydown', trigger);
+
   return card;
 }
 
@@ -262,40 +374,39 @@ function createCategoryHeader(catId) {
 }
 
 function renderGrid(category) {
-    // Usa requestAnimationFrame en lugar de setTimeout(180)
-    videoGrid.style.opacity = '0';
-    videoGrid.style.transform = 'translateY(8px)';
+  videoGrid.style.opacity = '0';
+  videoGrid.style.transform = 'translateY(8px)';
 
-    requestAnimationFrame(() => {
-        videoGrid.innerHTML = '';
-        emptyState.classList.add('hidden');
-        emptyState.setAttribute('aria-hidden', 'true');
+  setTimeout(() => {
+    videoGrid.innerHTML = '';
+    emptyState.classList.add('hidden');
+    emptyState.setAttribute('aria-hidden', 'true');
 
-        const videos = getFilteredVideos(category);
-        renderSectionHeader(videos);
+    const videos = getFilteredVideos(category);
+    renderSectionHeader(videos);
 
-        if (videos.length === 0) {
-            emptyState.classList.remove('hidden');
-            emptyState.setAttribute('aria-hidden', 'false');
-            videoGrid.style.opacity = '1';
-            videoGrid.style.transform = 'translateY(0)';
-            return;
-        }
+    if (videos.length === 0) {
+      emptyState.classList.remove('hidden');
+      emptyState.setAttribute('aria-hidden', 'false');
+      videoGrid.style.opacity = '1';
+      videoGrid.style.transform = 'translateY(0)';
+      return;
+    }
 
-        if (category === 'all') {
-            Object.keys(CATEGORIES).forEach(catId => {
-                const catVideos = videos.filter(v => v.category === catId);
-                if (catVideos.length === 0) return;
-                videoGrid.appendChild(createCategoryHeader(catId));
-                catVideos.forEach((video, i) => videoGrid.appendChild(createVideoCard(video, i)));
-            });
-        } else {
-            videos.forEach((video, index) => videoGrid.appendChild(createVideoCard(video, index)));
-        }
+    if (category === 'all') {
+      Object.keys(CATEGORIES).forEach(catId => {
+        const catVideos = videos.filter(v => v.category === catId);
+        if (catVideos.length === 0) return;
+        videoGrid.appendChild(createCategoryHeader(catId));
+        catVideos.forEach((video, i) => videoGrid.appendChild(createVideoCard(video, i)));
+      });
+    } else {
+      videos.forEach((video, index) => videoGrid.appendChild(createVideoCard(video, index)));
+    }
 
-        videoGrid.style.opacity = '1';
-        videoGrid.style.transform = 'translateY(0)';
-    });
+    videoGrid.style.opacity = '1';
+    videoGrid.style.transform = 'translateY(0)';
+  }, 180);
 }
 
 /* ── TABS ───────────────────────────────────────────────────── */
@@ -328,6 +439,7 @@ function init() {
   renderHeroStats();
   renderTabCounts();
   initTabs();
+  initModal();
   renderGrid(activeCategory);
 }
 

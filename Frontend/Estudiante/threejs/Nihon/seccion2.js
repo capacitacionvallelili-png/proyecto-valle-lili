@@ -1,6 +1,5 @@
 /* =====================================================
    seccion2.js — Sección 2: Partes del dispositivo Nihon Koden
-  
    ===================================================== */
 
 import { inicializarEscena, cargarModelo, limpiarRenderer, THREE } from '../escena.js';
@@ -17,7 +16,6 @@ const FACTOR_EMISION = 0.45;
 
 /* =====================================================
    PARTES
-   
    ===================================================== */
 const PARTES = [
     {
@@ -25,15 +23,12 @@ const PARTES = [
         nombre: 'Perilla principal',
         objeto: 'perilla',
         tipo: 'click',
-        //camaraOffset: { x: 0, y: 0, z: 0.9 },
         audioInicio: 0,
         audioFin: 24,
         instruccion: 'Haz click sobre la perilla',
         resaltarTemporal: [
             { objetos: ['perilla'], color: 0x00ccff, intensidad: 0.6, inicio: 0, fin: 24 },
-
         ],
-
         texturasPantalla: [
             { tiempo: 0, imagen: '/Estudiante/threejs/img/negro.jpg' },
             { tiempo: 9, imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png' },
@@ -47,11 +42,10 @@ const PARTES = [
         nombre: 'Pantalla',
         objeto: 'pantalla001',
         tipo: 'click',
-        //camaraOffset: { x: 0, y: 0, z: 0.9 },
+        camaraOffset: { x: 0, y: 0.1, z: 0.7 },
         audioInicio: 25,
         audioFin: 50,
         instruccion: 'Haz click sobre la pantalla',
-        // resaltar: ['pantalla001'],
         texturasPantalla: [
             { tiempo: 0, imagen: '/Estudiante/threejs/img/negro.jpg' },
             { tiempo: 6, imagen: '/Estudiante/threejs/img/nihon/cardioversion_activada.png' },
@@ -65,30 +59,28 @@ const PARTES = [
         nombre: 'Botones Carga y Descarga',
         objeto: 'carga',
         tipo: 'click',
-        camaraOffset: { x: -0.2, y: 0.8, z: 1 },
         audioInicio: 50,
         audioFin: 66,
         instruccion: 'Haz click sobre el botón de descarga',
-        // resaltar: ['carga'],
+        resaltar: ['carga'],
         resaltarTemporal: [
             { objetos: ['carga'], color: 0x00ccff, intensidad: 0.6, inicio: 50, fin: 66 },
             { objetos: ['Cubo019'], color: 0x00ccff, intensidad: 0.6, inicio: 60, fin: 66 },
             { objetos: ['Cubo020'], color: 0x00ccff, intensidad: 0.6, inicio: 60, fin: 66 },
             { objetos: ['carga001'], color: 0x00ccff, intensidad: 0.6, inicio: 60, fin: 66 },
-
         ],
         texturasPantalla: [
             { tiempo: 0, imagen: '/Estudiante/threejs/img/negro.jpg' },
             { tiempo: 4, imagen: '/Estudiante/threejs/img/nihon/cardioversion_activada_energia_cargada.png' },
             { tiempo: 11, imagen: '/Estudiante/threejs/img/nihon/cardioversion_activada_energia_cargada.png' },
         ],
+        video:"https://youtu.be/_ZJc5kmVig0"
     },
     {
         id: 'deriv',
         nombre: 'Botón Derivada',
         objeto: 'Deriv',
         tipo: 'click',
-        //camaraOffset: { x: 0, y: 0, z: 0.9 },
         audioInicio: 66,
         audioFin: 94,
         instruccion: 'Haz click sobre el botón de derivada',
@@ -98,9 +90,9 @@ const PARTES = [
             { tiempo: 14, imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv1.png' },
             { tiempo: 18, imagen: '/Estudiante/threejs/img/nihon/derivada2ModoMonitor.png' },
         ],
-        resaltarTemporal: [
-            { objetos: ['Deriv'], color: 0x00ccff, intensidad: 0.6, inicio: 66, fin: 94 },
 
+        resaltarTemporal: [
+            { objetos: ['Deriv'], color: 0x00ccff, intensidad: 0.6, inicio: 95, fin: 108 },
         ],
     },
     {
@@ -108,27 +100,23 @@ const PARTES = [
         nombre: 'Botón de Sensibilidad',
         objeto: 'Sensibilidad',
         tipo: 'click',
-        //camaraOffset: { x: 0, y: 0, z: 0.9 },
         audioInicio: 95,
         audioFin: 108,
         instruccion: 'Haz click sobre el botón de sensibilidad',
-        //resaltar: ['Sensibilidad'],
+        resaltar: ['Sensibilidad'],
         texturasPantalla: [
             { tiempo: 0, imagen: '/Estudiante/threejs/img/nihon/derivada2ModoMonitor.png' },
             { tiempo: 9, imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv2.png' },
         ],
         resaltarTemporal: [
             { objetos: ['Sensibilidad'], color: 0x00ccff, intensidad: 0.6, inicio: 95, fin: 108 },
-
         ],
-
     },
     {
         id: 'sync',
         nombre: 'Botón SYN / Cardioversión',
         objeto: 'sinc',
         tipo: 'click',
-        //camaraOffset: { x: 0, y: 0, z: 0.9 },
         audioInicio: 108,
         audioFin: 126,
         instruccion: 'Haz click sobre el botón de cardioversión',
@@ -138,14 +126,12 @@ const PARTES = [
         ],
         resaltarTemporal: [
             { objetos: ['sinc'], color: 0x00ccff, intensidad: 0.6, inicio: 108, fin: 126 },
-
         ],
     },
     {
         id: 'marcapasos',
         nombre: 'Botones Modo Marcapasos',
         objeto: 'marcapasos',
-        //objetosGrupo: ['Cone'],
         tipo: 'click',
         camaraOffset: { x: 0, y: 0.5, z: 0.4 },
         audioInicio: 126,
@@ -157,9 +143,7 @@ const PARTES = [
         ],
         resaltarTemporal: [
             { objetos: ['marcapasos'], color: 0x00ccff, intensidad: 0.6, inicio: 126, fin: 137 },
-
         ],
-
     },
     {
         id: 'impresora',
@@ -176,8 +160,8 @@ const PARTES = [
         ],
         resaltarTemporal: [
             { objetos: ['Impresora'], color: 0x00ccff, intensidad: 0.6, inicio: 137, fin: 146 },
-
         ],
+        video:"https://youtu.be/45ryZ4MOFzo"
     },
     {
         id: 'led',
@@ -196,23 +180,32 @@ const PARTES = [
     {
         id: 'Palas',
         nombre: 'Palas adulto-pediátricas y Palas Internas',
-        objeto: 'PalasAdultoIzq',
+        objeto: 'PalasIzq',
+        // ════════════════════════════════════════════════════════════
+        // FIX — Nombres reales obtenidos del log de consola (traverse).
+        // El GLB anterior tenía nombres como 'Cubo005', 'Cubo005_1',
+        // 'Cubo013', 'Cubo013_1' que YA NO EXISTEN en este modelo.
+        // Los nombres correctos confirmados en consola son:
+        //   Lado derecho: palasDer, botonDer, botonpala, palasAdultoDer
+        //   Lado izquierdo: PalasIzq, BotonIzq, PalasAdultoIzq
+        // ════════════════════════════════════════════════════════════
         objetosGrupo: [
-            'Cubo005', 'Cubo005_1', 'Cubo005_2', 'botonDer', 'botonpala', 'palasAdultoDer',
-            'Cubo013', 'Cubo013_1', 'BotonIzq', 'PalasAdultoIzq',
+            'palasDer', 'botonDer', 'botonpala', 'palasAdultoDer',
+            'PalasIzq', 'BotonIzq', 'PalasAdultoIzq',
         ],
         tipo: 'click',
         camaraOffset: { x: 0, y: 0, z: 2.5 },
         audioInicio: 162,
         audioFin: 186,
-        instruccion: 'Haz click sobre las palas',
+        instruccion: 'Haz click sobre las cualquiera de las palas',
         resaltar: [
-            'Cubo005', 'Cubo005_1', 'Cubo005_2', 'botonDer', 'botonpala', 'palasAdultoDer',
-            'Cubo013', 'Cubo013_1', 'BotonIzq', 'PalasAdultoIzq',
+            'palasDer', 'botonDer', 'botonpala', 'palasAdultoDer',
+            'PalasIzq', 'BotonIzq', 'PalasAdultoIzq',
         ],
         texturasPantalla: [
             { tiempo: 0, imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv1.png' },
         ],
+        video:"https://youtu.be/3YvADC5AHFM"
     },
     {
         id: 'Puertos',
@@ -227,9 +220,10 @@ const PARTES = [
         texturasPantalla: [
             { tiempo: 0, imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv1.png' },
         ],
+        video:"https://youtu.be/AD2Ra64t0AA"
     },
 ];
-// Ruta Corregida del audio completo (antes tenía "NihonPartes.mp3" con "N" mayúscula, lo que causaba error 404 en algunos sistemas de archivos sensibles a mayúsculas)
+
 const AUDIO_COMPLETO = '/Estudiante/threejs/audios/nihon/NihonPartes.mp3';
 
 
@@ -257,10 +251,7 @@ let objetoRotando = null;
 let mouseXAnterior = 0;
 let mouseYAnterior = 0;
 
-// ── Resaltado permanente (emissive, UUID-based) ──
 const _materialesOriginales = new Map();
-
-// ── Resaltado temporal (mat.color, sin tocar emissive) ──
 const _coloresTemporales = new Map();
 
 const _cachTexturas = {};
@@ -338,7 +329,6 @@ export function iniciarSeccion2(contenedorId) {
 }
 
 export function destruirSeccion2() {
-    // Limpiar resaltados antes de destruir
     quitarResalte();
     quitarResaltesTemporales();
     pararSegmento();
@@ -511,7 +501,6 @@ function activarParte(indice) {
     const instruccion = document.getElementById('instruccionNihon2');
     if (instruccion) instruccion.textContent = parte.instruccion;
 
-    // Cámara condicional: con offset → enfoca objeto, sin offset → posición fija
     if (parte.camaraOffset) {
         enfocarObjeto(parte.objeto);
     } else {
@@ -525,7 +514,6 @@ function activarParte(indice) {
     crearSenal(parte.objeto);
     actualizarChecklist();
 
-    // Resaltado permanente del paso actual
     quitarResalte();
     aplicarResalte(parte.resaltar ?? []);
 
@@ -601,9 +589,7 @@ window.irAParteNihon2 = function (indice) {
 
 
 /* =====================================================
-   RESALTADO PERMANENTE — emissive UUID-based
-   Mismo algoritmo que Beneheart; evita el bug de
-   materiales compartidos (ej. Flecha1/2/3)
+   RESALTADO PERMANENTE
    ===================================================== */
 
 function aplicarResalte(nombres) {
@@ -639,8 +625,7 @@ function quitarResalte() {
 
 
 /* =====================================================
-   RESALTADO TEMPORAL — mat.color durante intervalo
-   No toca emissive → no interfiere con el permanente
+   RESALTADO TEMPORAL
    ===================================================== */
 
 function actualizarResaltesTemporales(parte, tiempoActual) {
@@ -715,7 +700,6 @@ function reproducirSegmento(parte) {
         if (!audioCompleto) { clearInterval(monitorIntervalo); return; }
         const tiempoActual = audioCompleto.currentTime;
 
-        // Texturas sincronizadas en pantalla
         const texturas = parte.texturasPantalla;
         if (texturas?.length) {
             const tiempoRelativo = tiempoActual - parte.audioInicio;
@@ -727,10 +711,8 @@ function reproducirSegmento(parte) {
             }
         }
 
-        // Resaltados temporales (no interfieren con emissive)
         actualizarResaltesTemporales(parte, tiempoActual);
 
-        // Barra de progreso
         const pct = Math.min(((tiempoActual - parte.audioInicio) / duracion) * 100, 100);
         const fill = document.getElementById('barraFillNihon2');
         if (fill) fill.style.width = `${pct}%`;

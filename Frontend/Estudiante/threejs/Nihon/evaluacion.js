@@ -106,7 +106,7 @@ const TARJETAS_P5 = [
 const PREGUNTAS = [
     { num: 1, tipo: '3d_click',     enunciado: 'Durante una desfibrilación manual con palas, el operador ya seleccionó el nivel de energía. ¿De qué forma(s) puede iniciar la carga del equipo?', instruccion: 'Selecciona la respuesta directamente en el modelado' },
     { num: 2, tipo: 'opcion_multiple', enunciado: 'Al inicio del turno, el operador debe realizar la prueba de usuario del desfibrilador. Durante la prueba con palas, el equipo indica una falla. ¿Cuál es el paso correcto a seguir? (Selecciona la(s) correctas)' },
-    { num: 3, tipo: '3d_secuencia', enunciado: 'El médico indica realizar una cardioversión sincronizada a 120 J. El paciente ya cuenta con trazado de ECG visible en el monitor. Realiza los pasos sobre el modelado en el orden correcto.', instruccion: 'Toca el elemento del modelo, luego verifica el paso' },
+    { num: 3, tipo: '3d_secuencia', enunciado: 'El médico indica realizar una cardioversión sincronizada a 100 J. El paciente todavia no cuenta con trazado de ECG visible en el monitor. Realiza los pasos sobre el modelado en el orden correcto.', instruccion: 'Presiona los pasos sobre el modelado, luego verifica si esta correcto' },
     { num: 4, tipo: 'columnas',     enunciado: 'Relaciona cada tipo de conexión con las acciones terapéuticas que permite realizar. Clasifica cada acción según corresponda a Palas o Electrodos desechables (parches).' },
     { num: 5, tipo: 'ordenar',      enunciado: 'El médico indica iniciar terapia de marcapasos transcutáneo. Los parches de electrodos ya están disponibles. Ordena los pasos que debe seguir el operador.' },
 ];
@@ -587,7 +587,7 @@ function _mostrarPregunta3DSecuencia(contenedor, pregunta, indice) {
             font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;
             text-align:center;white-space:nowrap;display:none;
             box-shadow:0 4px 14px rgba(0,0,0,0.25);pointer-events:none;`;
-        holdTip.innerHTML=`Toca y mantén presionado el botón de descarga`;
+        holdTip.innerHTML=`Oprime los botón de descarga por algunos segundos, en esta simulación solo necesitas oprimir uno`;
         if(cc) cc.appendChild(holdTip);
 
         _actualizarChecklist3D(0);
@@ -773,7 +773,7 @@ function _mostrarPreguntaColumnas(contenedor,pregunta,indice){
         </div>
         <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:20px;gap:16px;">
             <p style="font-size:0.8rem;color:#5a7a62;margin:0;text-align:center;">Arrastra cada acción a la columna correspondiente</p>
-            <div id="bandejaP4" style="display:flex;flex-direction:row;gap:12px;justify-content:center;flex-wrap:wrap;min-height:80px;padding:12px;border:2px dashed #c8d8c8;border-radius:12px;background:#fafafa;width:100%;max-width:1000px;">
+            <div id="bandejaP4" style="display:flex;flex-direction:row;gap:12px;justify-content:center;flex-wrap:wrap;min-height:80px;padding:12px;border:2px dashed #c8d8c8;border-radius:12px;background:#fafafa;width:100%;max-width:1500px;">
                 ${TARJETAS_P4.map(t=>`<div data-id="${t.id}" draggable="true" style="width:180px;min-height:70px;display:flex;align-items:center;justify-content:center;background:${t.bg};border:2.5px solid ${t.color};border-radius:12px;padding:10px;cursor:grab;user-select:none;font-size:0.8rem;font-weight:600;color:${t.color};text-align:center;line-height:1.4;">${t.texto}</div>`).join('')}
             </div>
             <div style="display:flex;gap:20px;width:100%;max-width:800px;align-items:stretch;">

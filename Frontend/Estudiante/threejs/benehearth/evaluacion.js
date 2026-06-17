@@ -564,7 +564,7 @@ function _actualizarIndicadorP3(config) {
     if (!indicador) return;
     indicador.style.borderColor = '#4a90d9';
     indicador.style.background = '#eef4fb';
-    indicador.innerHTML = `<span style="color:#1a2e1f;font-weight:500;">Seleccionaste: <strong>${config.nombre}</strong></span>`;
+    indicador.innerHTML = `<span style="color:#1a2e1f;font-weight:500;">Te encuentras en modo: <strong>${config.nombre}</strong></span>`;
 }
 
 function _aplicarTexturaPantalla(ruta) {
@@ -860,7 +860,7 @@ function mostrarResultado(resultado) {
                 </p>
                 <p style="font-size:0.86rem;color:#5a7a62;margin:0;">
                     ${aprobado ? 'Superaste el umbral mínimo de aprobación (80%).' : 'El puntaje mínimo para aprobar es 80%.'}
-                    ${!esInt2 ? ' — Tienes un intento más disponible.' : (aprobado ? '' : ' Has agotado tus intentos.')}
+                    ${!esInt2 ? ' — Tienes un intento más disponible si quieres mejorar tu nota.' : (aprobado ? '' : ' Has agotado tus intentos.')}
                 </p>
                 <div style="display:flex;gap:6px;margin-top:10px;">
                     ${PREGUNTAS.map(p => {

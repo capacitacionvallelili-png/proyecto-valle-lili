@@ -106,6 +106,45 @@
     </div>
   </footer>
 
+  <!-- VIDEO MODAL -->
+  <div class="modal-backdrop" id="videoModal" role="dialog" aria-modal="true" aria-label="Reproductor de video" hidden>
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <button class="modal-close" id="modalClose" aria-label="Cerrar video">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-video-wrapper" id="modalVideoWrapper">
+        <img class="modal-thumb-preview" id="modalThumbPreview" src="" alt="" aria-hidden="true"/>
+        <div class="modal-play-area">
+          <button class="modal-play-btn" id="modalPlayBtn" aria-label="Reproducir video">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <div class="modal-play-label">
+            <strong>Reproducir video</strong>
+            Se abrirá en una ventana flotante
+          </div>
+          <span class="modal-play-hint">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            Si el video no carga, activa "Permitir inserción" en YouTube Studio
+          </span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span class="modal-category" id="modalCategory"></span>
+        <a class="modal-yt-link" id="modalYtLink" href="#" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+            <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/>
+          </svg>
+          Ver en YouTube ↗
+        </a>
+      </div>
+    </div>
+  </div>
+
   <script src="/Estudiante/repaso/repaso.js"></script>
 </body>
 </html>

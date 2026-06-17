@@ -48,7 +48,7 @@ const PARTES = [
             '/Estudiante/threejs/img/negro.jpg',
         ],
         pasos: [
-            { objeto: 'perilla', imagen: '/Estudiante/threejs/img/nihon/chequeo_basico_inicio.png', instruccion: 'Haz click en la tecla OK' },
+            { objeto: 'perilla', imagen: '/Estudiante/threejs/img/nihon/chequeo_basico_inicio.png', instruccion: 'Haz click en la perilla y giralo hasta chequeo básico' },
         ],
         //video: "https://youtu.be/0g5mxeJtPBA"
     },
@@ -60,7 +60,7 @@ const PARTES = [
         instruccion: 'Haz click en el botón de OK',
         imagenesPantalla: ['/Estudiante/threejs/img/nihon/chequeo_basico_inicio.png'],
         pasos: [
-            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/chequeo_basico_carga_energia.png', instruccion: 'Haz click en  OK' },
+            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/chequeo_basico_carga_energia.png', instruccion: 'Presiona el botón para seleccionar el OK' },
         ],
         
     },
@@ -76,7 +76,7 @@ const PARTES = [
             '/Estudiante/threejs/img/nihon/chequeo_basico_carga_energia.png',
         ],
         pasos: [
-            { objeto: 'botonDer', imagen: '/Estudiante/threejs/img/nihon/chequeo_basico_comprobacion_registro.png', instruccion: 'Haz click en los botones para descargar' },
+            { objeto: 'botonDer', imagen: '/Estudiante/threejs/img/nihon/chequeo_basico_comprobacion_registro.png', instruccion: 'Presiona los botones para realizar la descarga' },
         ],
         video:"https://youtu.be/0P7JtXrkN8s"
     },

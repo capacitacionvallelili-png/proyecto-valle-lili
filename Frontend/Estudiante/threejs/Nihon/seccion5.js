@@ -30,11 +30,11 @@ const SEGUNDO_ENCENDIDO = 221.5;
 const PARTES = [
     {
         id: 'perilla',
-        nombre: 'Gira la perilla para encenderla y selecciona una energía hasta donde lo necesites',
+        nombre: 'Enciena el equipo y seleccione una energía hasta donde lo necesites',
         tipo: 'click',
         imagenesPantalla: ['/Estudiante/threejs/img/negro.jpg'],
         pasos: [
-            { objeto: 'perilla', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png', instruccion: 'Enciende el equipo con la perilla y selecciona una energía' },
+            { objeto: 'perilla', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png', instruccion: 'Gira la perilla para encender el equipo  y seleccionar una energía' },
         ],
         video:"https://youtu.be/7H7iDGSIBhM"
     },
@@ -55,7 +55,7 @@ const PARTES = [
         camaraOffset: { x: 0, y: 0.3, z: -0.8 },
         imagenesPantalla: ['/Estudiante/threejs/img/desfibrilacion_manual_cargado2.jpg'],
         pasos: [
-            { objeto: 'botonDer', imagen: '/Estudiante/threejs/img/nihon/desfibrilacion_manual_descarga.png', instruccion: 'Haz click en el botón de descarga de las palas' },
+            { objeto: 'botonDer', imagen: '/Estudiante/threejs/img/nihon/desfibrilacion_manual_descarga.png', instruccion: 'Haz click en el botón de descarga de las palas, en la vida real deben oprimirse ambos botones de manera simultanea' },
         ],
         video:"https://youtu.be/HgecgM8BMcg"
     },

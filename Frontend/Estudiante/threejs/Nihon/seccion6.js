@@ -37,7 +37,7 @@ const PARTES = [
         //camaraOffset: { x: 0, y: -0.1, z: 0.8 },
         imagenesPantalla: [ '/Estudiante/threejs/img/negro.jpg' ],
         pasos: [
-            { objeto: 'perilla', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png', instruccion: 'Gira la perilla hasta modo monitor' },
+            { objeto: 'perilla', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png', instruccion: 'Gira la perilla hasta modo monitor, pero para esta simulación solo debes dar click' },
         ],
     },
 

@@ -35,7 +35,7 @@ const PARTES = [
         //camaraOffset: { x: 0, y: -0.1, z: 0.8 },
         imagenesPantalla: [ '/Estudiante/threejs/img/negro.jpg' ],
         pasos: [
-            { objeto: 'perilla', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png', instruccion: 'Gira la perilla hasta modo monitor' },
+            { objeto: 'perilla', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_palas.png', instruccion: 'Gira la perilla hasta modo monitor, pero para esta simulación solo debes dar click sobre ella' },
         ],
     },
     {
@@ -48,13 +48,13 @@ const PARTES = [
     },
     {
         id: 'Deriv1',
-        nombre: 'Si la pantalla dice "PALAS" pero usted tiene conectados los electrodos, presione el botón "DERI" hasta que aparezca la opción deseada.',
+        nombre: 'Si la pantalla dice "PALAS" pero usted tiene conectados los electrodos, presione el botón "DERIVA" hasta que aparezca la opción deseada.',
         tipo: 'click',
         //camaraOffset: { x: 0, y: -0.1, z: 0.8 },
         imagenesPantalla: [ '/Estudiante/threejs/img/nihon/modo_monitor_palas.png' ],
         pasos: [
-            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv1.png', instruccion: 'Haz click sobre el botón de Deriv para pasar de pala a derivada' },
-            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/derivada2ModoMonitor.png', instruccion: 'Haz click sobre el botón de Deriv para pasar a derivada 2' },
+            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/modo_monitor_deriv1.png', instruccion: 'Haz click sobre el botón de Deriva para pasar de pala a derivada 1' },
+            { objeto: 'Deriv', imagen: '/Estudiante/threejs/img/nihon/derivada2ModoMonitor.png', instruccion: 'Haz click sobre el botón de Derivada  para pasar a derivada 2' },
         ],
         video:"https://youtu.be/vbup91xOGNU"
     },
